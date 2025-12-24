@@ -1,0 +1,38 @@
+{
+  "name": "organized-ai-marketplace",
+  "description": "Official Plugin Marketplace for Organized AI - GTM, Analytics, and Marketing Automation tools for Claude Code",
+  "owner": {
+    "name": "Organized AI",
+    "url": "https://github.com/organized-ai"
+  },
+  "plugins": [
+    {
+      "name": "gtm-implementation",
+      "source": "organized-ai/teleios-health-setup",
+      "version": "1.0.0",
+      "description": "Google Tag Manager implementation toolkit for Meta CAPI, GA4, Google Ads, and CRM webhook integrations",
+      "keywords": [
+        "gtm",
+        "google-tag-manager",
+        "meta-capi",
+        "server-side-tracking",
+        "ga4",
+        "google-ads",
+        "conversion-tracking",
+        "gohighlevel",
+        "stape"
+      ],
+      "commands": [
+        "/gtm-setup",
+        "/gtm-test",
+        "/gtm-capi",
+        "/gtm-audit",
+        "/gtm-webhook"
+      ],
+      "agents": [
+        "gtm-architect",
+        "gtm-debugger"
+      ]
+    }
+  ]
+}
