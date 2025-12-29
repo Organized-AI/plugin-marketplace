@@ -1,0 +1,32 @@
+{
+  "name": "blade-linkedin-plugin",
+  "description": "Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (client + server-side CAPI) and event ID deduplication. Zero manual GTM UI clicks required.",
+  "version": "1.0.0",
+  "author": {
+    "name": "BHT Promo",
+    "url": "https://github.com/organized-ai"
+  },
+  "keywords": [
+    "gtm",
+    "linkedin",
+    "insight-tag",
+    "capi",
+    "tracking",
+    "blade",
+    "mcp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/organized-ai/blade-linkedin-capi"
+  },
+  "license": "MIT",
+  "engines": {
+    "claude-code": ">=1.0.0"
+  },
+  "capabilities": {
+    "commands": true,
+    "agents": true,
+    "skills": true,
+    "hooks": true
+  }
+}

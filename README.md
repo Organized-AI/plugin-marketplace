@@ -1,60 +1,95 @@
 # Organized AI Plugin Marketplace
 
-Official plugin marketplace for Claude Code, featuring GTM, analytics, and marketing automation tools.
+Official Claude Code plugin marketplace for Organized AI.
 
 ## Installation
 
 Add this marketplace to Claude Code:
 
-```bash
-/plugin marketplace add organized-ai/plugin-marketplace
+```
+/plugin marketplace add Organized-AI/plugin-marketplace
 ```
 
 ## Available Plugins
+
+### organized-codebase-applicator
+
+Apply Organized Codebase template structure to existing projects and create Claude Code Plugins.
+
+```
+/plugin install organized-codebase-applicator@organized-ai-marketplace
+```
+
+**Features:**
+- Apply standardized project structure (PLANNING, DOCUMENTATION, CONFIG, etc.)
+- Create distributable Claude Code Plugins
+- Clean up unused/redundant directories
+- Plugin manifest and template generation
+- Local vs Plugin structure guidance
+
+---
+
+### blade-linkedin-plugin
+
+Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (client + server-side CAPI).
+
+```
+/plugin install blade-linkedin-plugin@organized-ai-marketplace
+```
+
+**Features:**
+- Zero-click GTM deployment via MCP
+- LinkedIn InsightTag 2.0 from Community Gallery
+- Event ID deduplication (client + server CAPI)
+- Automated preview, version, publish workflow
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/blade-deploy` | Execute full LinkedIn tracking deployment |
+| `/blade-status` | Check implementation phase progress |
+| `/blade-rollback` | Revert to previous GTM version |
+
+---
 
 ### gtm-implementation
 
 Google Tag Manager implementation toolkit for Meta CAPI, GA4, Google Ads, and CRM webhook integrations.
 
-**Install:**
-```bash
-/plugin install gtm-implementation@organized-ai
+```
+/plugin install gtm-implementation@organized-ai-marketplace
 ```
 
-**Commands:**
-| Command | Description |
-|---------|-------------|
-| `/gtm-setup` | Initialize GTM tracking architecture |
-| `/gtm-test` | Run 7-phase testing checklist |
-| `/gtm-capi` | Configure Meta Conversions API with Stape CAPIG |
-| `/gtm-audit` | Audit existing GTM implementation |
-| `/gtm-webhook` | Configure CRM webhooks for offline conversions |
-
-**Agents:**
-| Agent | Model | Description |
-|-------|-------|-------------|
-| `gtm-architect` | Opus | Design tracking solutions and conversion funnels |
-| `gtm-debugger` | Sonnet | Troubleshoot tracking issues and fix implementations |
-
-**Source:** [organized-ai/teleios-health-setup](https://github.com/organized-ai/teleios-health-setup)
+**Features:**
+- Meta Conversions API setup
+- GA4 configuration
+- Google Ads conversion tracking
+- GoHighLevel CRM webhooks
+- Stape server-side GTM integration
 
 ---
 
-## Adding a New Plugin
+## Plugin Structure
 
-1. Create your plugin repository with the standard structure:
-   ```
-   your-plugin/
-   ├── .claude-plugin/
-   │   └── plugin.json
-   ├── commands/
-   ├── agents/
-   ├── skills/
-   └── README.md
-   ```
+Each plugin follows the Claude Code plugin specification:
 
-2. Submit a PR to add your plugin to `.claude-plugin/marketplace.json`
+```
+plugin-name/
+├── .claude-plugin/
+│   └── plugin.json      # Plugin manifest
+├── commands/            # Slash commands
+├── agents/              # Agents
+├── skills/              # Skills
+└── hooks/               # Hooks
+```
+
+## Contributing
+
+1. Fork this repository
+2. Create your plugin directory
+3. Add plugin to `.claude-plugin/marketplace.json`
+4. Submit a pull request
 
 ## License
 
-MIT License - Organized AI
+MIT

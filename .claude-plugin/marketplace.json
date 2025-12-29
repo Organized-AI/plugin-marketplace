@@ -3,36 +3,24 @@
   "description": "Official Plugin Marketplace for Organized AI - GTM, Analytics, and Marketing Automation tools for Claude Code",
   "owner": {
     "name": "Organized AI",
-    "url": "https://github.com/organized-ai"
+    "url": "https://github.com/Organized-AI"
   },
   "plugins": [
+    {
+      "name": "organized-codebase-applicator",
+      "source": "./organized-codebase-applicator",
+      "description": "Apply Organized Codebase template structure and create Claude Code Plugins"
+    },
+    {
+      "name": "blade-linkedin-plugin",
+      "source": "./blade-linkedin-plugin",
+      "description": "Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (client + server-side CAPI)"
+    },
     {
       "name": "gtm-implementation",
       "source": "organized-ai/teleios-health-setup",
       "version": "1.0.0",
-      "description": "Google Tag Manager implementation toolkit for Meta CAPI, GA4, Google Ads, and CRM webhook integrations",
-      "keywords": [
-        "gtm",
-        "google-tag-manager",
-        "meta-capi",
-        "server-side-tracking",
-        "ga4",
-        "google-ads",
-        "conversion-tracking",
-        "gohighlevel",
-        "stape"
-      ],
-      "commands": [
-        "/gtm-setup",
-        "/gtm-test",
-        "/gtm-capi",
-        "/gtm-audit",
-        "/gtm-webhook"
-      ],
-      "agents": [
-        "gtm-architect",
-        "gtm-debugger"
-      ]
+      "description": "Google Tag Manager implementation toolkit for Meta CAPI, GA4, Google Ads, and CRM webhook integrations"
     }
   ]
 }

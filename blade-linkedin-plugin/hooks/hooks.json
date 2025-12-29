@@ -1,0 +1,24 @@
+{
+  "hooks": [
+    {
+      "name": "pre-gtm-deployment",
+      "event": "before_command",
+      "command_pattern": "blade-deploy",
+      "description": "Verify MCP authentication and workspace status before deployment",
+      "action": {
+        "type": "prompt",
+        "content": "Before deploying, verify:\n1. GTM MCP server is authenticated\n2. No workspace conflicts exist\n3. LinkedIn Partner ID is available"
+      }
+    },
+    {
+      "name": "post-gtm-deployment", 
+      "event": "after_command",
+      "command_pattern": "blade-deploy",
+      "description": "Log deployment completion and update state",
+      "action": {
+        "type": "prompt",
+        "content": "Deployment complete. Update CONFIG/phase-state.json with results and create completion documentation."
+      }
+    }
+  ]
+}
