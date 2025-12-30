@@ -1,0 +1,58 @@
+{
+  "gtm": {
+    "accountId": "YOUR_GTM_ACCOUNT_ID",
+    "webContainerId": "GTM-XXXXXXX",
+    "serverContainerId": "GTM-YYYYYYY",
+    "workspaceId": "default"
+  },
+  "platforms": {
+    "linkedin": {
+      "partnerId": "YOUR_LINKEDIN_PARTNER_ID",
+      "conversionIds": {
+        "lead": "YOUR_LEAD_CONVERSION_ID",
+        "purchase": "YOUR_PURCHASE_CONVERSION_ID"
+      }
+    },
+    "meta": {
+      "pixelId": "YOUR_META_PIXEL_ID",
+      "accessToken": "USE_ENV_VARIABLE",
+      "testEventCode": "TEST12345"
+    },
+    "ga4": {
+      "measurementId": "G-XXXXXXXXXX",
+      "apiSecret": "USE_ENV_VARIABLE"
+    },
+    "googleAds": {
+      "customerId": "YOUR_GOOGLE_ADS_CUSTOMER_ID",
+      "conversionId": "AW-XXXXXXXXX",
+      "conversionLabel": "YOUR_CONVERSION_LABEL"
+    },
+    "tiktok": {
+      "pixelId": "YOUR_TIKTOK_PIXEL_ID",
+      "accessToken": "USE_ENV_VARIABLE"
+    },
+    "pinterest": {
+      "tagId": "YOUR_PINTEREST_TAG_ID",
+      "adAccountId": "YOUR_AD_ACCOUNT_ID"
+    }
+  },
+  "triggers": {
+    "allPages": "TRIGGER_ID_ALL_PAGES",
+    "purchase": "TRIGGER_ID_PURCHASE",
+    "lead": "TRIGGER_ID_LEAD",
+    "signUp": "TRIGGER_ID_SIGNUP",
+    "addToCart": "TRIGGER_ID_ADD_TO_CART"
+  },
+  "stape": {
+    "containerUrl": "https://YOUR_STAPE_CONTAINER.stape.io",
+    "apiKey": "USE_ENV_VARIABLE"
+  },
+  "ghl": {
+    "locationId": "YOUR_GHL_LOCATION_ID",
+    "apiKey": "USE_ENV_VARIABLE"
+  },
+  "tripleWhale": {
+    "shopId": "your-shop.myshopify.com",
+    "apiKey": "USE_ENV_VARIABLE"
+  }
+}

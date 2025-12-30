@@ -1,0 +1,81 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(echo:*)",
+      "Bash(cd:*)",
+      "Bash(source:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "WebSearch",
+      "WebFetch(domain:marketplace.gohighlevel.com)",
+      "WebFetch(domain:triplewhale.readme.io)",
+      "WebFetch(domain:kb.triplewhale.com)",
+      "WebFetch(domain:developers.facebook.com)",
+      "WebFetch(domain:business.facebook.com)",
+      "WebFetch(domain:ads.google.com)",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:stape.io)",
+      "WebFetch(domain:tagmanager.google.com)",
+      "WebFetch(domain:linkedin.com)",
+      "WebFetch(domain:business.linkedin.com)",
+      "stape-mcp-server:*",
+      "google-tag-manager-mcp-server:*",
+      "meta-ads-mcp:*",
+      "google-ads-mcp:*",
+      "gateway-mcp:*",
+      "ghl-mcp:*",
+      "Skill(tidy-gtm)",
+      "Skill(gtm-AI)",
+      "Skill(linkedin-capi-setup)",
+      "Skill(triple-whale-bridge)",
+      "Skill(organized-codebase-applicator)",
+      "Skill(phased-planning)",
+      "Skill(phase-0-template)",
+      "Skill(ghl-contact-processor)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo:*)"
+    ],
+    "ask": []
+  },
+  "agents": {
+    "defaultAgent": "audit-coordinator",
+    "availableAgents": [
+      "audit-coordinator",
+      "gtm-automation",
+      "meta-ads",
+      "google-ads",
+      "tracking-infra",
+      "data-sync"
+    ]
+  },
+  "subagentInvocation": {
+    "pattern": "@{agent-name}",
+    "enabled": true,
+    "orchestrator": "audit-coordinator"
+  },
+  "mcpServers": {
+    "autoConnect": [
+      "google-tag-manager-mcp-server",
+      "meta-ads-mcp",
+      "google-ads-mcp"
+    ],
+    "lazyConnect": [
+      "stape-mcp-server",
+      "gateway-mcp",
+      "ghl-mcp"
+    ]
+  }
+}

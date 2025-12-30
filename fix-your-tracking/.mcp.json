@@ -1,0 +1,65 @@
+{
+  "mcpServers": {
+    "google-tag-manager-mcp-server": {
+      "type": "url",
+      "url": "https://gtm-mcp.stape.ai/mcp",
+      "description": "Google Tag Manager MCP server for GTM API operations. Provides CRUD operations for templates, variables, tags, triggers, versions, and workspace management.",
+      "auth": {
+        "type": "oauth",
+        "note": "On first use, opens browser for Google OAuth. Tokens cached in ~/.mcp-auth/"
+      }
+    },
+    "stape-mcp-server": {
+      "type": "sse",
+      "url": "https://mcp.stape.ai/sse",
+      "description": "Stape MCP server for server-side GTM container management. Provides analytics and domain management for sGTM.",
+      "headers": {
+        "x-api-key": "${STAPE_API_KEY}"
+      },
+      "optional": true
+    },
+    "meta-ads-mcp": {
+      "command": "python",
+      "args": ["-m", "meta_ads_mcp"],
+      "description": "Meta Ads MCP server for Facebook/Instagram advertising. Provides campaign management, insights, creative analysis, and CAPI integration.",
+      "env": {
+        "META_APP_ID": "${META_APP_ID}",
+        "PIPEBOARD_API_TOKEN": "${PIPEBOARD_API_TOKEN}"
+      },
+      "cwd": "${PLUGIN_DIR}/mcp-servers/meta_ads_mcp"
+    },
+    "google-ads-mcp": {
+      "command": "python",
+      "args": ["-m", "google_ads_mcp"],
+      "description": "Google Ads MCP server for campaign analysis and GAQL queries. Supports OAuth and service account authentication.",
+      "env": {
+        "GOOGLE_ADS_CREDENTIALS_PATH": "${GOOGLE_ADS_CREDENTIALS_PATH}",
+        "GOOGLE_ADS_DEVELOPER_TOKEN": "${GOOGLE_ADS_DEVELOPER_TOKEN}",
+        "GOOGLE_ADS_LOGIN_CUSTOMER_ID": "${GOOGLE_ADS_LOGIN_CUSTOMER_ID}",
+        "GOOGLE_ADS_AUTH_TYPE": "${GOOGLE_ADS_AUTH_TYPE:-oauth}"
+      },
+      "cwd": "${PLUGIN_DIR}/mcp-servers/google_ads_mcp"
+    },
+    "gateway-mcp": {
+      "command": "node",
+      "args": ["build/index.js"],
+      "description": "Gateway MCP for Meta CAPI Gateway and Signals Gateway infrastructure management.",
+      "env": {
+        "META_PIXEL_ID": "${META_PIXEL_ID}",
+        "META_ACCESS_TOKEN": "${META_ACCESS_TOKEN}"
+      },
+      "cwd": "${PLUGIN_DIR}/mcp-servers/gateway_mcp"
+    },
+    "ghl-mcp": {
+      "command": "node",
+      "args": ["build/index.js"],
+      "description": "GoHighLevel MCP server for CRM operations - contacts, opportunities, pipelines, and webhooks.",
+      "env": {
+        "GHL_API_KEY": "${GHL_API_KEY}",
+        "GHL_LOCATION_ID": "${GHL_LOCATION_ID}"
+      },
+      "cwd": "${PLUGIN_DIR}/mcp-servers/ghl_mcp",
+      "optional": true
+    }
+  }
+}
