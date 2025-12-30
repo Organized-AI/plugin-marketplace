@@ -1,0 +1,61 @@
+{
+  "project": {
+    "name": "",
+    "platform": "",
+    "startedAt": null
+  },
+  "currentPhase": null,
+  "status": "not_started",
+  "phases": {
+    "0": {
+      "name": "Template Installation",
+      "status": "pending",
+      "startedAt": null,
+      "completedAt": null,
+      "artifacts": {
+        "templateId": null
+      }
+    },
+    "1": {
+      "name": "Variable Creation",
+      "status": "pending",
+      "startedAt": null,
+      "completedAt": null,
+      "artifacts": {
+        "variables": {}
+      }
+    },
+    "2": {
+      "name": "Tag Creation",
+      "status": "pending",
+      "startedAt": null,
+      "completedAt": null,
+      "artifacts": {
+        "tags": {}
+      }
+    },
+    "3": {
+      "name": "Validation",
+      "status": "pending",
+      "startedAt": null,
+      "completedAt": null,
+      "artifacts": {
+        "previewUrl": null,
+        "validated": false
+      }
+    },
+    "4": {
+      "name": "Test & Publish",
+      "status": "pending",
+      "startedAt": null,
+      "completedAt": null,
+      "artifacts": {
+        "versionId": null,
+        "previousVersionId": null,
+        "publishedAt": null
+      }
+    }
+  },
+  "history": [],
+  "errors": []
+}

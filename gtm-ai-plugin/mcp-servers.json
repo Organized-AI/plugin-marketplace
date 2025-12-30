@@ -1,0 +1,49 @@
+{
+  "mcpServers": {
+    "google-tag-manager-mcp-server": {
+      "url": "https://gtm-mcp.stape.ai/mcp",
+      "transport": "sse",
+      "description": "GTM API operations - CRUD for templates, variables, tags, triggers, versions",
+      "required": true,
+      "tools": [
+        "gtm_template",
+        "gtm_variable",
+        "gtm_tag",
+        "gtm_trigger",
+        "gtm_folder",
+        "gtm_workspace",
+        "gtm_version",
+        "gtm_version_header",
+        "gtm_container",
+        "gtm_client",
+        "gtm_remove_session"
+      ]
+    },
+    "stape-mcp-server": {
+      "url": "https://mcp.stape.ai/sse",
+      "transport": "sse",
+      "description": "Stape sGTM container management and analytics",
+      "required": false,
+      "tools": [
+        "stape_container_crud",
+        "stape_container_analytics",
+        "stape_container_domains"
+      ]
+    }
+  },
+  "installation": {
+    "claude_desktop": {
+      "config_path": "~/Library/Application Support/Claude/claude_desktop_config.json",
+      "merge_strategy": "append"
+    },
+    "claude_code": {
+      "config_path": ".mcp.json",
+      "merge_strategy": "merge"
+    }
+  },
+  "auth_notes": [
+    "GTM MCP uses OAuth - authenticate via browser on first use",
+    "Session stored in ~/.mcp-auth/",
+    "To re-auth: rm -rf ~/.mcp-auth && restart Claude"
+  ]
+}

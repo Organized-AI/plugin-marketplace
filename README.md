@@ -12,6 +12,50 @@ Add this marketplace to Claude Code:
 
 ## Available Plugins
 
+### gtm-ai-plugin ⭐ NEW
+
+Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers.
+
+```
+/plugin install gtm-ai-plugin@organized-ai-marketplace
+```
+
+**Features:**
+- Multi-platform tracking deployment (LinkedIn, Meta, GA4, TikTok, Pinterest, Google Ads)
+- Client-side + Server-side CAPI support
+- Container auditing with duplicate/naming detection
+- Web ↔ sGTM correlation validation
+- Pre-publish audit with critical issue blocking
+- Visual before/after ASCII diagram generation
+- 5-phase autonomous deployment workflow
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `gtm-AI` | Core automation - templates, variables, tags, versions |
+| `tidy-gtm` | Container auditing - duplicates, naming, correlation |
+| `linkedin-capi-setup` | Server-side LinkedIn CAPI implementation |
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/gtm-deploy [platform]` | Deploy tracking for platform |
+| `/gtm-audit` | Run container audit |
+| `/gtm-status` | Check workspace status |
+| `/gtm-rollback` | Rollback to previous version |
+
+**Hooks:**
+| Hook | Description |
+|------|-------------|
+| `pre-publish-audit` | Strategic container audit before publishing |
+| `ascii-diagram-generator` | Generate visual before/after diagrams |
+
+**MCP Servers Required:**
+- `google-tag-manager-mcp-server` - GTM API operations
+- `stape-mcp-server` (optional) - sGTM validation
+
+---
+
 ### organized-codebase-applicator
 
 Apply Organized Codebase template structure to existing projects and create Claude Code Plugins.

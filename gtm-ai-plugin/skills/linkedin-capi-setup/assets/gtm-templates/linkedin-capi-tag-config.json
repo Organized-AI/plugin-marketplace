@@ -1,0 +1,15 @@
+{
+  "name": "LinkedIn CAPI - Purchase",
+  "type": "stape_linkedin_capi",
+  "description": "LinkedIn Conversions API tag for purchase events",
+  "parameter": [
+    {"key": "eventType", "value": "Conversion"},
+    {"key": "accessToken", "value": "{{LinkedIn - Access Token}}"},
+    {"key": "conversionRuleId", "value": "{{LinkedIn - Conversion Rule ID - Purchase}}"},
+    {"key": "eventId", "value": "{{Event ID}}"},
+    {"key": "currencyCode", "value": "{{Currency Code}}"},
+    {"key": "conversionValue", "value": "{{Transaction Value}}"}
+  ],
+  "firingTrigger": ["purchase_event"],
+  "notes": "Ensure event_id matches client-side for deduplication"
+}

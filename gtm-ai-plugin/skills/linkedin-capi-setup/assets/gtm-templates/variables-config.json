@@ -1,0 +1,9 @@
+{
+  "variables": [
+    {"name": "LinkedIn - Access Token", "type": "c", "note": "Constant - replace with actual token"},
+    {"name": "LinkedIn - Conversion Rule ID - Purchase", "type": "c", "note": "Constant - from Campaign Manager"},
+    {"name": "li_fat_id Cookie", "type": "k", "cookieName": "li_fat_id"},
+    {"name": "Event ID", "type": "v", "dataLayerVariable": "event_id"},
+    {"name": "User Email Hashed", "type": "v", "dataLayerVariable": "user_data.sha256_email_address"}
+  ]
+}

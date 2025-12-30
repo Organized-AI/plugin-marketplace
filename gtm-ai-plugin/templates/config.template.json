@@ -1,0 +1,79 @@
+{
+  "project": {
+    "name": "My GTM Project",
+    "description": "Platform tracking implementation"
+  },
+  "gtm": {
+    "accountId": "YOUR_ACCOUNT_ID",
+    "webContainer": {
+      "id": "YOUR_WEB_CONTAINER_ID",
+      "publicId": "GTM-XXXXXXX"
+    },
+    "serverContainer": {
+      "id": "YOUR_SERVER_CONTAINER_ID",
+      "publicId": "GTM-XXXXXXX"
+    },
+    "workspace": {
+      "id": "YOUR_WORKSPACE_ID",
+      "name": "Default Workspace"
+    }
+  },
+  "platforms": {
+    "linkedin": {
+      "enabled": false,
+      "partnerId": "",
+      "conversionIds": {
+        "lead": "",
+        "purchase": ""
+      },
+      "capi": {
+        "enabled": false,
+        "accessToken": ""
+      }
+    },
+    "meta": {
+      "enabled": false,
+      "pixelId": "",
+      "conversionIds": {
+        "lead": "",
+        "purchase": ""
+      },
+      "capi": {
+        "enabled": false,
+        "accessToken": ""
+      }
+    },
+    "ga4": {
+      "enabled": false,
+      "measurementId": "",
+      "apiSecret": ""
+    },
+    "tiktok": {
+      "enabled": false,
+      "pixelId": "",
+      "accessToken": ""
+    },
+    "pinterest": {
+      "enabled": false,
+      "tagId": "",
+      "accessToken": ""
+    }
+  },
+  "triggers": {
+    "allPages": "2147479553",
+    "lead": "",
+    "purchase": "",
+    "addToCart": ""
+  },
+  "naming": {
+    "tagPrefix": "",
+    "variablePrefix": "",
+    "folderName": ""
+  },
+  "options": {
+    "createFolder": true,
+    "useEventId": true,
+    "enableCapi": false,
+    "autoPublish": false
+  }
+}

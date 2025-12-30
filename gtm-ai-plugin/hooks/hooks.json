@@ -1,0 +1,83 @@
+{
+  "hooks": {
+    "pre-phase": {
+      "description": "Validates prerequisites before phase execution",
+      "trigger": "Before each phase starts",
+      "file": "pre-phase.md"
+    },
+    "post-phase": {
+      "description": "Validates completion and updates state after phase",
+      "trigger": "After each phase completes",
+      "file": "post-phase.md"
+    },
+    "pre-publish-audit": {
+      "description": "Comprehensive container audit before publishing - runs GTM Status and GTM Audit",
+      "trigger": "Before Phase 4 publish, after major changes (5+ components), or manually via /gtm-audit",
+      "file": "pre-publish-audit.md",
+      "required": true,
+      "blocking": true,
+      "commands": ["/gtm-status", "/gtm-audit"],
+      "criticalBlocks": true,
+      "warningPrompts": true
+    },
+    "ascii-diagram-generator": {
+      "description": "Generates visual before/after ASCII diagrams for container audits and data flow changes",
+      "trigger": "After tidy-gtm audit, GTM AI deployments, sGTM correlation checks, or major changes",
+      "file": "ascii-diagram-generator.md",
+      "required": false,
+      "blocking": false,
+      "outputs": {
+        "audit": "AUDIT-SUMMARY-{{timestamp}}.md",
+        "dataFlow": "DATA-FLOW-WORKSPACE-{{workspaceId}}.md",
+        "correlation": "CORRELATION-MAP-{{timestamp}}.md",
+        "changes": "CHANGE-SUMMARY-{{timestamp}}.md"
+      }
+    }
+  },
+  "state_file": "CONFIG/phase-state.json",
+  "phases": [
+    { "id": 0, "name": "Template Installation", "required": true },
+    { "id": 1, "name": "Variable Creation", "required": true },
+    { "id": 2, "name": "Tag Creation", "required": true, "postHooks": ["ascii-diagram-generator"] },
+    { "id": 3, "name": "Validation", "required": true },
+    { "id": 4, "name": "Test & Publish", "required": true, "preHooks": ["pre-publish-audit"] }
+  ],
+  "settings": {
+    "enforce_sequence": true,
+    "allow_skip": false,
+    "auto_commit": false,
+    "create_completion_files": true,
+    "audit_before_publish": true,
+    "block_on_critical": true,
+    "warn_on_warnings": true,
+    "generate_diagrams": true,
+    "diagram_output_dir": "."
+  },
+  "triggers": {
+    "pre-publish-audit": {
+      "automatic": [
+        "phase_4_entry",
+        "before_gtm_version_publish",
+        "major_changes_threshold_5"
+      ],
+      "manual": [
+        "/gtm-audit --container both",
+        "/gtm-audit",
+        "/gtm-status"
+      ]
+    },
+    "ascii-diagram-generator": {
+      "automatic": [
+        "tidy_gtm_audit_complete",
+        "phase_2_complete",
+        "sgtm_correlation_check",
+        "major_changes_threshold_5"
+      ],
+      "manual": [
+        "Generate data flow diagram",
+        "Create audit summary",
+        "Show correlation map"
+      ]
+    }
+  }
+}
