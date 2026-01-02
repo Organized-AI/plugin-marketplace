@@ -1,20 +1,60 @@
 {
   "name": "organized-ai-marketplace",
-  "description": "Official Plugin Marketplace for Organized AI - GTM, Analytics, and Marketing Automation tools for Claude Code",
+  "description": "Official Plugin Marketplace for Organized AI - Development tools, integrations, GTM, Analytics, and Marketing Automation for Claude Code",
   "owner": {
     "name": "Organized AI",
     "url": "https://github.com/Organized-AI"
   },
   "plugins": [
     {
-      "name": "organized-codebase-applicator",
-      "source": "./organized-codebase-applicator",
-      "description": "Apply Organized Codebase template structure and create Claude Code Plugins"
+      "name": "frontend-design",
+      "source": "./frontend-design",
+      "description": "Create distinctive, production-grade frontend interfaces with high design quality (Anthropic Official)"
     },
     {
-      "name": "blade-linkedin-plugin",
-      "source": "./blade-linkedin-plugin",
-      "description": "Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (client + server-side CAPI)"
+      "name": "agent-sdk-dev",
+      "source": "./agent-sdk-dev",
+      "description": "Create and verify Claude Agent SDK applications in Python and TypeScript (Anthropic Official)"
+    },
+    {
+      "name": "hookify",
+      "source": "./hookify",
+      "description": "Create custom hooks to prevent unwanted behaviors from conversation analysis (Anthropic Official)"
+    },
+    {
+      "name": "stripe",
+      "source": "./stripe",
+      "description": "Stripe development integration with best practices for payment processing (Anthropic Official)"
+    },
+    {
+      "name": "supabase",
+      "source": "./supabase",
+      "description": "Supabase MCP for database operations, auth, storage, and real-time subscriptions (Anthropic Official)"
+    },
+    {
+      "name": "github",
+      "source": "./github",
+      "description": "Official GitHub MCP server for repository management and API interactions (Anthropic Official)"
+    },
+    {
+      "name": "slack",
+      "source": "./slack",
+      "description": "Slack workspace integration for messages, channels, and threads (Anthropic Official)"
+    },
+    {
+      "name": "asana",
+      "source": "./asana",
+      "description": "Asana project management integration for tasks and projects (Anthropic Official)"
+    },
+    {
+      "name": "context7",
+      "source": "./context7",
+      "description": "Upstash Context7 MCP for up-to-date documentation lookup (Anthropic Official)"
+    },
+    {
+      "name": "serena",
+      "source": "./serena",
+      "description": "Semantic code analysis MCP for intelligent code understanding (Anthropic Official)"
     },
     {
       "name": "gtm-ai-plugin",
@@ -22,9 +62,19 @@
       "description": "Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers"
     },
     {
+      "name": "blade-linkedin-plugin",
+      "source": "./blade-linkedin-plugin",
+      "description": "Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (client + server-side CAPI)"
+    },
+    {
       "name": "fix-your-tracking",
       "source": "./fix-your-tracking",
       "description": "Tracking diagnostics and fixes for analytics implementations"
+    },
+    {
+      "name": "organized-codebase-applicator",
+      "source": "./organized-codebase-applicator",
+      "description": "Apply Organized Codebase template structure and create Claude Code Plugins"
     }
   ]
 }

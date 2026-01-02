@@ -1,6 +1,6 @@
 # Organized AI Plugin Marketplace
 
-Official Claude Code plugin marketplace for Organized AI.
+Official Claude Code plugin marketplace for Organized AI. Includes curated plugins from Anthropic's official collection plus custom tracking and automation tools.
 
 ## Installation
 
@@ -12,7 +12,254 @@ Add this marketplace to Claude Code:
 
 ## Available Plugins
 
-### gtm-ai-plugin ⭐ NEW
+---
+
+## 🎨 Development & Design
+
+### frontend-design ⭐ ANTHROPIC OFFICIAL
+
+Create distinctive, production-grade frontend interfaces with high design quality that avoids generic AI aesthetics.
+
+```
+/plugin install frontend-design@organized-ai-marketplace
+```
+
+**Features:**
+- Bold aesthetic choices and distinctive typography
+- High-impact animations and visual details
+- Context-aware implementation
+- Production-ready code generation
+- Avoids cookie-cutter AI design patterns
+
+**Authors:** Prithvi Rajasekaran, Alexander Bricken (Anthropic)
+
+---
+
+### agent-sdk-dev ⭐ ANTHROPIC OFFICIAL
+
+Comprehensive plugin for creating and verifying Claude Agent SDK applications in Python and TypeScript.
+
+```
+/plugin install agent-sdk-dev@organized-ai-marketplace
+```
+
+**Features:**
+- Interactive project scaffolding with `/new-sdk-app`
+- Latest SDK version checking and installation
+- TypeScript and Python support
+- Automatic verification against best practices
+- Environment and security setup
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/new-sdk-app [name]` | Create new Agent SDK application |
+
+**Agents:**
+| Agent | Description |
+|-------|-------------|
+| `agent-sdk-verifier-ts` | Verify TypeScript SDK applications |
+| `agent-sdk-verifier-py` | Verify Python SDK applications |
+
+**Author:** Ashwin Bhat (Anthropic)
+
+---
+
+### hookify ⭐ ANTHROPIC OFFICIAL
+
+Easily create custom hooks to prevent unwanted behaviors by analyzing conversation patterns or from explicit instructions.
+
+```
+/plugin install hookify@organized-ai-marketplace
+```
+
+**Features:**
+- Analyze conversations to find unwanted behaviors automatically
+- Simple markdown configuration with YAML frontmatter
+- Regex pattern matching for powerful rules
+- No coding required - just describe the behavior
+- Instant activation without restart
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/hookify [behavior]` | Create hook from instructions or analyze conversation |
+| `/hookify:list` | List all configured rules |
+| `/hookify:configure` | Enable/disable rules interactively |
+| `/hookify:help` | Get help with hookify |
+
+**Event Types:**
+- `bash` - Match Bash commands
+- `file` - Match Edit/Write/MultiEdit operations
+- `stop` - Match completion checks
+- `prompt` - Match user prompt submission
+- `all` - Match all events
+
+**Author:** Anthropic
+
+---
+
+## 🔌 Integrations (MCP Servers)
+
+### stripe ⭐ ANTHROPIC OFFICIAL
+
+Stripe development integration with best practices for payment processing, checkout flows, and subscriptions.
+
+```
+/plugin install stripe@organized-ai-marketplace
+```
+
+**Features:**
+- Payment integration best practices
+- Error code explanations and solutions
+- Test card reference
+- Checkout Sessions and Payment Intents guidance
+- Connect platform recommendations
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/stripe-error [code]` | Explain Stripe error codes |
+| `/stripe-test-cards [scenario]` | Display test card numbers |
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `stripe-best-practices` | Best practices for Stripe integrations |
+
+**MCP Server:** `https://mcp.stripe.com`
+
+**Author:** Stripe
+
+---
+
+### supabase ⭐ ANTHROPIC OFFICIAL
+
+Supabase MCP integration for database operations, authentication, storage, and real-time subscriptions.
+
+```
+/plugin install supabase@organized-ai-marketplace
+```
+
+**Features:**
+- Database operations and SQL queries
+- Authentication management
+- Storage operations
+- Real-time subscriptions
+- Project management
+
+**MCP Server:** `https://mcp.supabase.com/mcp`
+
+**Author:** Supabase
+
+---
+
+### github ⭐ ANTHROPIC OFFICIAL
+
+Official GitHub MCP server for repository management and GitHub API interactions.
+
+```
+/plugin install github@organized-ai-marketplace
+```
+
+**Features:**
+- Create and manage issues
+- Pull request management
+- Code review workflows
+- Repository search
+- Full GitHub API access
+
+**MCP Server:** `https://api.githubcopilot.com/mcp/`
+
+**Requires:** `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable
+
+**Author:** GitHub
+
+---
+
+### slack ⭐ ANTHROPIC OFFICIAL
+
+Slack workspace integration for searching messages, accessing channels, and reading threads.
+
+```
+/plugin install slack@organized-ai-marketplace
+```
+
+**Features:**
+- Search messages
+- Access channels
+- Read threads
+- Team communications integration
+
+**MCP Server:** `https://mcp.slack.com/sse`
+
+**Author:** Slack
+
+---
+
+### asana ⭐ ANTHROPIC OFFICIAL
+
+Asana project management integration for task and project management.
+
+```
+/plugin install asana@organized-ai-marketplace
+```
+
+**Features:**
+- Create and manage tasks
+- Search projects
+- Update assignments
+- Track progress
+- Workflow integration
+
+**MCP Server:** `https://mcp.asana.com/sse`
+
+**Author:** Asana
+
+---
+
+### context7 ⭐ ANTHROPIC OFFICIAL
+
+Upstash Context7 MCP server for up-to-date documentation lookup.
+
+```
+/plugin install context7@organized-ai-marketplace
+```
+
+**Features:**
+- Version-specific documentation lookup
+- Code examples from source repositories
+- Direct LLM context integration
+
+**MCP Server:** `npx -y @upstash/context7-mcp`
+
+**Author:** Upstash
+
+---
+
+### serena ⭐ ANTHROPIC OFFICIAL
+
+Semantic code analysis MCP server for intelligent code understanding and refactoring.
+
+```
+/plugin install serena@organized-ai-marketplace
+```
+
+**Features:**
+- Semantic code analysis
+- Refactoring suggestions
+- Codebase navigation
+- Language server protocol integration
+
+**MCP Server:** `uvx --from git+https://github.com/oraios/serena serena start-mcp-server`
+
+**Author:** Oraios
+
+---
+
+## 📊 Tracking & Analytics
+
+### gtm-ai-plugin
 
 Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers.
 
@@ -44,32 +291,9 @@ Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publ
 | `/gtm-status` | Check workspace status |
 | `/gtm-rollback` | Rollback to previous version |
 
-**Hooks:**
-| Hook | Description |
-|------|-------------|
-| `pre-publish-audit` | Strategic container audit before publishing |
-| `ascii-diagram-generator` | Generate visual before/after diagrams |
-
 **MCP Servers Required:**
 - `google-tag-manager-mcp-server` - GTM API operations
 - `stape-mcp-server` (optional) - sGTM validation
-
----
-
-### organized-codebase-applicator
-
-Apply Organized Codebase template structure to existing projects and create Claude Code Plugins.
-
-```
-/plugin install organized-codebase-applicator@organized-ai-marketplace
-```
-
-**Features:**
-- Apply standardized project structure (PLANNING, DOCUMENTATION, CONFIG, etc.)
-- Create distributable Claude Code Plugins
-- Clean up unused/redundant directories
-- Plugin manifest and template generation
-- Local vs Plugin structure guidance
 
 ---
 
@@ -96,20 +320,32 @@ Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (clien
 
 ---
 
-### gtm-implementation
+### fix-your-tracking
 
-Google Tag Manager implementation toolkit for Meta CAPI, GA4, Google Ads, and CRM webhook integrations.
+Advertising and tracking audit toolkit for comprehensive platform analysis.
 
 ```
-/plugin install gtm-implementation@organized-ai-marketplace
+/plugin install fix-your-tracking@organized-ai-marketplace
+```
+
+---
+
+## 🛠️ Utilities
+
+### organized-codebase-applicator
+
+Apply Organized Codebase template structure to existing projects and create Claude Code Plugins.
+
+```
+/plugin install organized-codebase-applicator@organized-ai-marketplace
 ```
 
 **Features:**
-- Meta Conversions API setup
-- GA4 configuration
-- Google Ads conversion tracking
-- GoHighLevel CRM webhooks
-- Stape server-side GTM integration
+- Apply standardized project structure (PLANNING, DOCUMENTATION, CONFIG, etc.)
+- Create distributable Claude Code Plugins
+- Clean up unused/redundant directories
+- Plugin manifest and template generation
+- Local vs Plugin structure guidance
 
 ---
 
@@ -124,8 +360,28 @@ plugin-name/
 ├── commands/            # Slash commands
 ├── agents/              # Agents
 ├── skills/              # Skills
-└── hooks/               # Hooks
+├── hooks/               # Hooks
+└── mcp-servers.json     # MCP server configs (optional)
 ```
+
+## Quick Reference
+
+| Plugin | Type | Source |
+|--------|------|--------|
+| frontend-design | Skills | Anthropic Official |
+| agent-sdk-dev | Commands, Agents | Anthropic Official |
+| hookify | Commands, Agents, Skills, Hooks | Anthropic Official |
+| stripe | Commands, Skills, MCP | Anthropic Official |
+| supabase | MCP | Anthropic Official |
+| github | MCP | Anthropic Official |
+| slack | MCP | Anthropic Official |
+| asana | MCP | Anthropic Official |
+| context7 | MCP | Anthropic Official |
+| serena | MCP | Anthropic Official |
+| gtm-ai-plugin | Commands, Skills, Hooks | Organized AI |
+| blade-linkedin-plugin | Commands | Organized AI |
+| fix-your-tracking | Tools | Organized AI |
+| organized-codebase-applicator | Skills | Organized AI |
 
 ## Contributing
 
@@ -137,3 +393,7 @@ plugin-name/
 ## License
 
 MIT
+
+---
+
+*Anthropic Official plugins are sourced from [claude-plugins-official](https://github.com/anthropics/claude-plugins-official)*
