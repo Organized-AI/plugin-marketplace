@@ -2,149 +2,18 @@
   "name": "gtm-ai-plugin",
   "version": "2.2.0",
   "description": "Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers with pre-publish validation",
-  "author": "GTM Automation",
-  "category": "Marketing Technology",
-  "license": "MIT",
-  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "author": {
+    "name": "GTM Automation",
+    "url": "https://github.com/Organized-AI"
+  },
   "keywords": [
     "gtm",
     "google-tag-manager",
     "sgtm",
     "server-side",
     "capi",
-    "linkedin",
-    "meta",
-    "ga4",
-    "tracking",
-    "marketing",
-    "mcp"
+    "tracking"
   ],
-  "mcp_servers": [
-    "google-tag-manager-mcp-server",
-    "stape-mcp-server"
-  ],
-  "components": {
-    "skills": [
-      {
-        "name": "gtm-AI",
-        "path": "skills/gtm-AI",
-        "description": "Core GTM automation - templates, variables, tags, versions"
-      },
-      {
-        "name": "tidy-gtm",
-        "path": "skills/tidy-gtm",
-        "description": "Container auditing - duplicates, naming, correlation"
-      },
-      {
-        "name": "linkedin-capi-setup",
-        "path": "skills/linkedin-capi-setup",
-        "description": "Server-side LinkedIn CAPI implementation"
-      }
-    ],
-    "agents": [
-      {
-        "name": "gtm-automation-agent",
-        "path": "agents/gtm-automation-agent.md",
-        "description": "Autonomous execution of multi-phase deployments"
-      }
-    ],
-    "commands": [
-      {
-        "name": "gtm-deploy",
-        "path": "commands/gtm-deploy.md",
-        "description": "Deploy tracking for platform"
-      },
-      {
-        "name": "gtm-audit",
-        "path": "commands/gtm-audit.md",
-        "description": "Audit container health"
-      },
-      {
-        "name": "gtm-status",
-        "path": "commands/gtm-status.md",
-        "description": "Check workspace status"
-      },
-      {
-        "name": "gtm-rollback",
-        "path": "commands/gtm-rollback.md",
-        "description": "Rollback to previous version"
-      }
-    ],
-    "hooks": [
-      {
-        "name": "pre-phase",
-        "path": "hooks/pre-phase.md",
-        "description": "Validate prerequisites before phase execution"
-      },
-      {
-        "name": "post-phase",
-        "path": "hooks/post-phase.md",
-        "description": "Validate completion and update state"
-      },
-      {
-        "name": "pre-publish-audit",
-        "path": "hooks/pre-publish-audit.md",
-        "description": "Strategic container audit before publishing"
-      },
-      {
-        "name": "ascii-diagram-generator",
-        "path": "hooks/ascii-diagram-generator.md",
-        "description": "Generate visual before/after diagrams"
-      }
-    ]
-  },
-  "supported_platforms": [
-    {
-      "name": "LinkedIn",
-      "client_side": true,
-      "server_side_capi": true
-    },
-    {
-      "name": "Meta/Facebook",
-      "client_side": true,
-      "server_side_capi": true
-    },
-    {
-      "name": "GA4",
-      "client_side": true,
-      "server_side_capi": true
-    },
-    {
-      "name": "Google Ads",
-      "client_side": true,
-      "server_side_capi": false
-    },
-    {
-      "name": "TikTok",
-      "client_side": true,
-      "server_side_capi": true
-    },
-    {
-      "name": "Pinterest",
-      "client_side": true,
-      "server_side_capi": true
-    },
-    {
-      "name": "Twitter/X",
-      "client_side": true,
-      "server_side_capi": false
-    }
-  ],
-  "install": {
-    "script": "install.sh",
-    "creates": [
-      ".claude/skills/gtm-AI/",
-      ".claude/skills/tidy-gtm/",
-      ".claude/skills/linkedin-capi-setup/",
-      ".claude/agents/gtm-automation-agent.md",
-      ".claude/commands/gtm-deploy.md",
-      ".claude/commands/gtm-audit.md",
-      ".claude/commands/gtm-status.md",
-      ".claude/commands/gtm-rollback.md",
-      ".claude/hooks/",
-      "scripts/",
-      "CONFIG/",
-      "PLANNING/"
-    ]
-  }
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT"
 }

@@ -1,0 +1,17 @@
+{
+  "name": "fix-your-tracking",
+  "description": "Tracking diagnostics and fixes for analytics implementations",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "tracking",
+    "analytics",
+    "diagnostics",
+    "gtm"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT"
+}

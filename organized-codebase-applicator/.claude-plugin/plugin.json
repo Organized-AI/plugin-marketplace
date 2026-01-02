@@ -13,15 +13,6 @@
     "plugin-creator",
     "template"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Organized-AI/plugin-marketplace"
-  },
-  "license": "MIT",
-  "engines": {
-    "claude-code": ">=1.0.0"
-  },
-  "capabilities": {
-    "skills": true
-  }
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT"
 }
