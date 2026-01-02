@@ -17,10 +17,14 @@
       "description": "Autonomous GTM implementation for LinkedIn Insight Tag with dual-tracking (client + server-side CAPI)"
     },
     {
-      "name": "gtm-implementation",
-      "source": "organized-ai/teleios-health-setup",
-      "version": "1.0.0",
-      "description": "Google Tag Manager implementation toolkit for Meta CAPI, GA4, Google Ads, and CRM webhook integrations"
+      "name": "gtm-ai-plugin",
+      "source": "./gtm-ai-plugin",
+      "description": "Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers"
+    },
+    {
+      "name": "fix-your-tracking",
+      "source": "./fix-your-tracking",
+      "description": "Tracking diagnostics and fixes for analytics implementations"
     }
   ]
 }
