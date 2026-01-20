@@ -334,7 +334,7 @@ Advertising and tracking audit toolkit for comprehensive platform analysis.
 
 ### organized-codebase-applicator
 
-Apply Organized Codebase template structure to existing projects and create Claude Code Plugins.
+Apply Organized Codebase template structure to existing projects, create Claude Code Plugins, and set up verification infrastructure.
 
 ```
 /plugin install organized-codebase-applicator@organized-ai-marketplace
@@ -346,6 +346,73 @@ Apply Organized Codebase template structure to existing projects and create Clau
 - Clean up unused/redundant directories
 - Plugin manifest and template generation
 - Local vs Plugin structure guidance
+- Set up Boris methodology verification infrastructure (Phase 7)
+
+**Triggers:** "organized codebase", "clean up codebase", "apply template", "create plugin", "standardize project"
+
+---
+
+### boris
+
+Master orchestrator for Boris methodology - the verification-first workflow designed by Claude Code's creator.
+
+```
+/plugin install boris@organized-ai-marketplace
+```
+
+**Features:**
+- Verification-first development workflow
+- Session start/end protocols
+- Pre-commit and pre-PR checklists
+- Error documentation workflow (DO NOT patterns)
+- Integration with phased-planning and organized-codebase-applicator
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/verify` | Run all verification checks |
+| `/commit` | Smart commit with verification |
+| `/review` | Self-review before PR |
+| `/status` | Project health check |
+
+**Agents:**
+| Agent | Description |
+|-------|-------------|
+| `verify-architecture` | Check file locations, naming, imports |
+| `verify-build` | Clean install + build validation |
+
+**Triggers:** "boris", "verify my work", "check my code", "methodology", "best practices"
+
+**Source:** [Boris Interview](https://www.youtube.com/watch?v=B-UXpneKw6M)
+
+---
+
+### phased-planning
+
+Creates structured implementation plans with phase prompts for Claude Code execution.
+
+```
+/plugin install phased-planning@organized-ai-marketplace
+```
+
+**Features:**
+- Generate IMPLEMENTATION-MASTER-PLAN.md with phase overview
+- Create PHASE-X-PROMPT.md files with complete code specifications
+- Success criteria and completion templates per phase
+- Fresh context per phase protocol (prevents compaction)
+- Integration with boris verification and organized-codebase-applicator
+
+**Triggers:** "create implementation plan", "phase this project", "plan the build", "phased implementation", "break this into phases"
+
+**File Organization:**
+```
+PLANNING/
+├── IMPLEMENTATION-MASTER-PLAN.md
+└── implementation-phases/
+    ├── PHASE-0-PROMPT.md
+    ├── PHASE-1-PROMPT.md
+    └── PHASE-X-COMPLETE.md (created after)
+```
 
 ---
 
@@ -382,6 +449,8 @@ plugin-name/
 | blade-linkedin-plugin | Commands | Organized AI |
 | fix-your-tracking | Tools | Organized AI |
 | organized-codebase-applicator | Skills | Organized AI |
+| boris | Commands, Agents, Skills | Organized AI |
+| phased-planning | Skills | Organized AI |
 
 ## Contributing
 

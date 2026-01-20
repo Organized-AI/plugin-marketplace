@@ -1,0 +1,24 @@
+{
+  "name": "boris",
+  "description": "Master orchestrator for Boris methodology - verification-first workflow from Claude Code's creator",
+  "version": "1.1.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "verification",
+    "workflow",
+    "methodology",
+    "best-practices",
+    "claude-code",
+    "boris"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true,
+    "commands": true,
+    "agents": true
+  }
+}

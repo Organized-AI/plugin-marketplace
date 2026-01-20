@@ -1,0 +1,22 @@
+{
+  "name": "phased-planning",
+  "description": "Creates structured implementation plans with phase prompts for Claude Code execution",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "planning",
+    "phased-build",
+    "implementation",
+    "roadmap",
+    "project-management",
+    "claude-code"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true
+  }
+}
