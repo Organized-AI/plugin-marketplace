@@ -85,6 +85,11 @@
       "name": "organized-dev-toolkit",
       "source": "./organized-dev-toolkit",
       "description": "Development methodology toolkit — Boris, GSD, Ralphy workflows with phased builds and verification"
+    },
+    {
+      "name": "clawdbot-sandbox",
+      "source": "./clawdbot-sandbox",
+      "description": "Secure sandboxed bash execution for OpenClaw AgentSkills — filesystem tiers, network controls, permission guards, AI SDK tool integration"
     }
   ]
 }

@@ -189,6 +189,50 @@ Google Ads CLI skill for OpenClaw agents. Manages campaigns, CPA metrics, budget
 
 ---
 
+### clawdbot-sandbox
+
+Secure sandboxed bash execution for OpenClaw AgentSkills via [just-bash](https://github.com/nichochar/just-bash). Provides filesystem tiers, network controls, and permission guards for safe agent command execution.
+
+```
+/plugin install clawdbot-sandbox@organized-ai-marketplace
+```
+
+**Features:**
+- Filesystem tiers: in-memory (ephemeral), overlay (copy-on-write), read-write (persistent)
+- Network controls: preset-based policies — `isolated`, `api-only`, `full-access` with URL allowlisting
+- Permission system: tier-based command allowlists, filesystem guards, network guards
+- AI SDK integration: `createTieredBashTool()` for Vercel AI SDK with execution limits per tier
+- Skill adapter: route OpenClaw AgentSkill execution through sandboxed environments
+- Plugin system: full OpenClaw plugin with lifecycle hooks, config management, audit logging
+- Error hierarchy: typed errors for PermissionDenied, SandboxCreation, CommandExecution, NetworkBlocked
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `just-bash-build` | Build coordinator for sandbox package phases |
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/just-bash:next` | Execute next incomplete build phase |
+| `/just-bash:status` | Show build progress and next step |
+| `/just-bash:verify` | Run full verification suite |
+| `/just-bash:research` | Deep-dive API research for current phase |
+
+**Agents:**
+| Agent | Description |
+|-------|-------------|
+| `just-bash-researcher` | Pre-phase API research agent |
+| `just-bash-tester` | Post-phase verification gate |
+
+**Requires:**
+- Node.js >= 20.0.0
+- pnpm
+
+**Triggers:** "sandbox", "just-bash", "clawdbot sandbox", "sandboxed bash", "agent skills"
+
+---
+
 ## 📊 Tracking & Analytics (Organized AI)
 
 ### gtm-ai-plugin
@@ -529,6 +573,7 @@ plugin-name/
 | organized-codebase-applicator | Skills | Organized AI |
 | organized-dev-toolkit | Skills, Commands, Agents | Organized AI |
 | media-buyer-bash | Skills | Organized AI |
+| clawdbot-sandbox | Skills, Commands, Agents | Organized AI |
 | gtm-ai-plugin | Commands, Skills, Hooks | Organized AI |
 | blade-linkedin-plugin | Commands | Organized AI |
 | fix-your-tracking | Tools | Organized AI |
