@@ -75,6 +75,16 @@
       "name": "organized-codebase-applicator",
       "source": "./organized-codebase-applicator",
       "description": "Apply Organized Codebase template structure and create Claude Code Plugins"
+    },
+    {
+      "name": "media-buyer-bash",
+      "source": "./media-buyer-bash",
+      "description": "Google Ads CLI skill for OpenClaw agents — campaign management, CPA metrics, budget control via bash"
+    },
+    {
+      "name": "organized-dev-toolkit",
+      "source": "./organized-dev-toolkit",
+      "description": "Development methodology toolkit — Boris, GSD, Ralphy workflows with phased builds and verification"
     }
   ]
 }
