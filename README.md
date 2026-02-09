@@ -100,6 +100,139 @@ Apply Organized Codebase template structure to existing projects, create Claude 
 
 ---
 
+### organized-dev-toolkit
+
+Complete development methodology system with 11 skills, 12 commands, and 2 verification agents. Includes Boris, GSD, and Ralphy workflows.
+
+```
+/plugin install organized-dev-toolkit@organized-ai-marketplace
+```
+
+**Features:**
+- Three methodologies: Boris (verification-first), GSD (fresh-context), Ralphy (autonomous)
+- Meta-router skill that picks the right methodology for your project
+- Phased planning and build system with verification gates
+- Session management across multiple context windows
+- Git worktree workflows for parallel branch development
+- Terminal-to-web session transfer (Teleport)
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `methodology` | Meta-router: picks Boris, GSD, or Ralphy |
+| `boris` | Verification-first workflow orchestrator |
+| `gsd-mode` | Fresh-context orchestration for large projects |
+| `ralphy-mode` | Autonomous PRD execution mode |
+| `phased-planning` | Break projects into implementation phases |
+| `phased-build` | Execute phases with verification and commits |
+| `phase-0-bootstrap` | Bootstrap TypeScript/Node.js project setup |
+| `long-runner` | Sessions across multiple context windows |
+| `teleport` | Transfer sessions between terminal and web |
+| `git-worktree-master` | Parallel branch workflows |
+| `organized-codebase-applicator` | Structured codebase templates |
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/boris:status` | Project health check |
+| `/boris:verify` | Run all verification checks |
+| `/boris:commit` | Smart commit with verification |
+| `/boris:review` | Self-review before PR |
+| `/oc:new-project` | Initialize project with planning |
+| `/oc:discuss` | Capture decisions before coding |
+| `/oc:quick` | Ad-hoc task with OC guarantees |
+| `/oc:progress` | Show state and next steps |
+| `/oc:pause` | Create handoff docs |
+| `/oc:resume` | Restore context from handoff |
+| `/session:start` | Session initialization ritual |
+| `/session:end` | Session closure ritual |
+
+**Agents:**
+| Agent | Description |
+|-------|-------------|
+| `verify-architecture` | Check code follows project conventions |
+| `verify-build` | Validate builds from clean state |
+
+**Triggers:** "boris", "gsd", "ralphy", "methodology", "phased build", "verify my work", "session start"
+
+---
+
+## 🦀 OpenClaw Tools (Organized AI)
+
+### media-buyer-bash
+
+Google Ads CLI skill for OpenClaw agents. Manages campaigns, CPA metrics, budgets, and campaign lifecycle entirely through bash commands — no MCP servers required.
+
+```
+/plugin install media-buyer-bash@organized-ai-marketplace
+```
+
+**Features:**
+- List and filter campaigns by name
+- CPA metrics with configurable date ranges (today, yesterday, 7d, 30d)
+- Formatted performance reports
+- Budget management with dry-run preview
+- Campaign lifecycle control (pause/enable)
+- Multi-account MCC support with account lookup table
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `media-buyer-bash` | Full Google Ads CLI command reference for agents |
+
+**Requires:**
+- `google-ads-cli` installed on the target machine
+- Google Ads API credentials configured
+- MCC account with sub-account access
+
+**Triggers:** "google ads", "campaign", "CPA", "budget", "media buying", "ad performance", "PMAX"
+
+---
+
+### clawdbot-sandbox
+
+Secure sandboxed bash execution for OpenClaw AgentSkills via [just-bash](https://github.com/nichochar/just-bash). Provides filesystem tiers, network controls, and permission guards for safe agent command execution.
+
+```
+/plugin install clawdbot-sandbox@organized-ai-marketplace
+```
+
+**Features:**
+- Filesystem tiers: in-memory (ephemeral), overlay (copy-on-write), read-write (persistent)
+- Network controls: preset-based policies — `isolated`, `api-only`, `full-access` with URL allowlisting
+- Permission system: tier-based command allowlists, filesystem guards, network guards
+- AI SDK integration: `createTieredBashTool()` for Vercel AI SDK with execution limits per tier
+- Skill adapter: route OpenClaw AgentSkill execution through sandboxed environments
+- Plugin system: full OpenClaw plugin with lifecycle hooks, config management, audit logging
+- Error hierarchy: typed errors for PermissionDenied, SandboxCreation, CommandExecution, NetworkBlocked
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `just-bash-build` | Build coordinator for sandbox package phases |
+
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `/just-bash:next` | Execute next incomplete build phase |
+| `/just-bash:status` | Show build progress and next step |
+| `/just-bash:verify` | Run full verification suite |
+| `/just-bash:research` | Deep-dive API research for current phase |
+
+**Agents:**
+| Agent | Description |
+|-------|-------------|
+| `just-bash-researcher` | Pre-phase API research agent |
+| `just-bash-tester` | Post-phase verification gate |
+
+**Requires:**
+- Node.js >= 20.0.0
+- pnpm
+
+**Triggers:** "sandbox", "just-bash", "clawdbot sandbox", "sandboxed bash", "agent skills"
+
+---
+
 ## 📊 Tracking & Analytics (Organized AI)
 
 ### gtm-ai-plugin
@@ -438,6 +571,9 @@ plugin-name/
 | boris | Commands, Agents, Skills | Organized AI |
 | phased-planning | Skills | Organized AI |
 | organized-codebase-applicator | Skills | Organized AI |
+| organized-dev-toolkit | Skills, Commands, Agents | Organized AI |
+| media-buyer-bash | Skills | Organized AI |
+| clawdbot-sandbox | Skills, Commands, Agents | Organized AI |
 | gtm-ai-plugin | Commands, Skills, Hooks | Organized AI |
 | blade-linkedin-plugin | Commands | Organized AI |
 | fix-your-tracking | Tools | Organized AI |

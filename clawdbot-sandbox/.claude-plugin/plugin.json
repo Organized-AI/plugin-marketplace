@@ -1,0 +1,26 @@
+{
+  "name": "clawdbot-sandbox",
+  "description": "Secure sandboxed bash execution for OpenClaw AgentSkills via just-bash — filesystem tiers, network controls, permission guards, and AI SDK tool integration",
+  "version": "0.1.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "sandbox",
+    "just-bash",
+    "openclaw",
+    "clawdbot",
+    "agent-skills",
+    "security",
+    "permissions",
+    "ai-sdk"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true,
+    "commands": true,
+    "agents": true
+  }
+}

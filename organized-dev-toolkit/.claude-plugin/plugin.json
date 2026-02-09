@@ -1,0 +1,28 @@
+{
+  "name": "organized-dev-toolkit",
+  "description": "Development methodology toolkit — Boris, GSD, Ralphy workflows with phased builds, verification, and session management",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "methodology",
+    "boris",
+    "gsd",
+    "ralphy",
+    "phased-build",
+    "verification",
+    "workflow",
+    "session-management",
+    "git-worktree",
+    "teleport"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true,
+    "commands": true,
+    "agents": true
+  }
+}

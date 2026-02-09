@@ -1,0 +1,23 @@
+{
+  "name": "media-buyer-bash",
+  "description": "Google Ads CLI skill for OpenClaw agents — campaign management, CPA metrics, budget control via bash",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "google-ads",
+    "media-buying",
+    "openclaw",
+    "bash",
+    "campaigns",
+    "cpa",
+    "advertising"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true
+  }
+}
