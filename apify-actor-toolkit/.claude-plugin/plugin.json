@@ -1,0 +1,27 @@
+{
+  "name": "apify-actor-toolkit",
+  "description": "Complete toolkit for building, testing, and deploying Apify Actors with TypeScript — scaffold projects, run gate checks, test locally, and deploy",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "apify",
+    "actor",
+    "web-scraping",
+    "automation",
+    "typescript",
+    "scaffold",
+    "deploy",
+    "testing",
+    "workflow"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true,
+    "commands": true,
+    "agents": true
+  }
+}

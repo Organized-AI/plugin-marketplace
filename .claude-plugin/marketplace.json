@@ -90,6 +90,11 @@
       "name": "clawdbot-sandbox",
       "source": "./clawdbot-sandbox",
       "description": "Secure sandboxed bash execution for OpenClaw AgentSkills — filesystem tiers, network controls, permission guards, AI SDK tool integration"
+    },
+    {
+      "name": "apify-actor-toolkit",
+      "source": "./apify-actor-toolkit",
+      "description": "Complete toolkit for building, testing, and deploying Apify Actors with TypeScript — scaffold, gate checks, local testing, and deployment"
     }
   ]
 }
