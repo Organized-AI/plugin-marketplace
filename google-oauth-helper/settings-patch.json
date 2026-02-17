@@ -1,0 +1,63 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gcloud:*)",
+      "Bash(gcloud config:*)",
+      "Bash(gcloud auth list:*)",
+      "Bash(gcloud projects list:*)",
+      "Bash(gcloud services list:*)",
+      "Bash(gcloud services enable:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)"
+    ],
+    "ask": [
+      "Bash(gcloud auth login:*)",
+      "Bash(gcloud init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(npm install:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(sudo:*)",
+      "Bash(rm -rf /:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/auto-run-task.sh",
+            "timeout": 5,
+            "statusMessage": "Checking sequential bash pattern"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|TaskOutput",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/auto-task-output.sh",
+            "timeout": 5,
+            "statusMessage": "Monitoring background tasks"
+          }
+        ]
+      }
+    ]
+  }
+}

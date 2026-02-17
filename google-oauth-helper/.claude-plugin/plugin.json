@@ -1,0 +1,36 @@
+{
+  "name": "google-oauth-helper",
+  "description": "Google OAuth Helper — checks for gcloud CLI (installs if missing), deploys Claude Code safety hooks (auto-run-task, auto-task-output), and installs the gcp-oauth skill for Google Ads OAuth 2.0 integration. One-command GCP bootstrap for any project.",
+  "version": "1.0.0",
+  "author": {
+    "name": "BHT Labs",
+    "url": "https://github.com/organized-ai"
+  },
+  "keywords": [
+    "gcloud",
+    "google-cloud",
+    "gcp",
+    "oauth",
+    "google-ads",
+    "hooks",
+    "auto-run-task",
+    "auto-task-output",
+    "claude-code",
+    "attribution"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/organized-ai/organized-codebase"
+  },
+  "components": {
+    "installer": "install.sh",
+    "hooks": [
+      "hooks/auto-run-task.sh",
+      "hooks/auto-task-output.sh"
+    ],
+    "skills": [
+      "skills/gcp-oauth/SKILL.md"
+    ],
+    "settings_patch": "settings-patch.json"
+  }
+}
