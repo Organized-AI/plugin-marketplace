@@ -1,0 +1,12 @@
+{
+  "containerId": "GTM-XXXXXXX",
+  "targetUrl": "https://example.com",
+  "expectedTags": ["GA4 - Page View", "Meta Pixel - PageView"],
+  "expectedEvents": ["page_view", "gtm.js", "gtm.dom"],
+  "expectedDataLayer": {},
+  "actions": [
+    {"type": "wait", "duration": 3000, "comment": "Wait for page load"}
+  ],
+  "timeout": 30000,
+  "headless": false
+}

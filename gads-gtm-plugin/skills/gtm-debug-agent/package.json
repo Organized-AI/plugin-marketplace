@@ -1,0 +1,28 @@
+{
+  "name": "gtm-debug-agent",
+  "version": "2.0.0",
+  "description": "Comprehensive GTM debugging and automated workspace validation using Playwright",
+  "main": "scripts/validate.js",
+  "bin": {
+    "gtm-validate": "scripts/validate.js",
+    "gtm-setup": "scripts/setup-browser.js"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.js",
+    "setup": "node scripts/setup-browser.js",
+    "test": "node scripts/validate.js --config test-config.example.json"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "keywords": [
+    "gtm",
+    "google-tag-manager",
+    "validation",
+    "testing",
+    "analytics",
+    "playwright"
+  ],
+  "author": "BHT Labs",
+  "license": "MIT"
+}

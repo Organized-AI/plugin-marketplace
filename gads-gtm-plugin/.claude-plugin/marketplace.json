@@ -1,0 +1,26 @@
+{
+  "name": "organized-ai-marketplace",
+  "description": "Organized AI plugin marketplace — production-grade skills for data infrastructure, conversion tracking, and GTM automation.",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "name": "gads-gtm-plugin",
+      "source": ".",
+      "description": "Google Ads & GTM automation suite — audit, build, debug, and optimize conversion tracking infrastructure programmatically via MCP servers.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Blue Highlighted Text",
+        "email": "jordan@organizedai.vip"
+      },
+      "keywords": [
+        "google-ads",
+        "gtm",
+        "conversion-tracking",
+        "stape",
+        "meta-ads",
+        "data-audit"
+      ],
+      "category": "data-infrastructure"
+    }
+  ]
+}

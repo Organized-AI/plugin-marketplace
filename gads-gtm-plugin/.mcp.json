@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "google-tag-manager": {
+      "type": "url",
+      "url": "https://gtm-mcp.stape.ai/mcp",
+      "description": "Stape GTM MCP — full CRUD for GTM containers, tags, triggers, variables, and workspaces"
+    },
+    "stape": {
+      "type": "url",
+      "url": "https://mcp.stape.io/mcp",
+      "description": "Stape container management — domains, analytics, power-ups, subscriptions"
+    },
+    "google-ads": {
+      "type": "url",
+      "url": "https://mcp.gaql.app/sse/google-ads/AUTH_TOKEN_HERE",
+      "description": "TrueClicks Google Ads MCP — GAQL queries, conversion actions, campaign data"
+    },
+    "pipeboard-meta": {
+      "type": "url",
+      "url": "https://mcp.pipeboard.co/meta-ads-mcp",
+      "description": "Pipeboard Meta Ads MCP — campaign data, pixel health, CAPI diagnostics"
+    }
+  }
+}

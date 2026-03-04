@@ -1,0 +1,180 @@
+{
+  "$schema": "./config.schema.json",
+  "_comment": "GTM-AI Skill Configuration Template - Copy and customize for your project",
+
+  "project": {
+    "name": "PROJECT_NAME",
+    "client": "CLIENT_NAME",
+    "description": "Brief description of tracking implementation"
+  },
+
+  "gtm": {
+    "accountId": "ACCOUNT_ID",
+    "webContainer": {
+      "id": "CONTAINER_ID",
+      "publicId": "GTM-XXXXXXX",
+      "name": "Web Container"
+    },
+    "serverContainer": {
+      "id": "SERVER_CONTAINER_ID",
+      "publicId": "GTM-XXXXXXX",
+      "name": "Server Container",
+      "domain": "gtm.your-domain.com",
+      "_comment": "Optional - only if using sGTM"
+    },
+    "workspace": {
+      "id": "WORKSPACE_ID",
+      "name": "Default Workspace"
+    }
+  },
+
+  "platforms": {
+    "linkedin": {
+      "enabled": true,
+      "partnerId": "PARTNER_ID",
+      "conversionIds": {
+        "lead": "CONVERSION_ID_LEAD",
+        "purchase": "CONVERSION_ID_PURCHASE"
+      },
+      "template": {
+        "owner": "linkedin",
+        "repository": "linkedin-gtm-community-template",
+        "version": "c07099c0e0cf0ade2057ee4016d3da9f32959169"
+      },
+      "capi": {
+        "enabled": false,
+        "accessToken": "ACCESS_TOKEN",
+        "conversionRules": {
+          "lead": "RULE_ID_LEAD",
+          "purchase": "RULE_ID_PURCHASE"
+        }
+      }
+    },
+
+    "meta": {
+      "enabled": false,
+      "pixelId": "PIXEL_ID",
+      "template": {
+        "owner": "stape-io",
+        "repository": "facebook-pixel-tag",
+        "version": "main"
+      },
+      "capi": {
+        "enabled": false,
+        "accessToken": "ACCESS_TOKEN"
+      }
+    },
+
+    "ga4": {
+      "enabled": true,
+      "measurementId": "G-XXXXXXXXXX",
+      "apiSecret": "API_SECRET",
+      "serverSide": {
+        "enabled": false,
+        "transportUrl": "https://gtm.your-domain.com"
+      }
+    },
+
+    "googleAds": {
+      "enabled": false,
+      "conversionId": "AW-XXXXXXXXXX",
+      "conversionLabel": "CONVERSION_LABEL"
+    },
+
+    "tiktok": {
+      "enabled": false,
+      "pixelId": "PIXEL_ID",
+      "accessToken": "ACCESS_TOKEN"
+    }
+  },
+
+  "triggers": {
+    "_comment": "Pre-populate with existing trigger IDs from your container",
+    "allPages": "2147479553",
+    "domReady": "TRIGGER_ID",
+    "windowLoaded": "TRIGGER_ID",
+    "purchase": "TRIGGER_ID",
+    "addToCart": "TRIGGER_ID",
+    "beginCheckout": "TRIGGER_ID",
+    "lead": "TRIGGER_ID",
+    "completeRegistration": "TRIGGER_ID",
+    "viewItem": "TRIGGER_ID",
+    "search": "TRIGGER_ID"
+  },
+
+  "variables": {
+    "_comment": "Pre-populate with existing variable IDs if reusing",
+    "eventId": "VARIABLE_ID",
+    "transactionId": "VARIABLE_ID",
+    "transactionValue": "VARIABLE_ID",
+    "currency": "VARIABLE_ID",
+    "userEmail": "VARIABLE_ID",
+    "userPhone": "VARIABLE_ID"
+  },
+
+  "dataLayer": {
+    "transactionId": "ecommerce.transaction_id",
+    "transactionValue": "ecommerce.value",
+    "currency": "ecommerce.currency",
+    "items": "ecommerce.items",
+    "userEmail": "user.email",
+    "userPhone": "user.phone",
+    "userId": "user.id"
+  },
+
+  "naming": {
+    "tagPrefix": {
+      "ga4": "GA4",
+      "linkedin": "LinkedIn",
+      "meta": "Meta",
+      "googleAds": "GAds",
+      "tiktok": "TikTok"
+    },
+    "variablePrefix": {
+      "constant": "Const",
+      "customJs": "CJS",
+      "dataLayer": "DL",
+      "cookie": "Cookie",
+      "lookupTable": "LUT"
+    },
+    "triggerPrefix": {
+      "pageview": "PV",
+      "customEvent": "CE",
+      "click": "Click",
+      "form": "Form",
+      "scroll": "Scroll"
+    }
+  },
+
+  "phases": {
+    "0": {
+      "name": "Template Installation",
+      "status": "pending"
+    },
+    "1": {
+      "name": "Variable Creation",
+      "status": "pending"
+    },
+    "2": {
+      "name": "Tag Creation",
+      "status": "pending"
+    },
+    "3": {
+      "name": "Validation",
+      "status": "pending"
+    },
+    "4": {
+      "name": "Test & Publish",
+      "status": "pending"
+    }
+  },
+
+  "artifacts": {
+    "_comment": "Populated during execution",
+    "templateIds": {},
+    "variableIds": {},
+    "tagIds": {},
+    "versionId": null,
+    "previewUrl": null
+  }
+}

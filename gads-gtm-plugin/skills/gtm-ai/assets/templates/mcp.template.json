@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "MCP Server Configuration Template - Copy to .mcp.json in your project root",
+
+  "mcpServers": {
+    "google-tag-manager-mcp-server": {
+      "type": "url",
+      "url": "https://gtm-mcp.stape.ai/mcp",
+      "_comment": "GTM API operations - templates, tags, variables, triggers, versions"
+    },
+
+    "stape-mcp-server": {
+      "type": "sse",
+      "url": "https://mcp.stape.ai/sse",
+      "headers": {
+        "x-api-key": "${STAPE_API_KEY}"
+      },
+      "_comment": "Stape sGTM container management - optional, requires API key"
+    }
+  },
+
+  "_instructions": {
+    "setup": [
+      "1. Copy this file to your project root as .mcp.json",
+      "2. Remove the _comment and _instructions fields",
+      "3. For Stape: Set STAPE_API_KEY environment variable",
+      "4. Restart Claude Desktop/Code to load servers",
+      "5. First GTM command will trigger Google OAuth in browser"
+    ],
+    "authentication": {
+      "gtm": "OAuth via browser - tokens cached in ~/.mcp-auth",
+      "stape": "API key from Stape dashboard"
+    },
+    "troubleshooting": [
+      "If auth fails: rm -rf ~/.mcp-auth && restart Claude",
+      "If no access: Verify Google account has GTM permissions",
+      "If Stape fails: Check API key is valid"
+    ]
+  }
+}

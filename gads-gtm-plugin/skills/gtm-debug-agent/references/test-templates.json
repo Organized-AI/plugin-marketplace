@@ -1,0 +1,42 @@
+{
+  "templates": {
+    "pageView": {
+      "description": "Basic page view tracking validation",
+      "expectedEvents": ["page_view", "gtm.js", "gtm.dom", "gtm.load"],
+      "actions": [{"type": "wait", "duration": 3000}]
+    },
+    "ecommerce_purchase": {
+      "description": "Purchase/conversion tracking",
+      "expectedEvents": ["purchase"],
+      "expectedDataLayer": {
+        "ecommerce.transaction_id": "*",
+        "ecommerce.value": "*",
+        "ecommerce.items": "*"
+      },
+      "actions": [{"type": "wait", "selector": ".order-confirmation", "timeout": 10000}]
+    },
+    "form_submission": {
+      "description": "Form submission tracking",
+      "expectedEvents": ["form_submit", "generate_lead"],
+      "actions": [
+        {"type": "fill", "selector": "input[type='email']", "value": "test@example.com"},
+        {"type": "click", "selector": "button[type='submit']"},
+        {"type": "wait", "duration": 3000}
+      ]
+    },
+    "add_to_cart": {
+      "description": "Add to cart tracking",
+      "expectedEvents": ["add_to_cart"],
+      "expectedDataLayer": {"ecommerce.items": "*"},
+      "actions": [
+        {"type": "click", "selector": "[data-action='add-to-cart'], .add-to-cart"},
+        {"type": "wait", "duration": 2000}
+      ]
+    }
+  },
+  "platformExpectations": {
+    "ga4": {"networkPattern": "google-analytics.com/g/collect"},
+    "metaPixel": {"networkPattern": "facebook.com/tr"},
+    "tiktok": {"networkPattern": "analytics.tiktok.com"}
+  }
+}

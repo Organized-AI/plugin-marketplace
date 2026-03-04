@@ -549,6 +549,50 @@ Semantic code analysis MCP server for intelligent code understanding and refacto
 
 ---
 
+
+---
+
+### gads-gtm-plugin ⭐ NEW
+
+Google Ads & GTM automation suite — create conversion actions, wire into GTM, audit containers, and validate tracking infrastructure.
+
+```
+/plugin install gads-gtm-plugin@organized-ai-marketplace
+```
+
+**6 Skills:**
+
+| Skill | Description |
+| --- | --- |
+| `gtm-ai` | Full GTM container automation via MCP — deploy, audit, manage tags/triggers/variables |
+| `data-audit` | Meta Ads account auditing — Pixel/CAPI/Stape evaluation, architecture diagrams |
+| `tidy-gtm` | Container hygiene — duplicate removal, naming standardization, sGTM correlation |
+| `gtm-debug-agent` | Browser-based GTM debugging — tag firing, dataLayer inspection, consent mode |
+| `gads-to-gtm-programmatic` | End-to-end: create Google Ads conversions via API → wire labels into GTM via MCP |
+| `gads-conversion-flow` | Lightweight: create Google Ads conversions and retrieve labels for GTM |
+
+**Commands:**
+
+| Command | Description |
+| --- | --- |
+| `/gtm-audit` | Full GTM container audit with health score |
+| `/gads-setup` | Create Google Ads conversion actions + wire into GTM |
+| `/tracking-check` | Validate entire tracking stack (GTM + GAds + Meta) |
+
+**Agents:**
+
+| Agent | Description |
+| --- | --- |
+| `tracking-architect` | Plans full conversion tracking architecture for a client |
+| `gtm-qa` | Pre-publish workspace validation and QA |
+
+**MCP Servers Required:**
+
+* `google-tag-manager-mcp-server` (Stape GTM)
+* `stape-mcp-server` (Stape container management)
+* `google-ads-mcp` (TrueClicks GAQL)
+* `pipeboard-meta` (Meta Ads auditing)
+
 ## Plugin Structure
 
 Each plugin follows the Claude Code plugin specification:

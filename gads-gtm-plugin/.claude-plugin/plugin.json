@@ -1,0 +1,31 @@
+{
+  "name": "gads-gtm-plugin",
+  "version": "1.0.0",
+  "description": "Google Ads & GTM automation suite — audit, build, debug, and optimize conversion tracking infrastructure programmatically via MCP servers.",
+  "author": {
+    "name": "Blue Highlighted Text",
+    "url": "https://github.com/organized-ai"
+  },
+  "license": "MIT",
+  "keywords": [
+    "google-ads",
+    "gtm",
+    "google-tag-manager",
+    "conversion-tracking",
+    "sgtm",
+    "server-side-tagging",
+    "meta-ads",
+    "data-audit",
+    "stape",
+    "mcp"
+  ],
+  "category": "data-infrastructure",
+  "skills": [
+    "skills/gtm-ai",
+    "skills/data-audit",
+    "skills/tidy-gtm",
+    "skills/gtm-debug-agent",
+    "skills/gads-to-gtm-programmatic",
+    "skills/gads-conversion-flow"
+  ]
+}
