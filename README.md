@@ -233,6 +233,59 @@ Secure sandboxed bash execution for OpenClaw AgentSkills via [just-bash](https:/
 
 ---
 
+
+---
+
+### openclaw-tools
+
+12 battle-tested OpenClaw skills from ClawHub's most-downloaded registry — wrapped as Claude Code-native bash tools.
+
+```
+/plugin install openclaw-tools@organized-ai-marketplace
+```
+
+**Features:**
+- Every skill ships with a `SKILL.md` + CLI bash wrapper in `scripts/` matching the Clawdbot Ready tool pattern
+- Sourced from the official [openclaw/skills](https://github.com/openclaw/skills) registry (ClawHub)
+- Power combos pre-documented: morning intel, Twitter growth, token savings, content pipeline
+
+**Skills:**
+| Skill | Description | ClawHub Rank |
+|-------|-------------|-------------|
+| `larry` | TikTok slideshow marketing engine — generate, post, track, iterate | — |
+| `capability-evolver` | Self-upgrading meta-skill — analyzes failures, rewrites own code | #1 (35k downloads) |
+| `qmd` | Token killer — BM25 + vector local indexing, up to 70% token reduction | — |
+| `anti-ai-slop` | Strips 24 AI writing tells from content + code slop mode | — |
+| `brave-search` | Free web search for agents via Brave API ($5/mo credit) | — |
+| `gog` | Google Workspace CLI — Gmail, Calendar, Drive, Contacts, Sheets, Docs | — |
+| `x-research` | Twitter analyst with quality filter (10+ likes min), trends, watchlists | — |
+| `bite-rover` | Persistent context tree memory across sessions (ByteRover) | #3 (16k downloads) |
+| `whatsapp-cli` | WhatsApp bridge — send, search history, auto-reply agent | #2 (16.4k downloads) |
+| `playwright` | Full Chrome browser automation + stealth scraping | — |
+| `mission-control` | Daily intel dashboard — tasks, calendar, inbox aggregated | — |
+| `x-impact-checker` | Tweet scorer against the real open-source Twitter recommendation algorithm | — |
+
+**Power Combos:**
+| Combo | Skills |
+|-------|--------|
+| Morning Intel | `mission-control` + `gog` + `x-research` |
+| Twitter Growth | `x-research` + `x-impact-checker` |
+| Token Savings | `qmd` + `bite-rover` |
+| Content Pipeline | `larry` + `anti-ai-slop` + `brave-search` |
+| Self-Improving Agent | `capability-evolver` (run daily via cron) |
+
+**ENV Vars:**
+| Var | Skill | Notes |
+|-----|-------|-------|
+| `BRAVE_SEARCH_API_KEY` | brave-search | Free $5/mo — api-dashboard.search.brave.com |
+| `TWITTERAPI_KEY` | x-research, x-impact-checker | twitterapi.io |
+| `OPENAI_API_KEY` | larry | gpt-image-1.5 for slide generation |
+| `POSTIZ_API_KEY` | larry | postiz.pro — posting + analytics loop |
+| `A2A_NODE_ID` | capability-evolver | Register at evomap.ai |
+| `GOG_ACCOUNT` | gog | your@gmail.com (avoids --account flag) |
+
+**Triggers:** "openclaw skills", "larry tiktok", "capability evolver", "token savings", "google workspace agent", "twitter agent", "persistent memory", "whatsapp agent", "browser automation", "mission control brief", "tweet optimizer"
+
 ## 📊 Tracking & Analytics (Organized AI)
 
 ### gtm-ai-plugin
@@ -618,6 +671,7 @@ plugin-name/
 | organized-dev-toolkit | Skills, Commands, Agents | Organized AI |
 | media-buyer-bash | Skills | Organized AI |
 | clawdbot-sandbox | Skills, Commands, Agents | Organized AI |
+| openclaw-tools | Skills (12) | Organized AI |
 | gtm-ai-plugin | Commands, Skills, Hooks | Organized AI |
 | blade-linkedin-plugin | Commands | Organized AI |
 | fix-your-tracking | Tools | Organized AI |

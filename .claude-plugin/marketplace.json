@@ -102,9 +102,9 @@
       "description": "Google Ads & GTM automation suite — 6 skills for conversion tracking: create GAds conversions via API, wire into GTM via MCP, audit containers, debug tag firing, Meta/CAPI assessment"
     },
     {
-      "name": "clawhub-skills",
-      "source": "./clawhub-skills",
-      "description": "Top 13 ClawHub skills — TikTok marketing (Larry), self-evolving AI, token savings (QMD), Google Workspace (GOG), Twitter growth, persistent memory, WhatsApp, Playwright browser automation, and more"
+      "name": "openclaw-tools",
+      "source": "./openclaw-tools",
+      "description": "Top 12 OpenClaw skills for Claude Code agents — TikTok marketing (Larry), self-evolving AI, token savings (QMD), Google Workspace (GOG), Twitter growth, persistent memory (ByteRover), WhatsApp, Playwright browser automation, Mission Control, and more"
     }
   ]
 }
