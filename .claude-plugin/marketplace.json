@@ -79,27 +79,32 @@
     {
       "name": "media-buyer-bash",
       "source": "./media-buyer-bash",
-      "description": "Google Ads CLI skill for OpenClaw agents \u2014 campaign management, CPA metrics, budget control via bash"
+      "description": "Google Ads CLI skill for OpenClaw agents — campaign management, CPA metrics, budget control via bash"
     },
     {
       "name": "organized-dev-toolkit",
       "source": "./organized-dev-toolkit",
-      "description": "Development methodology toolkit \u2014 Boris, GSD, Ralphy workflows with phased builds and verification"
+      "description": "Development methodology toolkit — Boris, GSD, Ralphy workflows with phased builds and verification"
     },
     {
       "name": "clawdbot-sandbox",
       "source": "./clawdbot-sandbox",
-      "description": "Secure sandboxed bash execution for OpenClaw AgentSkills \u2014 filesystem tiers, network controls, permission guards, AI SDK tool integration"
+      "description": "Secure sandboxed bash execution for OpenClaw AgentSkills — filesystem tiers, network controls, permission guards, AI SDK tool integration"
     },
     {
       "name": "apify-actor-toolkit",
       "source": "./apify-actor-toolkit",
-      "description": "Complete toolkit for building, testing, and deploying Apify Actors with TypeScript \u2014 scaffold, gate checks, local testing, and deployment"
+      "description": "Complete toolkit for building, testing, and deploying Apify Actors with TypeScript — scaffold, gate checks, local testing, and deployment"
     },
     {
       "name": "gads-gtm-plugin",
       "source": "./gads-gtm-plugin",
-      "description": "Google Ads & GTM automation suite \u2014 6 skills for conversion tracking: create GAds conversions via API, wire into GTM via MCP, audit containers, debug tag firing, Meta/CAPI assessment"
+      "description": "Google Ads & GTM automation suite — 6 skills for conversion tracking: create GAds conversions via API, wire into GTM via MCP, audit containers, debug tag firing, Meta/CAPI assessment"
+    },
+    {
+      "name": "clawhub-skills",
+      "source": "./clawhub-skills",
+      "description": "Top 13 ClawHub skills — TikTok marketing (Larry), self-evolving AI, token savings (QMD), Google Workspace (GOG), Twitter growth, persistent memory, WhatsApp, Playwright browser automation, and more"
     }
   ]
 }

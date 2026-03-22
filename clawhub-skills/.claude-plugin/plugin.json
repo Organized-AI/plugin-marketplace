@@ -1,0 +1,29 @@
+{
+  "name": "clawhub-skills",
+  "description": "Top 13 ClawHub skills for OpenClaw agents — TikTok marketing, self-evolving AI, token savings, browser automation, Google Workspace, Twitter growth, persistent memory, WhatsApp, and more",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "openclaw",
+    "clawhub",
+    "tiktok",
+    "google-workspace",
+    "twitter",
+    "whatsapp",
+    "playwright",
+    "browser-automation",
+    "memory",
+    "self-improving",
+    "token-optimization",
+    "bash",
+    "cli"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true
+  }
+}
