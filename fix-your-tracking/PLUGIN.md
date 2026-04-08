@@ -7,7 +7,7 @@ A comprehensive Claude Code plugin for marketing tracking infrastructure, ad pla
 | Field | Value |
 |-------|-------|
 | **Name** | fix-your-tracking |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 | **Author** | Organized AI |
 | **License** | Apache-2.0 |
 | **Category** | Marketing & Analytics |
@@ -60,12 +60,13 @@ This plugin provides a complete toolkit for:
 | `/setup-tracking` | Initialize tracking infrastructure for new domains |
 | `/sync-data` | Synchronize data between GHL, TripleWhale, and ad platforms |
 
-### Skills (8 specialized skills)
+### Skills (9 specialized skills)
 
 | Skill | Purpose |
 |-------|---------|
 | `tidy-gtm` | GTM container auditing and cleanup (web + server-side) |
 | `gtm-AI` | GTM automation patterns and phase-based deployment |
+| `gtm-autoresearch-loop` | Autonomous GTM optimize/validate/revert loop using enriched ad-platform signals |
 | `linkedin-capi-setup` | Server-side LinkedIn Conversions API implementation |
 | `triple-whale-bridge` | GHL to Triple Whale data transformation |
 | `organized-codebase-applicator` | Project structure template application |
@@ -178,6 +179,17 @@ Create `CONFIG/config.json` with your GTM credentials:
 # Deploy all platforms
 /gtm-deploy all
 ```
+
+### Running GTM Autoresearch
+
+Use skill: `gtm-autoresearch-loop`
+
+This skill runs a Karpathy-style optimization loop on GTM container exports:
+- Scores the container across 12 dimensions
+- Prompts Claude to mutate low-scoring areas
+- Validates JSON/schema/invariants
+- Keeps improvements and reverts regressions
+- Stores winning configs and loop logs for review
 
 ### Agent Invocation
 

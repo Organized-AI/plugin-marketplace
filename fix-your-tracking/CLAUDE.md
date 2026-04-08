@@ -65,6 +65,7 @@ TW_SHOP_ID=your-shop.myshopify.com
 
 - `tidy-gtm` - GTM container auditing and cleanup
 - `gtm-AI` - GTM automation patterns
+- `gtm-autoresearch-loop` - Autonomous GTM optimization loop with ads-driven scoring and keep/revert iteration
 - `linkedin-capi-setup` - LinkedIn Conversions API setup
 - `triple-whale-bridge` - GHL to Triple Whale transformation
 - `phased-planning` - Implementation planning

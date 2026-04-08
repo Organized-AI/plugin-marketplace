@@ -7,7 +7,7 @@ A comprehensive Claude Code plugin for marketing tracking infrastructure, ad pla
 - **6 Autonomous Agents**: Meta Ads, Google Ads, GTM Automation, Tracking Infrastructure, Data Sync, Audit Coordinator
 - **8 Slash Commands**: GTM deploy/audit/status/rollback, full-audit, analyze-performance, setup-tracking, sync-data
 - **6 MCP Servers**: GTM, Stape, Meta Ads, Google Ads, Gateway, GoHighLevel
-- **8 Specialized Skills**: tidy-gtm, gtm-AI, linkedin-capi-setup, triple-whale-bridge, and more
+- **9 Specialized Skills**: tidy-gtm, gtm-AI, gtm-autoresearch-loop, linkedin-capi-setup, triple-whale-bridge, and more
 - **8 Lifecycle Hooks**: Pre/post phase validation, pre-publish audit, diagram generation
 
 ## Installation
@@ -82,6 +82,10 @@ Create `CONFIG/config.json`:
 @data-sync reconcile GHL contacts
 ```
 
+### Run GTM Autoresearch
+
+Use the `gtm-autoresearch-loop` skill to run a Karpathy-style optimize/validate/revert loop on a GTM container using enriched Meta + Google Ads snapshots.
+
 ## Supported Platforms
 
 | Platform | Client-Side | Server-Side (CAPI) |
@@ -98,6 +102,10 @@ Create `CONFIG/config.json`:
 - Node.js >= 18.0.0
 - Python >= 3.10 (for Google Ads MCP)
 - Claude Code CLI or Claude Code extension
+
+## Included Skill
+
+- `gtm-autoresearch-loop` - Autonomous GTM optimization loop with 12-dimension scoring, mutation prompts, validation gates, and winning-config tracking
 
 ## License
 

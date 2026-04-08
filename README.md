@@ -357,6 +357,17 @@ Advertising and tracking audit toolkit for comprehensive platform analysis.
 /plugin install fix-your-tracking@organized-ai-marketplace
 ```
 
+**Features:**
+- Cross-platform tracking diagnostics and audit workflows
+- GTM deployment, audit, rollback, and workspace health commands
+- Specialized tracking agents for Meta Ads, Google Ads, GTM, data sync, and infrastructure
+- `gtm-autoresearch-loop` skill for autonomous GTM optimize/validate/revert experimentation
+
+**Skills:**
+| Skill | Description |
+|-------|-------------|
+| `gtm-autoresearch-loop` | Run a Karpathy-style autonomous optimization loop on GTM container exports using enriched ad-platform snapshots |
+
 ---
 
 ## 🎨 Development & Design (Anthropic Official)
@@ -674,7 +685,7 @@ plugin-name/
 | openclaw-tools | Skills (12) | Organized AI |
 | gtm-ai-plugin | Commands, Skills, Hooks | Organized AI |
 | blade-linkedin-plugin | Commands | Organized AI |
-| fix-your-tracking | Tools | Organized AI |
+| fix-your-tracking | Agents, Commands, Skills, MCP | Organized AI |
 | frontend-design | Skills | Anthropic Official |
 | agent-sdk-dev | Commands, Agents | Anthropic Official |
 | hookify | Commands, Agents, Skills, Hooks | Anthropic Official |
