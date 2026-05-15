@@ -105,6 +105,11 @@
       "name": "openclaw-tools",
       "source": "./openclaw-tools",
       "description": "Top 12 OpenClaw skills for Claude Code agents — TikTok marketing (Larry), self-evolving AI, token savings (QMD), Google Workspace (GOG), Twitter growth, persistent memory (ByteRover), WhatsApp, Playwright browser automation, Mission Control, and more"
+    },
+    {
+      "name": "hyperframes-axonometric",
+      "source": "./hyperframes-axonometric",
+      "description": "Codex-ready scaffold for HyperFrames axonometric architecture video production — HTML compositions, system-map cutaways, render QA, preview frames, and contact sheets"
     }
   ]
 }
