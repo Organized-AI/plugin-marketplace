@@ -1,0 +1,15 @@
+{
+  "created_at": "2026-07-23 CDT",
+  "name": "social-carousel",
+  "purpose": "Codex-ready scaffold for converting source ideas into branded social carousels with optional animated previews",
+  "no_secrets": true,
+  "contents": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "prompts",
+    "skills",
+    "templates",
+    "scripts",
+    "README.md"
+  ]
+}

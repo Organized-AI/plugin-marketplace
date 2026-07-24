@@ -711,3 +711,23 @@ MIT
 ---
 
 *Anthropic Official plugins are sourced from [claude-plugins-official](https://github.com/anthropics/claude-plugins-official)*
+
+
+---
+
+### social-carousel
+
+Simplified branded social carousel workflow: capture the source argument, turn it into a 4:5 slide set, add a brand mark, QA with a contact sheet, and optionally export a short animated preview.
+
+```
+/plugin install social-carousel@organized-ai-marketplace
+```
+
+**Features:**
+- source-hook → storyboard → render workflow scaffold
+- info-only remixes for reels/posts when screenshots are not desired
+- brand asset placement guidance
+- contact-sheet-first QA pattern
+- optional HyperFrames-style preview MP4 wrapper
+
+**Triggers:** "social carousel", "turn this into slides", "instagram carousel", "linkedin carousel", "info-only carousel"

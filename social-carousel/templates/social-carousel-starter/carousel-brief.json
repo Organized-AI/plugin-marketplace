@@ -1,0 +1,20 @@
+{
+  "project_name": "social-carousel-example",
+  "hook": "Can we build this ourselves?",
+  "topic": "Owning the harness behind viral social carousels",
+  "audience": "builders shipping AI workflows",
+  "offer": "Turn one high-performing source into a reusable branded carousel system.",
+  "cta": "Comment \"prompts\" if you want the build notes.",
+  "proof_points": [
+    "Reverse-engineer the winning post structure",
+    "Pull the tool stack, not just the aesthetic",
+    "Render deterministic slides and audit them before posting"
+  ],
+  "reference_notes": "Info-only remix. No source frames.",
+  "brand_name": "Organized AI",
+  "brand_asset_path": "/absolute/path/to/logo.png",
+  "theme": "organized-dark",
+  "aspect_ratio": "4:5",
+  "slide_count": 6,
+  "make_preview_mp4": true
+}

@@ -1,0 +1,25 @@
+{
+  "name": "social-carousel",
+  "description": "Codex/Claude-ready plugin scaffold for turning a source hook, proof stack, and brand asset into a clean social carousel with optional HyperFrames-style animated preview",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "carousel",
+    "social-media",
+    "instagram",
+    "linkedin",
+    "hyperframes",
+    "branding",
+    "content"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true,
+    "prompts": true,
+    "templates": true
+  }
+}
