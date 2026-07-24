@@ -110,6 +110,11 @@
       "name": "hyperframes-axonometric",
       "source": "./hyperframes-axonometric",
       "description": "Codex-ready scaffold for HyperFrames axonometric architecture video production — HTML compositions, system-map cutaways, render QA, preview frames, and contact sheets"
+    },
+    {
+      "name": "organized-ai-shorts",
+      "source": "./organized-ai-shorts",
+      "description": "Ingest and analyze Shorts/Reels, then produce original Organized AI channel variants with evidence-first scripts, motion recipes, captions, and QA"
     }
   ]
 }
