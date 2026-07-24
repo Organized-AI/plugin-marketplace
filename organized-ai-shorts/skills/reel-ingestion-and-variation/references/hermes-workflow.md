@@ -9,6 +9,8 @@ The recovered brief asked Hermes to build Organized AI Shorts from:
 
 The local synthesis is recorded in `/Users/claw/.openclaw/workspace/organized_ai_shorts_channel_kit/STYLE_BIBLE.md`.
 
+If those Hermes paths are unavailable on another machine, use the portable rules in this plugin and substitute that machine's media workspace. The absolute paths below are historical evidence, not runtime requirements.
+
 ## Forkcast ingestion
 
 Local ingest: `/Users/claw/.openclaw/workspace/organized_ai_shorts_forkcast_ingest/`
