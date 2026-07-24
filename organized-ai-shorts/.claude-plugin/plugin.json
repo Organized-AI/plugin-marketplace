@@ -23,5 +23,6 @@
   "capabilities": {
     "skills": true,
     "prompts": true
+    ,"templates": true
   }
 }

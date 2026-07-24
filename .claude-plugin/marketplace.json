@@ -114,7 +114,7 @@
     {
       "name": "organized-ai-shorts",
       "source": "./organized-ai-shorts",
-      "description": "Ingest and analyze Shorts/Reels, then produce original Organized AI channel variants with evidence-first scripts, motion recipes, captions, and QA"
+      "description": "Ingest and analyze Shorts/Reels, produce original Organized AI variants, and turn them into QA'd 4:5 carousels or preview MP4s"
     }
   ]
 }
