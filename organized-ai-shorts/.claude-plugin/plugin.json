@@ -1,0 +1,28 @@
+{
+  "name": "organized-ai-shorts",
+  "description": "Ingest, analyze, and produce Organized AI Shorts from YouTube, Instagram, and Facebook references using a repeatable, evidence-first production system.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "keywords": [
+    "shorts",
+    "reels",
+    "youtube",
+    "instagram",
+    "facebook",
+    "video",
+    "content",
+    "ffmpeg",
+    "yt-dlp",
+    "brand"
+  ],
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT",
+  "capabilities": {
+    "skills": true,
+    "prompts": true
+    ,"templates": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "title": "",
+  "source_short": "",
+  "platform": "instagram",
+  "aspect_ratio": "4:5",
+  "slide_count": 6,
+  "brand_system": "organized-dark",
+  "source_argument": {
+    "hook": "",
+    "proof": [],
+    "mechanism": [],
+    "payoff": "",
+    "cta": ""
+  },
+  "slides": [],
+  "variance_map": {
+    "preserve": [],
+    "change": ["copy", "examples", "visual assets", "cta"],
+    "brand_markers": ["Organized AI lime", "systems vocabulary"],
+    "rights_note": ""
+  },
+  "outputs": {
+    "slides_directory": "",
+    "contact_sheet": "",
+    "preview_mp4": ""
+  }
+}
