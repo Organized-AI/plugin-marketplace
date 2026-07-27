@@ -51,7 +51,10 @@ try {
                 const allowedAttributes = ['id', 'name', 'type', 'role', 'aria-label', 'data-testid', 'data-track', 'data-event'];
                 const controls = Array.from(document.querySelectorAll(
                     'button, a[href], input:not([type="hidden"]), select, textarea, [role="button"], [role="link"], [contenteditable="true"]',
-                )).slice(0, limit);
+                )).filter((element) => {
+                    const style = window.getComputedStyle(element);
+                    return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
+                }).slice(0, limit);
 
                 return controls.map((element) => {
                     const attributes = Object.fromEntries(allowedAttributes
