@@ -618,13 +618,13 @@ Semantic code analysis MCP server for intelligent code understanding and refacto
 
 ### gads-gtm-plugin ⭐ NEW
 
-Google Ads & GTM automation suite — create conversion actions, wire into GTM, audit containers, validate cross-platform server-side conversion processes, and baseline published measurement releases.
+Google Ads & GTM automation suite — inventory authorized website event surfaces, create conversion actions, wire into GTM, validate cross-platform server-side conversion processes, and baseline published measurement releases.
 
 ```
 /plugin install gads-gtm-plugin@organized-ai-marketplace
 ```
 
-**8 Skills:**
+**9 Skills:**
 
 | Skill | Description |
 | --- | --- |
@@ -636,6 +636,7 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 | `gads-conversion-flow` | Lightweight: create Google Ads conversions and retrieve labels for GTM |
 | `measurement-release-versioning` | Capture published GTM/sGTM versions, event/pixel mappings, and aggregate outcomes for governed comparison |
 | `conversion-api-process` | Plan and validate consent-gated Google Ads, Meta, TikTok, and X server-side conversion delivery |
+| `event-surface-audit` | Convert an authorized, read-only Apify DOM inventory into a GTM/sGTM event-capture proposal |
 
 **Commands:**
 
@@ -646,6 +647,7 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 | `/tracking-check` | Validate entire tracking stack (GTM + GAds + Meta) |
 | `/measurement-release` | Capture a pre-change GTM/sGTM baseline manifest |
 | `/conversion-api-readiness` | Validate cross-platform server-side conversion readiness |
+| `/event-surface-audit` | Build a proposed event map from an Apify DOM inventory dataset |
 
 **Agents:**
 

@@ -1,0 +1,6 @@
+{
+  "startUrls": [{ "url": "https://example.com/" }],
+  "maxPages": 10,
+  "sameDomainOnly": true,
+  "maxElementsPerPage": 250
+}

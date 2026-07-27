@@ -1,0 +1,15 @@
+[
+  {
+    "kind": "page_inventory",
+    "url": "https://example.com/quiz",
+    "controls": [
+      {
+        "selector": "#result-form",
+        "candidates": [
+          { "eventName": "form_started", "interaction": "form_start", "selector": "#result-form", "rationale": "Field belongs to a visible form." },
+          { "eventName": "form_submitted", "interaction": "form_submit", "selector": "#result-form", "rationale": "Submit control." }
+        ]
+      }
+    ]
+  }
+]

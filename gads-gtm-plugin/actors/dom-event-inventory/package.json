@@ -1,0 +1,11 @@
+{
+  "name": "dom-event-inventory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only Apify Actor that inventories website interaction surfaces for measurement planning.",
+  "engines": { "node": ">=22" },
+  "scripts": { "build": "tsc", "start": "node dist/main.js" },
+  "dependencies": { "apify": "^3.5.2", "crawlee": "^3.15.0" },
+  "devDependencies": { "@apify/tsconfig": "^0.1.0", "typescript": "~5.6.0" }
+}
