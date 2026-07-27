@@ -1,7 +1,7 @@
 {
   "name": "gads-gtm-plugin",
-  "version": "1.0.0",
-  "description": "Google Ads & GTM automation suite — audit, build, debug, and optimize conversion tracking infrastructure programmatically via MCP servers.",
+  "version": "1.3.0",
+  "description": "Google Ads & GTM automation suite — audit event surfaces, build, debug, version releases, and govern cross-platform server-side conversion processes.",
   "author": {
     "name": "Blue Highlighted Text",
     "url": "https://github.com/organized-ai"
@@ -17,7 +17,14 @@
     "meta-ads",
     "data-audit",
     "stape",
-    "mcp"
+    "mcp",
+    "measurement-versioning",
+    "release-management",
+    "conversions-api",
+    "server-side-conversions",
+    "apify",
+    "event-audit",
+    "dom-inventory"
   ],
   "category": "data-infrastructure",
   "skills": [
@@ -26,6 +33,9 @@
     "skills/tidy-gtm",
     "skills/gtm-debug-agent",
     "skills/gads-to-gtm-programmatic",
-    "skills/gads-conversion-flow"
+    "skills/gads-conversion-flow",
+    "skills/measurement-release-versioning",
+    "skills/conversion-api-process",
+    "skills/event-surface-audit"
   ]
 }

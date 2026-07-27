@@ -1,0 +1,9 @@
+{
+  "actorSpecification": 1,
+  "name": "dom-event-inventory",
+  "title": "DOM Event Inventory",
+  "description": "Read-only inventory of public interactive page elements for GTM measurement planning.",
+  "version": "1.0.0",
+  "input": "./input_schema.json",
+  "dockerfile": "./Dockerfile"
+}

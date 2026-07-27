@@ -99,7 +99,7 @@
     {
       "name": "gads-gtm-plugin",
       "source": "./gads-gtm-plugin",
-      "description": "Google Ads & GTM automation suite — 6 skills for conversion tracking: create GAds conversions via API, wire into GTM via MCP, audit containers, debug tag firing, Meta/CAPI assessment"
+      "description": "Google Ads & GTM automation suite — 9 skills for authorized DOM event auditing, conversion tracking, cross-platform server-side conversion readiness, and GTM/sGTM release baselining"
     },
     {
       "name": "openclaw-tools",

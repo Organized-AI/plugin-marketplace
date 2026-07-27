@@ -1,0 +1,38 @@
+{
+  "title": "DOM Event Inventory input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "startUrls": {
+      "title": "Start URLs",
+      "type": "array",
+      "description": "Pages you are authorized to audit.",
+      "editor": "requestListSources",
+      "prefill": [{ "url": "https://example.com/" }]
+    },
+    "maxPages": {
+      "title": "Maximum pages",
+      "type": "integer",
+      "description": "Keep this small for a first audit.",
+      "default": 10,
+      "editor": "textfield"
+    },
+    "sameDomainOnly": {
+      "title": "Same domain only",
+      "type": "boolean",
+      "description": "Do not follow links outside the first start URL's domain.",
+      "default": true,
+      "editor": "select",
+      "enum": [true, false],
+      "enumTitles": ["Yes", "No"]
+    },
+    "maxElementsPerPage": {
+      "title": "Maximum elements per page",
+      "type": "integer",
+      "description": "Caps reported controls; no controls are clicked.",
+      "default": 250,
+      "editor": "textfield"
+    }
+  },
+  "required": ["startUrls"]
+}
