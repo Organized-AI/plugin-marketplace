@@ -618,13 +618,13 @@ Semantic code analysis MCP server for intelligent code understanding and refacto
 
 ### gads-gtm-plugin ⭐ NEW
 
-Google Ads & GTM automation suite — create conversion actions, wire into GTM, audit containers, validate tracking infrastructure, and baseline published measurement releases.
+Google Ads & GTM automation suite — create conversion actions, wire into GTM, audit containers, validate cross-platform server-side conversion processes, and baseline published measurement releases.
 
 ```
 /plugin install gads-gtm-plugin@organized-ai-marketplace
 ```
 
-**7 Skills:**
+**8 Skills:**
 
 | Skill | Description |
 | --- | --- |
@@ -635,6 +635,7 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 | `gads-to-gtm-programmatic` | End-to-end: create Google Ads conversions via API → wire labels into GTM via MCP |
 | `gads-conversion-flow` | Lightweight: create Google Ads conversions and retrieve labels for GTM |
 | `measurement-release-versioning` | Capture published GTM/sGTM versions, event/pixel mappings, and aggregate outcomes for governed comparison |
+| `conversion-api-process` | Plan and validate consent-gated Google Ads, Meta, TikTok, and X server-side conversion delivery |
 
 **Commands:**
 
@@ -644,6 +645,7 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 | `/gads-setup` | Create Google Ads conversion actions + wire into GTM |
 | `/tracking-check` | Validate entire tracking stack (GTM + GAds + Meta) |
 | `/measurement-release` | Capture a pre-change GTM/sGTM baseline manifest |
+| `/conversion-api-readiness` | Validate cross-platform server-side conversion readiness |
 
 **Agents:**
 

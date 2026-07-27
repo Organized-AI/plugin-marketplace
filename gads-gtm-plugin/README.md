@@ -2,7 +2,7 @@
 
 > Production-grade Google Ads & GTM automation suite for Claude Code. Audit, build, debug, and optimize conversion tracking infrastructure programmatically via MCP servers.
 
-## Skills (7)
+## Skills (8)
 
 | Skill | Purpose |
 |-------|---------|
@@ -13,6 +13,7 @@
 | **gads-to-gtm-programmatic** | End-to-end: create Google Ads conversion actions via API → wire labels into GTM tags/variables via MCP |
 | **gads-conversion-flow** | Lightweight: create Google Ads conversions and retrieve labels for manual GTM wiring |
 | **measurement-release-versioning** | Capture published GTM/sGTM versions, pixel mappings, and baseline outcomes for governed before/after comparison |
+| **conversion-api-process** | Configure and validate consent-gated server-side conversion processes for Google Ads, Meta, TikTok, and X |
 
 ## MCP Servers Required
 
@@ -62,10 +63,15 @@
 2. `gtm-ai` → bulk tag/trigger/variable operations
 3. `gtm-debug-agent` → validate changes before publish
 4. `measurement-release-versioning` → capture the immutable baseline before and after a published release
+5. `conversion-api-process` → validate browser/server event mappings, consent, deduplication, and platform test evidence
 
 ## Measurement releases
 
 Use `/measurement-release` before a tracking deployment. It creates a privacy-safe manifest linking published web GTM and sGTM version IDs to event-contract and pixel/destination mappings, an evaluation window, and aggregate results. It complements the existing GTM deployment flow; it does not publish or modify a container.
+
+## Cross-platform conversion processes
+
+Use `/conversion-api-readiness` to validate the setup plan for Google Ads, Meta CAPI, TikTok Events API, and X CAPI before production event delivery. It checks the shared event contract, consent gate, browser/server deduplication identifiers, destination IDs, secret storage, test evidence, and diagnostics ownership. It never stores or prints credentials.
 
 ## License
 

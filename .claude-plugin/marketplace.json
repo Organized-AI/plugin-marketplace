@@ -99,7 +99,7 @@
     {
       "name": "gads-gtm-plugin",
       "source": "./gads-gtm-plugin",
-      "description": "Google Ads & GTM automation suite — 7 skills for conversion tracking and measurement-release baselining: create GAds conversions, wire GTM, audit, validate, and compare published GTM/sGTM versions"
+      "description": "Google Ads & GTM automation suite — 8 skills for conversion tracking, cross-platform server-side conversion readiness, and GTM/sGTM release baselining"
     },
     {
       "name": "openclaw-tools",

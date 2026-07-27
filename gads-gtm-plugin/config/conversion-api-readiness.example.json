@@ -1,0 +1,53 @@
+{
+  "schema_version": "conversion-api-readiness/v1",
+  "event_contract_version": "events/v1",
+  "consent": {
+    "advertising_required": true,
+    "gate_implemented": false,
+    "policy_reference": "replace-with-policy-reference"
+  },
+  "events": [
+    {
+      "name": "lead",
+      "source_of_truth": "crm",
+      "event_id_strategy": "browser UUID passed to server; CRM lead ID for lifecycle events",
+      "transaction_or_crm_id": "crm_lead_id"
+    }
+  ],
+  "destinations": {
+    "google_ads": {
+      "enabled": false,
+      "destination_id": "conversion-action-id",
+      "server_process": "data-manager-api-or-approved-server-tag",
+      "test_evidence": null,
+      "diagnostics_owner": "owner-name"
+    },
+    "meta": {
+      "enabled": false,
+      "destination_id": "pixel-or-dataset-id",
+      "browser_event": "Lead",
+      "server_event": "Lead",
+      "dedupe_key": "event_id",
+      "test_evidence": null,
+      "diagnostics_owner": "owner-name"
+    },
+    "tiktok": {
+      "enabled": false,
+      "destination_id": "pixel-code",
+      "browser_event": "SubmitForm",
+      "server_event": "SubmitForm",
+      "dedupe_key": "event_id",
+      "test_evidence": null,
+      "diagnostics_owner": "owner-name"
+    },
+    "x": {
+      "enabled": false,
+      "destination_id": "pixel-and-event-id",
+      "browser_event": "Lead",
+      "server_event": "Lead",
+      "dedupe_key": "conversion_id",
+      "test_evidence": null,
+      "diagnostics_owner": "owner-name"
+    }
+  }
+}
