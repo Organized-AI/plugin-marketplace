@@ -7,7 +7,7 @@
  * pages_read_engagement and pages_show_list.
  */
 
-export const WORKER_NAME = 'CHANGE-ME';
+export const WORKER_NAME = 'change-me';
 
 /** Pin explicitly. Marketing API REJECTS unversioned calls outright. */
 export const GRAPH_VERSION = 'v25.0';

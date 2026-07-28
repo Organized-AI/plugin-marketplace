@@ -1,9 +1,9 @@
 {
-  "name": "CHANGE-ME",
+  "name": "change-me",
   "main": "src/index.ts",
   "compatibility_date": "2026-07-01",
   "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
-  "d1_databases": [{ "binding": "DB", "database_name": "CHANGE-ME", "database_id": "PASTE" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "change-me", "database_id": "PASTE" }],
   "kv_namespaces": [{ "binding": "CACHE", "id": "PASTE" }],
   "vars": {
     "ENVIRONMENT": "production",

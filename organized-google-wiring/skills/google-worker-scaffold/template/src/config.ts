@@ -11,7 +11,7 @@
  * your app creates, where the broad scopes are sensitive or restricted.
  */
 
-export const WORKER_NAME = 'CHANGE-ME';
+export const WORKER_NAME = 'change-me';
 
 export interface Capability {
   label: string;
