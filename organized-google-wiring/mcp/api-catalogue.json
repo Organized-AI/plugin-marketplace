@@ -1,0 +1,298 @@
+{
+  "$comment": "Scope sensitivity drives OAuth verification burden. 'verified: true' means the classification was read from Google's own per-API scope documentation. 'verified: false' means the scope string is right but the class is a best-effort read — re-check at https://support.google.com/cloud/answer/13464321 before planning a verification submission, because Google reclassifies.",
+  "classes": {
+    "non-sensitive": "Basic verification only. No security assessment. Cheapest path.",
+    "sensitive": "Requires OAuth verification if you exceed the unverified cap. No CASA assessment.",
+    "restricted": "Requires OAuth verification AND an annual CASA security assessment. Most expensive."
+  },
+  "universal": {
+    "openid": { "class": "non-sensitive", "verified": true },
+    "https://www.googleapis.com/auth/userinfo.email": { "class": "non-sensitive", "verified": true },
+    "https://www.googleapis.com/auth/userinfo.profile": { "class": "non-sensitive", "verified": true }
+  },
+  "apis": {
+    "gmail": {
+      "label": "Gmail",
+      "service": "gmail.googleapis.com",
+      "base": "https://gmail.googleapis.com/gmail/v1",
+      "docs": "https://developers.google.com/workspace/gmail/api/auth/scopes",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/gmail.readonly": { "class": "restricted", "verified": true, "does": "read and search mail" },
+        "https://www.googleapis.com/auth/gmail.compose": { "class": "restricted", "verified": true, "does": "manage drafts and send" },
+        "https://www.googleapis.com/auth/gmail.modify": { "class": "restricted", "verified": true, "does": "label, archive, triage" },
+        "https://www.googleapis.com/auth/gmail.send": { "class": "sensitive", "verified": true, "does": "send only" },
+        "https://www.googleapis.com/auth/gmail.metadata": { "class": "sensitive", "verified": true, "does": "headers and labels, no bodies" },
+        "https://www.googleapis.com/auth/gmail.labels": { "class": "non-sensitive", "verified": true, "does": "manage labels" }
+      },
+      "quirks": [
+        "gmail.send alone cannot read threads; pair with gmail.metadata to thread replies correctly.",
+        "Message bodies are base64url in payload.parts; use format=metadata when you only need headers.",
+        "Incremental sync uses historyId, not page tokens. Store it per account."
+      ]
+    },
+    "drive": {
+      "label": "Google Drive",
+      "service": "drive.googleapis.com",
+      "base": "https://www.googleapis.com/drive/v3",
+      "docs": "https://developers.google.com/workspace/drive/api/guides/api-specific-auth",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/drive": { "class": "restricted", "verified": true, "does": "full access" },
+        "https://www.googleapis.com/auth/drive.readonly": { "class": "restricted", "verified": true, "does": "read all files" },
+        "https://www.googleapis.com/auth/drive.file": { "class": "non-sensitive", "verified": true, "does": "only files this app created or the user picked" }
+      },
+      "quirks": [
+        "drive.file is the single biggest verification saving available. If the app creates the files it touches, use it.",
+        "Always pass supportsAllDrives=true and includeItemsFromAllDrives=true or shared drives silently vanish.",
+        "Google-native docs have no bytes; use /export with a target mimeType instead of alt=media.",
+        "Incremental sync uses the changes endpoint with a startPageToken."
+      ]
+    },
+    "analytics-data": {
+      "label": "Google Analytics Data API (GA4)",
+      "service": "analyticsdata.googleapis.com",
+      "base": "https://analyticsdata.googleapis.com/v1beta",
+      "docs": "https://developers.google.com/analytics/devguides/reporting/data/v1",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/analytics.readonly": { "class": "sensitive", "verified": false, "does": "read reports" }
+      },
+      "quirks": [
+        "Property id goes in the URL path as properties/{id}:runReport, not a query param.",
+        "Quotas are per property per day and tokens are consumed by query complexity, not row count.",
+        "This API accepts a service account directly — no per-user OAuth needed if you add the service account email as a property viewer. Prefer that over the token vault for reporting-only workloads."
+      ]
+    },
+    "analytics-admin": {
+      "label": "Google Analytics Admin API (GA4)",
+      "service": "analyticsadmin.googleapis.com",
+      "base": "https://analyticsadmin.googleapis.com/v1beta",
+      "docs": "https://developers.google.com/analytics/devguides/config/admin/v1",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/analytics.readonly": { "class": "sensitive", "verified": false, "does": "list accounts, properties, data streams" },
+        "https://www.googleapis.com/auth/analytics.edit": { "class": "sensitive", "verified": false, "does": "create and modify properties, streams, conversions" }
+      },
+      "quirks": ["Account and property listing is the cheapest way to discover what an authenticated user can reach."]
+    },
+    "google-ads": {
+      "label": "Google Ads API",
+      "service": "googleads.googleapis.com",
+      "base": "https://googleads.googleapis.com/v21",
+      "docs": "https://developers.google.com/google-ads/api/docs/start",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/adwords": { "class": "sensitive", "verified": false, "does": "full Ads API access" }
+      },
+      "quirks": [
+        "REQUIRES a developer-token header on every call in addition to the bearer. Missing it is the single most common cause of silent 401/403 — a Worker that only sets Authorization will never work.",
+        "Manager accounts require the login-customer-id header set to the MCC id, with customer_id as the target account.",
+        "Customer ids must have hyphens stripped before use.",
+        "Reporting is GAQL via customers/{id}/googleAds:searchStream, not REST resources.",
+        "Developer tokens start with test-account-only access; production access needs an application to Google."
+      ]
+    },
+    "tag-manager": {
+      "label": "Google Tag Manager API",
+      "service": "tagmanager.googleapis.com",
+      "base": "https://tagmanager.googleapis.com/tagmanager/v2",
+      "docs": "https://developers.google.com/tag-platform/tag-manager/api/v2",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/tagmanager.readonly": { "class": "sensitive", "verified": false, "does": "read containers" },
+        "https://www.googleapis.com/auth/tagmanager.edit.containers": { "class": "sensitive", "verified": false, "does": "edit tags, triggers, variables" },
+        "https://www.googleapis.com/auth/tagmanager.edit.containerversions": { "class": "sensitive", "verified": false, "does": "create versions" },
+        "https://www.googleapis.com/auth/tagmanager.publish": { "class": "sensitive", "verified": false, "does": "publish a version live" },
+        "https://www.googleapis.com/auth/tagmanager.manage.accounts": { "class": "sensitive", "verified": false, "does": "manage accounts" },
+        "https://www.googleapis.com/auth/tagmanager.manage.users": { "class": "sensitive", "verified": false, "does": "manage container permissions" }
+      },
+      "quirks": [
+        "Everything happens inside a workspace. Create or pick a workspace before writing anything.",
+        "Publishing is a two-step dance: create a version from the workspace, then publish that version.",
+        "Resource paths are long and positional: accounts/{a}/containers/{c}/workspaces/{w}/tags/{t}.",
+        "tagmanager.publish without edit.containerversions cannot create the version it would publish."
+      ]
+    },
+    "tag-gateway": {
+      "label": "Google tag gateway for advertisers (Cloudflare)",
+      "service": null,
+      "base": null,
+      "docs": "https://support.google.com/tagmanager/answer/16061641",
+      "per_user": false,
+      "scopes": {},
+      "quirks": [
+        "NOT an OAuth API. There is no client, no token, no scope. Do not build a Worker integration for it.",
+        "It is a Cloudflare zone-level feature that serves Google tags from your own domain path, replacing third-party tag requests with first-party ones.",
+        "Configured in the Cloudflare dashboard against a zone, then pointed at from GTM or the Google tag. Formerly called first-party mode.",
+        "Relevant to this framework only in that it lives on the same Cloudflare account as your Workers — it is a dashboard toggle, not code."
+      ]
+    },
+    "search-console": {
+      "label": "Search Console API",
+      "service": "searchconsole.googleapis.com",
+      "base": "https://searchconsole.googleapis.com/webmasters/v3",
+      "docs": "https://developers.google.com/webmaster-tools/v1/api_reference_index",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/webmasters.readonly": { "class": "sensitive", "verified": false, "does": "read search analytics and sitemaps" },
+        "https://www.googleapis.com/auth/webmasters": { "class": "sensitive", "verified": false, "does": "manage sites and sitemaps" }
+      },
+      "quirks": [
+        "Search analytics data lags roughly two days; do not alert on today.",
+        "siteUrl must match the verified property exactly, including sc-domain: prefix for domain properties.",
+        "Row limits cap at 25000 per request; paginate with startRow."
+      ]
+    },
+    "merchant-center": {
+      "label": "Merchant Center / Content API",
+      "service": "shoppingcontent.googleapis.com",
+      "base": "https://shoppingcontent.googleapis.com/content/v2.1",
+      "docs": "https://developers.google.com/shopping-content/guides/quickstart",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/content": { "class": "sensitive", "verified": false, "does": "manage products, feeds, and account" }
+      },
+      "quirks": [
+        "Product ids are composite: channel:contentLanguage:targetCountry:offerId.",
+        "Batch endpoints exist and are dramatically cheaper than per-product calls.",
+        "The newer Merchant API is superseding Content API v2.1 — check which your account is on before building."
+      ]
+    },
+    "bigquery": {
+      "label": "BigQuery",
+      "service": "bigquery.googleapis.com",
+      "base": "https://bigquery.googleapis.com/bigquery/v2",
+      "docs": "https://cloud.google.com/bigquery/docs/reference/rest",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/bigquery": { "class": "sensitive", "verified": false, "does": "run jobs and manage datasets" },
+        "https://www.googleapis.com/auth/bigquery.readonly": { "class": "sensitive", "verified": false, "does": "read data and metadata" },
+        "https://www.googleapis.com/auth/cloud-platform": { "class": "sensitive", "verified": false, "does": "broad GCP access, avoid unless needed" }
+      },
+      "quirks": [
+        "This is a GCP resource API, not user data. Use a SERVICE ACCOUNT, not the OAuth vault — see the service-account decision rule.",
+        "Queries are asynchronous jobs by default; jobs.query with a timeout is the synchronous shortcut.",
+        "Billing must be enabled on the project or every query fails."
+      ]
+    },
+    "calendar": {
+      "label": "Google Calendar",
+      "service": "calendar-json.googleapis.com",
+      "base": "https://www.googleapis.com/calendar/v3",
+      "docs": "https://developers.google.com/calendar/api/auth",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/calendar": { "class": "sensitive", "verified": false, "does": "full calendar access" },
+        "https://www.googleapis.com/auth/calendar.readonly": { "class": "sensitive", "verified": false, "does": "read calendars and events" },
+        "https://www.googleapis.com/auth/calendar.events": { "class": "sensitive", "verified": false, "does": "manage events only" }
+      },
+      "quirks": [
+        "Recurring events expand only when singleEvents=true; otherwise you get the rule, not the instances.",
+        "Incremental sync uses syncToken, which expires and returns 410 — handle by resyncing from scratch.",
+        "All-day events use date, timed events use dateTime. They are different fields."
+      ]
+    },
+    "sheets": {
+      "label": "Google Sheets",
+      "service": "sheets.googleapis.com",
+      "base": "https://sheets.googleapis.com/v4/spreadsheets",
+      "docs": "https://developers.google.com/sheets/api/scopes",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/spreadsheets": { "class": "sensitive", "verified": false, "does": "read and write all sheets" },
+        "https://www.googleapis.com/auth/spreadsheets.readonly": { "class": "sensitive", "verified": false, "does": "read all sheets" },
+        "https://www.googleapis.com/auth/drive.file": { "class": "non-sensitive", "verified": true, "does": "only sheets this app created — prefer this" }
+      },
+      "quirks": [
+        "drive.file works for Sheets the app creates and avoids sensitive classification entirely.",
+        "values.batchUpdate is far cheaper than repeated single-range writes.",
+        "A1 notation is 1-indexed; the API's grid ranges are 0-indexed and half-open. Mixing them is the classic bug."
+      ]
+    },
+    "docs": {
+      "label": "Google Docs",
+      "service": "docs.googleapis.com",
+      "base": "https://docs.googleapis.com/v1/documents",
+      "docs": "https://developers.google.com/docs/api/how-tos/overview",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/documents": { "class": "sensitive", "verified": false, "does": "read and write all docs" },
+        "https://www.googleapis.com/auth/documents.readonly": { "class": "sensitive", "verified": false, "does": "read all docs" },
+        "https://www.googleapis.com/auth/drive.file": { "class": "non-sensitive", "verified": true, "does": "only docs this app created — prefer this" }
+      },
+      "quirks": [
+        "Edits are batchUpdate request arrays applied in order; indexes shift as you go, so build requests back-to-front.",
+        "There is no plain-text write. Everything is structural requests."
+      ]
+    },
+    "slides": {
+      "label": "Google Slides",
+      "service": "slides.googleapis.com",
+      "base": "https://slides.googleapis.com/v1/presentations",
+      "docs": "https://developers.google.com/slides/api/guides/overview",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/presentations": { "class": "sensitive", "verified": false, "does": "read and write all presentations" },
+        "https://www.googleapis.com/auth/presentations.readonly": { "class": "sensitive", "verified": false, "does": "read presentations" },
+        "https://www.googleapis.com/auth/drive.file": { "class": "non-sensitive", "verified": true, "does": "only decks this app created — prefer this" }
+      },
+      "quirks": ["Same batchUpdate model as Docs. Object ids you supply must be unique per presentation."]
+    },
+    "forms": {
+      "label": "Google Forms",
+      "service": "forms.googleapis.com",
+      "base": "https://forms.googleapis.com/v1/forms",
+      "docs": "https://developers.google.com/forms/api/guides",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/forms.body": { "class": "sensitive", "verified": false, "does": "create and edit forms" },
+        "https://www.googleapis.com/auth/forms.responses.readonly": { "class": "sensitive", "verified": false, "does": "read responses" }
+      },
+      "quirks": ["Response watches are push notifications via Pub/Sub, not polling."]
+    },
+    "admin-directory": {
+      "label": "Admin SDK Directory",
+      "service": "admin.googleapis.com",
+      "base": "https://admin.googleapis.com/admin/directory/v1",
+      "docs": "https://developers.google.com/admin-sdk/directory/v1/guides/authorizing",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/admin.directory.user": { "class": "sensitive", "verified": false, "does": "manage users" },
+        "https://www.googleapis.com/auth/admin.directory.user.readonly": { "class": "sensitive", "verified": false, "does": "read users" },
+        "https://www.googleapis.com/auth/admin.directory.group": { "class": "sensitive", "verified": false, "does": "manage groups" }
+      },
+      "quirks": [
+        "Only a Workspace super-admin can consent. This is the one API where domain-wide delegation is usually the right answer instead of the token vault.",
+        "customer=my_customer is the shorthand for the authenticated admin's own domain."
+      ]
+    },
+    "business-profile": {
+      "label": "Google Business Profile",
+      "service": "mybusinessbusinessinformation.googleapis.com",
+      "base": "https://mybusinessbusinessinformation.googleapis.com/v1",
+      "docs": "https://developers.google.com/my-business/content/basic-setup",
+      "per_user": false,
+      "scopes": {
+        "https://www.googleapis.com/auth/business.manage": { "class": "sensitive", "verified": false, "does": "manage listings and reviews" }
+      },
+      "quirks": [
+        "Access requires an approved application to Google before the API returns anything — enabling it is not enough.",
+        "The API is split across several hostnames by concern (business information, account management, notifications)."
+      ]
+    },
+    "youtube": {
+      "label": "YouTube Data API",
+      "service": "youtube.googleapis.com",
+      "base": "https://www.googleapis.com/youtube/v3",
+      "docs": "https://developers.google.com/youtube/v3/guides/auth/installed-apps",
+      "per_user": true,
+      "scopes": {
+        "https://www.googleapis.com/auth/youtube.readonly": { "class": "sensitive", "verified": false, "does": "read channel and video data" },
+        "https://www.googleapis.com/auth/youtube": { "class": "sensitive", "verified": false, "does": "manage account" },
+        "https://www.googleapis.com/auth/youtube.upload": { "class": "sensitive", "verified": false, "does": "upload videos" }
+      },
+      "quirks": ["Daily quota is small and per-project, not per-user. Search costs 100 units per call."]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "CHANGE-ME",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
+  "d1_databases": [{ "binding": "DB", "database_name": "CHANGE-ME", "database_id": "PASTE" }],
+  "kv_namespaces": [{ "binding": "CACHE", "id": "PASTE" }],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "MAX_FANOUT_CONCURRENCY": "6",
+    "PER_ACCOUNT_TIMEOUT_MS": "15000",
+    "TOKEN_REFRESH_SKEW_SECONDS": "300"
+  },
+  "observability": { "enabled": true }
+  // Add only if the project needs them:
+  //  "r2_buckets": [{ "binding": "ARTIFACTS", "bucket_name": "CHANGE-ME" }]
+  //  "queues": { "producers": [...], "consumers": [...] }
+  //  "triggers": { "crons": ["*/15 * * * *"] }
+}

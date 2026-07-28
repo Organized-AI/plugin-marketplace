@@ -370,6 +370,41 @@ Advertising and tracking audit toolkit for comprehensive platform analysis.
 
 ---
 
+### organized-google-wiring ⭐ NEW
+
+Wire any Google API into a Cloudflare Worker without relearning the sharp edges each time.
+
+```
+/plugin install organized-google-wiring@organized-ai-marketplace
+```
+
+**5 skills**
+
+- `google-api-wiring` — the core framework: pick the auth model, build the encrypted token vault, fan out across accounts, scope by role
+- `google-oauth-preflight` — Console setup and the traps that silently break consent
+- `google-api-catalogue` — scopes, endpoints, verification cost and quirks for 18 Google APIs
+- `google-worker-scaffold` — generate a deployable starter Worker
+- `google-build-brief` — emit a paste-ready phased build prompt
+
+**MCP server** — `google-api-atlas`, zero dependencies, no network:
+
+| Tool | Answers |
+|---|---|
+| `google_api_lookup` | base URL, service to enable, scopes, quirks |
+| `google_scope_plan` | merged scopes plus the verification burden they create |
+| `google_auth_decision` | service account vs domain-wide delegation vs token vault |
+| `google_wrangler_config` | binding block and secret list |
+| `google_oauth_checklist` | the Console steps that cannot be automated |
+| `google_failure_modes` | symptom → cause → fix |
+
+**Agent** — `google-oauth-auditor`, checks an existing Worker against 18 known defects.
+
+**Scripts** — `gcp-provision.sh`, `set-google-secrets.sh` (refuses desktop-type clients), `oauth-doctor.sh`.
+
+**Why it exists.** There is no API for creating OAuth web clients — gcloud, GAM and gws all hit the same wall. An app left in Testing status expires every refresh token after seven days, silently. Restricted scopes drag an annual CASA security assessment behind them, and `drive.file` avoids that entirely for files your app creates. Domain-wide delegation cannot cross a Workspace tenant boundary. Each of those cost real time to discover.
+
+**Starter repo** — https://github.com/organized-ai/google-worker-template
+
 ## 🎨 Development & Design (Anthropic Official)
 
 ### frontend-design ⭐ ANTHROPIC OFFICIAL

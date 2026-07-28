@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "google-api-atlas": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/atlas-server.mjs"]
+    }
+  }
+}

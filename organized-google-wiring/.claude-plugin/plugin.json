@@ -1,0 +1,10 @@
+{
+  "name": "organized-google-wiring",
+  "version": "0.1.0",
+  "description": "Framework for wiring any Google API into a Cloudflare Worker: OAuth client setup, encrypted multi-account token vault, per-account fan-out, and role-scoped access. Covers GA4, Google Ads, Tag Manager, Search Console, Merchant Center, BigQuery, Gmail, Drive, Calendar, Sheets, Docs, Slides and Admin SDK.",
+  "author": { "name": "Organized AI" },
+  "homepage": "https://github.com/organized-ai/google-worker-template",
+  "repository": "https://github.com/organized-ai/organized-google-wiring",
+  "license": "MIT",
+  "keywords": ["google", "oauth", "cloudflare-workers", "gcp", "ga4", "gtm", "google-ads", "api"]
+}
