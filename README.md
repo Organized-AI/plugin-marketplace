@@ -370,6 +370,35 @@ Advertising and tracking audit toolkit for comprehensive platform analysis.
 
 ---
 
+### organized-meta-wiring ⭐ NEW
+
+Wire Meta APIs into a Cloudflare Worker. Sibling to `organized-google-wiring` — same framework shape, Meta's own sharp edges.
+
+```
+/plugin install organized-meta-wiring@organized-ai-marketplace
+```
+
+**5 skills** — `meta-api-wiring` (token type, self-refreshing vault, BUC rate limits, fan-out), `meta-app-preflight` (app, system user, asset assignment, access tiers), `meta-api-catalogue` (permissions, dependencies, endpoints, versions), `meta-worker-scaffold`, `meta-ads-connectors` (Ads CLI vs hosted Ads MCP vs Graph direct).
+
+**MCP server** — `meta-api-atlas`, zero dependencies:
+
+| Tool | Answers |
+|---|---|
+| `meta_api_lookup` | base URL, permissions, BUC bucket, quirks |
+| `meta_auth_decision` | system user vs user token vs dataset-scoped CAPI token |
+| `meta_permission_plan` | expands dependencies, reports App Review implications |
+| `meta_rate_limit_decode` | turns a throttle header or error code into an action |
+| `meta_app_checklist` | the dashboard steps that cannot be automated |
+| `meta_failure_modes` | symptom → cause → fix |
+| `meta_connector_compare` | CLI vs hosted MCP vs Worker-direct for a stated job |
+| `meta_wrangler_config` | bindings, secrets and the refresh cron |
+
+**Agent** — `meta-token-auditor`, 20 checks weighted toward the token lifecycle.
+
+**Scripts** — `meta-provision.sh`, `meta-token-refresh.sh`, `meta-doctor.sh`.
+
+**Why it exists.** There is no API to create a Meta app — `POST /{business_id}/owned_apps` looks like it does but takes no parameters and claims an existing app. A 60-day system user token that is never refreshed is *forfeit*, no grace period. Meta's refresh returns a **replacement credential** rather than minting from a persistent refresh token, so a vault ported straight from Google silently breaks at day 60. Marketing API rejects unversioned calls and gives only ~90 days of version overlap. BUC rate-limit headers report **percentages**, not counts, in minutes in one header and seconds in another.
+
 ### organized-google-wiring ⭐ NEW
 
 Wire any Google API into a Cloudflare Worker without relearning the sharp edges each time.

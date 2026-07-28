@@ -120,6 +120,11 @@
       "name": "organized-google-wiring",
       "source": "./organized-google-wiring",
       "description": "Framework for wiring any Google API into a Cloudflare Worker \u2014 auth-model decision, encrypted multi-account token vault, per-account fan-out, role-scoped access. Covers GA4, Google Ads, GTM, Search Console, Merchant Center, BigQuery, Gmail, Drive, Calendar, Sheets, Docs, Slides, Admin SDK."
+    },
+    {
+      "name": "organized-meta-wiring",
+      "source": "./organized-meta-wiring",
+      "description": "Framework for wiring Meta APIs into a Cloudflare Worker \u2014 spin up Meta Apps and system users, the self-refreshing 60-day token vault, Business Use Case rate limiting, and multi-ad-account fan-out. Covers Marketing API, Conversions API, Business Management, Catalog, Instagram, WhatsApp, Pages and Lead Ads, plus the Meta Ads CLI and hosted Ads MCP server."
     }
   ]
 }

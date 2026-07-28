@@ -1,0 +1,10 @@
+{
+  "name": "organized-meta-wiring",
+  "version": "0.1.0",
+  "description": "Framework for wiring Meta APIs into a Cloudflare Worker: spinning up Meta Apps and system users, the self-refreshing 60-day token vault, Business Use Case rate limiting, and multi-ad-account fan-out. Covers Marketing API, Conversions API, Business Management, Catalog, Instagram, WhatsApp, Pages and Lead Ads, plus the Meta Ads CLI and the hosted Ads MCP server.",
+  "author": { "name": "Organized AI" },
+  "homepage": "https://github.com/organized-ai/plugin-marketplace",
+  "repository": "https://github.com/organized-ai/plugin-marketplace",
+  "license": "MIT",
+  "keywords": ["meta", "facebook", "marketing-api", "conversions-api", "cloudflare-workers", "ads", "system-user", "capi"]
+}

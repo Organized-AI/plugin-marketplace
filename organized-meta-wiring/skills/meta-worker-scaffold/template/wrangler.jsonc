@@ -1,0 +1,20 @@
+{
+  "name": "CHANGE-ME",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
+  "d1_databases": [{ "binding": "DB", "database_name": "CHANGE-ME", "database_id": "PASTE" }],
+  "kv_namespaces": [{ "binding": "CACHE", "id": "PASTE" }],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "GRAPH_VERSION": "v25.0",
+    "MARKETING_VERSION": "v25.0",
+    "MAX_FANOUT_CONCURRENCY": "4",
+    "PER_ACCOUNT_TIMEOUT_MS": "20000",
+    "TOKEN_REFRESH_AT_DAYS": "45"
+  },
+  // Not optional. A 60-day system user token that is never refreshed is
+  // forfeit, with no grace period and no recovery except minting by hand.
+  "triggers": { "crons": ["0 4 * * *"] },
+  "observability": { "enabled": true }
+}
