@@ -8,7 +8,7 @@ APP_ID="${1:?usage: meta-token-refresh.sh <app-id> <app-secret> <current-token> 
 APP_SECRET="${2:?missing app secret}"
 CURRENT="${3:?missing current token}"
 WORKER="${4:-}"
-VERSION="${GRAPH_VERSION:-v25.0}"
+VERSION="${GRAPH_VERSION:-v26.0}"
 
 echo "==> current token state"
 curl -s "https://graph.facebook.com/$VERSION/debug_token?input_token=$CURRENT&access_token=$APP_ID|$APP_SECRET" \

@@ -1,6 +1,6 @@
 {
   "name": "organized-meta-wiring",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Framework for wiring Meta APIs into a Cloudflare Worker: spinning up Meta Apps and system users, the self-refreshing 60-day token vault, Business Use Case rate limiting, and multi-ad-account fan-out. Covers Marketing API, Conversions API, Business Management, Catalog, Instagram, WhatsApp, Pages and Lead Ads, plus the Meta Ads CLI and the hosted Ads MCP server.",
   "author": {
     "name": "Organized AI"

@@ -7,11 +7,11 @@
  * pages_read_engagement and pages_show_list.
  */
 
-export const WORKER_NAME = 'change-me';
+export const WORKER_NAME = 'CHANGE-ME';
 
 /** Pin explicitly. Marketing API REJECTS unversioned calls outright. */
-export const GRAPH_VERSION = 'v25.0';
-export const MARKETING_VERSION = 'v25.0';
+export const GRAPH_VERSION = 'v26.0';
+export const MARKETING_VERSION = 'v26.0';
 
 export interface Surface {
   label: string;

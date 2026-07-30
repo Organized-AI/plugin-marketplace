@@ -1,14 +1,14 @@
 {
-  "name": "change-me",
+  "name": "CHANGE-ME",
   "main": "src/index.ts",
   "compatibility_date": "2026-07-01",
   "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
-  "d1_databases": [{ "binding": "DB", "database_name": "change-me", "database_id": "PASTE" }],
+  "d1_databases": [{ "binding": "DB", "database_name": "CHANGE-ME", "database_id": "PASTE" }],
   "kv_namespaces": [{ "binding": "CACHE", "id": "PASTE" }],
   "vars": {
     "ENVIRONMENT": "production",
-    "GRAPH_VERSION": "v25.0",
-    "MARKETING_VERSION": "v25.0",
+    "GRAPH_VERSION": "v26.0",
+    "MARKETING_VERSION": "v26.0",
     "MAX_FANOUT_CONCURRENCY": "4",
     "PER_ACCOUNT_TIMEOUT_MS": "20000",
     "TOKEN_REFRESH_AT_DAYS": "45"

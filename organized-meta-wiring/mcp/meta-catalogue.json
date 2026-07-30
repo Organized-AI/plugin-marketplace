@@ -1,18 +1,18 @@
 {
-  "$comment": "Researched 2026-07-28 against official Meta docs. `verified: true` means read verbatim from a Meta doc page. Meta renamed the Marketing API tiers in May 2026 and ships a new Marketing API version roughly every four months on a 90-day deprecation clock, so re-check versions and tier names before relying on them.",
+  "$comment": "Researched 2026-07-28, versions re-verified live 2026-07-30 (v26.0 confirmed answering; v99.0 control still rejected) against official Meta docs. `verified: true` means read verbatim from a Meta doc page. Meta renamed the Marketing API tiers in May 2026 and ships a new Marketing API version roughly every four months on a 90-day deprecation clock, so re-check versions and tier names before relying on them.",
   "versions": {
-    "graph_api_latest": "v25.0",
-    "graph_api_introduced": "2026-02-18",
-    "marketing_api_current": "v25.0",
-    "marketing_api_next": "v26.0 (dated 2026-07-29)",
+    "graph_api_latest": "v26.0",
+    "graph_api_introduced": "2026-07-29",
+    "marketing_api_current": "v26.0",
+    "marketing_api_next": "v27.0 (~4 months out; Marketing ships roughly quarterly)",
     "verified": true,
     "policy": {
       "graph": "Each version lives at least 2 years. Unversioned calls fall back to the version set in App Dashboard > Settings > Advanced.",
-      "marketing": "Only ~90 days of overlap after a new version ships, and releases land about every four months. Marketing API does NOT support unversioned calls — omit the version and the call fails.",
+      "marketing": "Only ~90 days of overlap after a new version ships, and releases land about every four months. Marketing API does NOT support unversioned calls \u2014 omit the version and the call fails.",
       "warning_header": "X-Ad-Api-Version-Warning tells you an auto-upgrade fired."
-    }
+    },
+    "deprecation_watch": "v25.0 enters its ~90-day Marketing deprecation window from 2026-07-29; v24.0 documented Available Until 2026-10-06. Graph v25.0 remains supported until 2028-07-29."
   },
-
   "tokens": {
     "system_user_non_expiring": {
       "obtain": "POST /{system-user-id}/access_tokens",
@@ -28,7 +28,11 @@
       "verified": true,
       "note": "Refresh returns a NEW token string that replaces the old one. The old token stays valid until its original expiry, giving a zero-downtime overlap window. Revoke the old one explicitly after deploying the new one."
     },
-    "user_short_lived": { "obtain": "Login dialog / GET /oauth/access_token?code=", "lifetime": "About 1-2 hours", "verified": true },
+    "user_short_lived": {
+      "obtain": "Login dialog / GET /oauth/access_token?code=",
+      "lifetime": "About 1-2 hours",
+      "verified": true
+    },
     "user_long_lived": {
       "obtain": "GET /oauth/access_token?grant_type=fb_exchange_token&fb_exchange_token=<short-lived>",
       "lifetime": "About 60 days (expires_in 5183944)",
@@ -48,27 +52,33 @@
       "note": "Server-to-server only. Rejected entirely if the app type is Native/Desktop."
     }
   },
-
   "surfaces": {
     "marketing-api": {
       "label": "Marketing API (campaigns, ad sets, ads, creatives)",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/marketing-apis",
-      "permissions": ["ads_management", "pages_read_engagement", "pages_show_list", "business_management"],
+      "permissions": [
+        "ads_management",
+        "pages_read_engagement",
+        "pages_show_list",
+        "business_management"
+      ],
       "buc_type": "ads_management",
       "quirks": [
         "Marketing API refuses unversioned calls. Always pin a version in the path.",
         "Everything should be created PAUSED and activated deliberately; both the Ads CLI and the hosted MCP server do this by default.",
-        "Budgets are in minor units — 5000 means $50.00.",
+        "Budgets are in minor units \u2014 5000 means $50.00.",
         "Creation order is campaign, then ad set, then creative, then ad. An ad references a creative that must already exist.",
         "Lifetime budget requires an end time. Omit ad set budget entirely when the campaign uses campaign budget optimisation."
       ]
     },
     "ads-insights": {
       "label": "Ads Insights (reporting)",
-      "base": "https://graph.facebook.com/v25.0/{ad-account-id}/insights",
+      "base": "https://graph.facebook.com/v26.0/{ad-account-id}/insights",
       "docs": "https://developers.facebook.com/docs/marketing-api/insights",
-      "permissions": ["ads_read"],
+      "permissions": [
+        "ads_read"
+      ],
       "buc_type": "ads_insights",
       "quirks": [
         "Has its own throttle header, X-FB-Ads-Insights-Throttle, separate from the BUC header.",
@@ -78,12 +88,14 @@
     },
     "conversions-api": {
       "label": "Conversions API (server-side events)",
-      "base": "https://graph.facebook.com/v25.0/{dataset-id}/events",
+      "base": "https://graph.facebook.com/v26.0/{dataset-id}/events",
       "docs": "https://developers.facebook.com/docs/marketing-api/conversions-api",
-      "permissions": ["ads_read"],
+      "permissions": [
+        "ads_read"
+      ],
       "buc_type": "ads_management",
       "quirks": [
-        "ads_read is the CAPI permission — it grants server-side event access, which surprises people who assume ads_management.",
+        "ads_read is the CAPI permission \u2014 it grants server-side event access, which surprises people who assume ads_management.",
         "The dataset id IS the pixel id; Meta renamed pixels to datasets and the ids are interchangeable.",
         "A dataset-scoped token generated in Events Manager avoids needing an app at all for pure CAPI work.",
         "test_event_code routes events to the Test Events tool instead of production. Never leave it set in production.",
@@ -92,9 +104,11 @@
     },
     "business-management": {
       "label": "Business Management API (businesses, ad accounts, system users, asset assignment)",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/business-management-apis",
-      "permissions": ["business_management"],
+      "permissions": [
+        "business_management"
+      ],
       "buc_type": "ads_management",
       "quirks": [
         "This is what IS automatable on Meta: creating businesses, ad accounts, system users, assigning assets, minting tokens.",
@@ -104,48 +118,70 @@
     },
     "catalog": {
       "label": "Catalog / Commerce",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/marketing-api/catalog",
-      "permissions": ["catalog_management", "business_management"],
+      "permissions": [
+        "catalog_management",
+        "business_management"
+      ],
       "buc_type": "custom_audience",
       "quirks": [
-        "catalog_management depends on business_management — requesting it alone fails.",
+        "catalog_management depends on business_management \u2014 requesting it alone fails.",
         "Catalog Batch has its own BUC error code, 80014, separate from Catalog Management's 80009.",
         "Catalogs with active feeds or referencing ads cannot be deleted."
       ]
     },
     "custom-audiences": {
       "label": "Custom Audiences",
-      "base": "https://graph.facebook.com/v25.0/{ad-account-id}/customaudiences",
+      "base": "https://graph.facebook.com/v26.0/{ad-account-id}/customaudiences",
       "docs": "https://developers.facebook.com/docs/marketing-api/audiences",
-      "permissions": ["ads_management"],
+      "permissions": [
+        "ads_management"
+      ],
       "buc_type": "custom_audience",
-      "quirks": ["User identifiers must be SHA-256 hashed and normalised before upload.", "Has its own BUC bucket, so audience uploads do not consume ads_management quota."]
+      "quirks": [
+        "User identifiers must be SHA-256 hashed and normalised before upload.",
+        "Has its own BUC bucket, so audience uploads do not consume ads_management quota."
+      ]
     },
     "instagram": {
       "label": "Instagram (business accounts, media, boosting)",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/instagram-platform",
-      "permissions": ["instagram_basic", "pages_show_list", "pages_read_user_content"],
+      "permissions": [
+        "instagram_basic",
+        "pages_show_list",
+        "pages_read_user_content"
+      ],
       "buc_type": "instagram",
       "quirks": [
         "instagram_basic depends on pages_read_user_content and pages_show_list.",
-        "System user tokens do not carry the newer instagram_business_* permissions — check the supported scope list before assuming."
+        "System user tokens do not carry the newer instagram_business_* permissions \u2014 check the supported scope list before assuming."
       ]
     },
     "whatsapp": {
       "label": "WhatsApp Business",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/whatsapp",
-      "permissions": ["whatsapp_business_management", "whatsapp_business_messaging"],
+      "permissions": [
+        "whatsapp_business_management",
+        "whatsapp_business_messaging"
+      ],
       "buc_type": "whatsapp_business_management",
-      "quirks": ["Requires a business portfolio.", "Own BUC bucket with error code 80008."]
+      "quirks": [
+        "Requires a business portfolio.",
+        "Own BUC bucket with error code 80008."
+      ]
     },
     "pages": {
       "label": "Pages",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/pages-api",
-      "permissions": ["pages_show_list", "pages_read_engagement", "pages_manage_ads"],
+      "permissions": [
+        "pages_show_list",
+        "pages_read_engagement",
+        "pages_manage_ads"
+      ],
       "buc_type": "pages",
       "quirks": [
         "Neither Marketing API tier can create Pages through the API.",
@@ -155,29 +191,92 @@
     },
     "leadgen": {
       "label": "Lead Ads",
-      "base": "https://graph.facebook.com/v25.0",
+      "base": "https://graph.facebook.com/v26.0",
       "docs": "https://developers.facebook.com/docs/marketing-api/guides/lead-ads",
-      "permissions": ["leads_retrieval", "pages_manage_ads"],
+      "permissions": [
+        "leads_retrieval",
+        "pages_manage_ads"
+      ],
       "buc_type": "leadgen",
-      "quirks": ["Leads are only retrievable for 90 days.", "Realtime delivery is via webhooks, not polling."]
+      "quirks": [
+        "Leads are only retrievable for 90 days.",
+        "Realtime delivery is via webhooks, not polling."
+      ]
     }
   },
-
   "permissions": {
-    "ads_management": { "depends_on": ["pages_read_engagement", "pages_show_list"], "does": "read and manage ad accounts, create campaigns, manage ads, fetch metrics", "verified": true },
-    "ads_read": { "depends_on": [], "does": "Ads Insights API reporting AND server-side Conversions API access", "verified": true },
-    "business_management": { "depends_on": ["pages_read_engagement", "pages_show_list"], "does": "read and write the Business Manager API, manage and claim assets", "verified": true },
-    "catalog_management": { "depends_on": ["business_management"], "does": "create, read, update, delete business-owned product catalogs", "verified": true },
-    "pages_read_engagement": { "depends_on": [], "does": "required by both Marketing API use cases and by ads_management", "verified": true },
-    "pages_show_list": { "depends_on": [], "does": "list the Pages a user manages", "verified": true },
-    "pages_manage_ads": { "depends_on": [], "does": "manage ads associated with a Page", "verified": true },
-    "read_insights": { "depends_on": [], "does": "read insights; the Ads CLI asks for this rather than ads_read", "verified": true },
-    "instagram_basic": { "depends_on": ["pages_read_user_content", "pages_show_list"], "does": "read an Instagram business profile and its media", "verified": true },
-    "leads_retrieval": { "depends_on": [], "does": "retrieve lead ad submissions", "verified": true },
-    "whatsapp_business_management": { "depends_on": [], "does": "manage WhatsApp business assets, numbers, templates, webhooks", "verified": true },
-    "ads_mcp_management": { "depends_on": [], "does": "required by the hosted Ads MCP server only; no CLI or raw-API equivalent", "verified": true }
+    "ads_management": {
+      "depends_on": [
+        "pages_read_engagement",
+        "pages_show_list"
+      ],
+      "does": "read and manage ad accounts, create campaigns, manage ads, fetch metrics",
+      "verified": true
+    },
+    "ads_read": {
+      "depends_on": [],
+      "does": "Ads Insights API reporting AND server-side Conversions API access",
+      "verified": true
+    },
+    "business_management": {
+      "depends_on": [
+        "pages_read_engagement",
+        "pages_show_list"
+      ],
+      "does": "read and write the Business Manager API, manage and claim assets",
+      "verified": true
+    },
+    "catalog_management": {
+      "depends_on": [
+        "business_management"
+      ],
+      "does": "create, read, update, delete business-owned product catalogs",
+      "verified": true
+    },
+    "pages_read_engagement": {
+      "depends_on": [],
+      "does": "required by both Marketing API use cases and by ads_management",
+      "verified": true
+    },
+    "pages_show_list": {
+      "depends_on": [],
+      "does": "list the Pages a user manages",
+      "verified": true
+    },
+    "pages_manage_ads": {
+      "depends_on": [],
+      "does": "manage ads associated with a Page",
+      "verified": true
+    },
+    "read_insights": {
+      "depends_on": [],
+      "does": "read insights; the Ads CLI asks for this rather than ads_read",
+      "verified": true
+    },
+    "instagram_basic": {
+      "depends_on": [
+        "pages_read_user_content",
+        "pages_show_list"
+      ],
+      "does": "read an Instagram business profile and its media",
+      "verified": true
+    },
+    "leads_retrieval": {
+      "depends_on": [],
+      "does": "retrieve lead ad submissions",
+      "verified": true
+    },
+    "whatsapp_business_management": {
+      "depends_on": [],
+      "does": "manage WhatsApp business assets, numbers, templates, webhooks",
+      "verified": true
+    },
+    "ads_mcp_management": {
+      "depends_on": [],
+      "does": "required by the hosted Ads MCP server only; no CLI or raw-API equivalent",
+      "verified": true
+    }
   },
-
   "access": {
     "renamed_may_2026": true,
     "graph_api_levels": {
@@ -192,18 +291,33 @@
     },
     "verified": true
   },
-
   "rate_limits": {
     "headers": {
       "X-Business-Use-Case-Usage": {
         "shape": "{ business-object-id: [ { type, call_count, total_cputime, total_time, estimated_time_to_regain_access, ads_api_access_tier } ] }",
         "units": "call_count, total_cputime and total_time are PERCENTAGES of the allowance over a rolling hour, not counts. estimated_time_to_regain_access is in MINUTES.",
         "max_objects": 32,
-        "types": ["ads_insights", "ads_management", "custom_audience", "instagram", "leadgen", "messenger", "pages"]
+        "types": [
+          "ads_insights",
+          "ads_management",
+          "custom_audience",
+          "instagram",
+          "leadgen",
+          "messenger",
+          "pages"
+        ]
       },
-      "X-App-Usage": { "shape": "{ call_count, total_time, total_cputime }", "units": "percentages over a rolling hour, app-wide" },
-      "X-Ad-Account-Usage": { "shape": "{ acc_id_util_pct, reset_time_duration, ads_api_access_tier }", "units": "reset_time_duration is in SECONDS — note the mismatch with the BUC header's minutes" },
-      "X-FB-Ads-Insights-Throttle": { "shape": "{ app_id_util_pct, acc_id_util_pct, ads_api_access_tier }" }
+      "X-App-Usage": {
+        "shape": "{ call_count, total_time, total_cputime }",
+        "units": "percentages over a rolling hour, app-wide"
+      },
+      "X-Ad-Account-Usage": {
+        "shape": "{ acc_id_util_pct, reset_time_duration, ads_api_access_tier }",
+        "units": "reset_time_duration is in SECONDS \u2014 note the mismatch with the BUC header's minutes"
+      },
+      "X-FB-Ads-Insights-Throttle": {
+        "shape": "{ app_id_util_pct, acc_id_util_pct, ads_api_access_tier }"
+      }
     },
     "error_codes": {
       "4": "App-level too many calls",
@@ -214,7 +328,7 @@
       "80001": "Page calls with a Page or SYSTEM USER token",
       "80002": "Instagram BUC limit",
       "80003": "Custom Audience BUC limit",
-      "80004": "Ads Management BUC limit (subcode 2446079) — the one you will hit most",
+      "80004": "Ads Management BUC limit (subcode 2446079) \u2014 the one you will hit most",
       "80005": "LeadGen BUC limit",
       "80006": "Messenger BUC limit",
       "80008": "WhatsApp Business Management BUC limit",
@@ -223,43 +337,60 @@
     },
     "verified": true
   },
-
   "auth_errors": {
     "190": "Token expired, revoked or invalid. Get a new one.",
-    "190.458": "App Not Installed — the user has not authorised your app, or revoked it.",
-    "190.459": "User Checkpointed — they must log in at facebook.com to clear an issue.",
+    "190.458": "App Not Installed \u2014 the user has not authorised your app, or revoked it.",
+    "190.459": "User Checkpointed \u2014 they must log in at facebook.com to clear an issue.",
     "190.460": "Password Changed, or the user logged out. Both produce this.",
-    "190.463": "Expired — session expired on a given date.",
+    "190.463": "Expired \u2014 session expired on a given date.",
     "190.464": "Unconfirmed User.",
-    "190.467": "Invalid Access Token — revoked or malformed.",
-    "190.492": "Invalid Session — the user behind a Page token no longer has the right Page role. The classic Page-token killer.",
+    "190.467": "Invalid Access Token \u2014 revoked or malformed.",
+    "190.492": "Invalid Session \u2014 the user behind a Page token no longer has the right Page role. The classic Page-token killer.",
     "102": "API Session. Handle like 190.",
     "100": "Invalid parameter. The most common error overall.",
-    "104": "Incorrect signature — appsecret_proof missing or wrong.",
+    "104": "Incorrect signature \u2014 appsecret_proof missing or wrong.",
     "200": "Permission not granted or removed.",
     "368": "Action deemed abusive. Back off and retry later.",
     "506": "Duplicate post.",
     "verified": true,
     "critical": "Meta will NOT notify you that a token became invalid. You only find out on the next call. Tokens can also be invalidated early for security reasons with no signal at all."
   },
-
   "connectors": {
     "ads-cli": {
       "label": "Meta Ads CLI",
       "docs": "https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-cli/ads-cli-overview",
       "form": "Local Python package, pip install meta-ads, Python 3.12+, entrypoint `meta`",
       "auth": "System user access token only. No interactive login.",
-      "env": ["ACCESS_TOKEN", "AD_ACCOUNT_ID", "BUSINESS_ID"],
+      "env": [
+        "ACCESS_TOKEN",
+        "AD_ACCOUNT_ID",
+        "BUSINESS_ID"
+      ],
       "env_note": "No META_ prefix. The variable really is just ACCESS_TOKEN.",
-      "permissions": ["business_management", "ads_management", "pages_show_list", "pages_read_engagement", "pages_manage_ads", "catalog_management", "read_insights"],
+      "permissions": [
+        "business_management",
+        "ads_management",
+        "pages_show_list",
+        "pages_read_engagement",
+        "pages_manage_ads",
+        "catalog_management",
+        "read_insights"
+      ],
       "shape": "meta [global options] ads <resource> <action> [options]",
-      "exit_codes": { "0": "success", "1": "general error", "2": "usage error", "3": "auth error", "4": "API error", "5": "not found" },
+      "exit_codes": {
+        "0": "success",
+        "1": "general error",
+        "2": "usage error",
+        "3": "auth error",
+        "4": "API error",
+        "5": "not found"
+      },
       "quirks": [
         "Global flags must come BEFORE the subcommand: meta --output json ads campaign list.",
         "Everything is created PAUSED. Going live takes three separate updates: campaign, ad set, ad.",
         "Budgets in cents.",
         "Business id resolution falls back to an interactive prompt, which hangs in CI. Set BUSINESS_ID explicitly.",
-        "Dataset creation is gated on a business admin accepting the business tools ToS — another interactive blocker.",
+        "Dataset creation is gated on a business admin accepting the business tools ToS \u2014 another interactive blocker.",
         "Config precedence: CLI flags, then env vars, then project .env, then ~/.config/meta/.",
         "The overview page advertises product-item and product-set commands that do not exist in the command reference. Verify with meta ads --help."
       ],
@@ -272,11 +403,19 @@
       "endpoint": "https://mcp.facebook.com/ads",
       "transport": "streamable HTTP",
       "auth": "OAuth via Facebook Login for Business, OR a USER access token in an Authorization: Bearer header",
-      "permissions": ["ads_mcp_management", "ads_read", "ads_management", "catalog_management", "business_management", "pages_show_list", "instagram_basic"],
+      "permissions": [
+        "ads_mcp_management",
+        "ads_read",
+        "ads_management",
+        "catalog_management",
+        "business_management",
+        "pages_show_list",
+        "instagram_basic"
+      ],
       "connect_claude_code": "claude mcp add --transport http --client-id <META_APP_ID> meta-ads https://mcp.facebook.com/ads",
       "tools": "~91 tools named ads_*, across reporting, ad management, catalogs, datasets, help, experiments and activity logs",
       "quirks": [
-        "Owning a Meta app is optional — there is a no-app route through Business Manager.",
+        "Owning a Meta app is optional \u2014 there is a no-app route through Business Manager.",
         "Uses USER tokens, not system user tokens. A token minted for the Ads CLI will not cleanly serve the MCP server and vice versa.",
         "ads_mcp_management is MCP-only and has no CLI or raw-API equivalent.",
         "Advanced Access on ads_mcp_management is required to manage other businesses' data as an agency.",

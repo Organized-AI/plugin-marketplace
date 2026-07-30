@@ -6,7 +6,7 @@ APP_ID="${1:?usage: meta-doctor.sh <app-id> <app-secret> <token> [worker-url]}"
 APP_SECRET="${2:?missing app secret}"
 TOKEN="${3:?missing token}"
 WORKER_URL="${4:-}"
-VERSION="${GRAPH_VERSION:-v25.0}"
+VERSION="${GRAPH_VERSION:-v26.0}"
 
 echo "== token =="
 curl -s "https://graph.facebook.com/$VERSION/debug_token?input_token=$TOKEN&access_token=$APP_ID|$APP_SECRET" \

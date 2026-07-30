@@ -4,8 +4,9 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 
 ## Versions
 
-- Graph API: `v25.0` (introduced 2026-02-18)
-- Marketing API: `v25.0`, next `v26.0 (dated 2026-07-29)`
+- Graph API: `v26.0` (introduced 2026-07-29)
+- Marketing API: `v26.0`, next v27.0 (~4 months out; Marketing ships roughly quarterly)
+- Deprecation watch: v25.0 enters its ~90-day Marketing deprecation window from 2026-07-29; v24.0 documented Available Until 2026-10-06. Graph v25.0 remains supported until 2028-07-29.
 - Graph policy: Each version lives at least 2 years. Unversioned calls fall back to the version set in App Dashboard > Settings > Advanced.
 - Marketing policy: Only ~90 days of overlap after a new version ships, and releases land about every four months. Marketing API does NOT support unversioned calls — omit the version and the call fails.
 
@@ -25,7 +26,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Marketing API (campaigns, ad sets, ads, creatives)
 
 - id: `marketing-api`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `ads_management`, `pages_read_engagement`, `pages_show_list`, `business_management`
 - BUC bucket: `ads_management`
 - docs: <https://developers.facebook.com/docs/marketing-apis>
@@ -39,7 +40,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Ads Insights (reporting)
 
 - id: `ads-insights`
-- base: `https://graph.facebook.com/v25.0/{ad-account-id}/insights`
+- base: `https://graph.facebook.com/v26.0/{ad-account-id}/insights`
 - permissions: `ads_read`
 - BUC bucket: `ads_insights`
 - docs: <https://developers.facebook.com/docs/marketing-api/insights>
@@ -51,7 +52,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Conversions API (server-side events)
 
 - id: `conversions-api`
-- base: `https://graph.facebook.com/v25.0/{dataset-id}/events`
+- base: `https://graph.facebook.com/v26.0/{dataset-id}/events`
 - permissions: `ads_read`
 - BUC bucket: `ads_management`
 - docs: <https://developers.facebook.com/docs/marketing-api/conversions-api>
@@ -65,7 +66,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Business Management API (businesses, ad accounts, system users, asset assignment)
 
 - id: `business-management`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `business_management`
 - BUC bucket: `ads_management`
 - docs: <https://developers.facebook.com/docs/business-management-apis>
@@ -77,7 +78,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Catalog / Commerce
 
 - id: `catalog`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `catalog_management`, `business_management`
 - BUC bucket: `custom_audience`
 - docs: <https://developers.facebook.com/docs/marketing-api/catalog>
@@ -89,7 +90,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Custom Audiences
 
 - id: `custom-audiences`
-- base: `https://graph.facebook.com/v25.0/{ad-account-id}/customaudiences`
+- base: `https://graph.facebook.com/v26.0/{ad-account-id}/customaudiences`
 - permissions: `ads_management`
 - BUC bucket: `custom_audience`
 - docs: <https://developers.facebook.com/docs/marketing-api/audiences>
@@ -100,7 +101,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Instagram (business accounts, media, boosting)
 
 - id: `instagram`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `instagram_basic`, `pages_show_list`, `pages_read_user_content`
 - BUC bucket: `instagram`
 - docs: <https://developers.facebook.com/docs/instagram-platform>
@@ -111,7 +112,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### WhatsApp Business
 
 - id: `whatsapp`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `whatsapp_business_management`, `whatsapp_business_messaging`
 - BUC bucket: `whatsapp_business_management`
 - docs: <https://developers.facebook.com/docs/whatsapp>
@@ -122,7 +123,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Pages
 
 - id: `pages`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `pages_show_list`, `pages_read_engagement`, `pages_manage_ads`
 - BUC bucket: `pages`
 - docs: <https://developers.facebook.com/docs/pages-api>
@@ -134,7 +135,7 @@ Generated from `mcp/meta-catalogue.json`. The MCP tools read that file directly;
 ### Lead Ads
 
 - id: `leadgen`
-- base: `https://graph.facebook.com/v25.0`
+- base: `https://graph.facebook.com/v26.0`
 - permissions: `leads_retrieval`, `pages_manage_ads`
 - BUC bucket: `leadgen`
 - docs: <https://developers.facebook.com/docs/marketing-api/guides/lead-ads>
