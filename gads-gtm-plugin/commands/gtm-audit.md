@@ -1,33 +1,23 @@
-# /gtm-audit — Full GTM Container Audit
+# /gtm-audit — superseded by gtm-audit-pro
 
-Run a comprehensive GTM container audit with health scoring.
+> **This command is deprecated.** Its inventory → naming/duplicate check → optional browser-verify pipeline is now
+> covered, more thoroughly, by the `gtm-audit-pro` plugin: the same inventory and correlation checks plus consent,
+> data-layer parameter integrity, sGTM cross-container dedup, version history/drift, and offline-conversion /
+> Data Manager API coverage — with a scored report and tiered recommendations instead of a single health number.
+>
+> Install it: `/plugin install gtm-audit-pro@organized-ai-marketplace`, then just describe what you want ("audit
+> this GTM container") — no command syntax needed.
 
-## Usage
-```
-/gtm-audit <account_id> <container_id>
-```
+## What this command used to do
 
-## What It Does
+Ran a lighter version of the same idea: inventory (`gtm-ai`) → naming/duplicate analysis (`tidy-gtm`) → optional
+browser verification (`gtm-debug-agent`) → a 0-100 health score.
 
-1. **Inventory** — Lists all tags, triggers, variables, and folders in the workspace
-2. **Naming Check** — Flags tags that don't follow `[Platform] Event - Action` convention
-3. **Duplicate Detection** — Identifies tags with identical type + trigger combinations
-4. **Orphan Scan** — Finds triggers with no associated tags and variables referenced nowhere
-5. **sGTM Correlation** — If server container detected, validates web→server tag pairing
-6. **Health Score** — Outputs a 0-100 score with prioritized fix list
+## Still here for remediation
 
-## Workflow
-
-```
-gtm-ai (SKILL.md) → inventory all resources
-tidy-gtm (SKILL.md) → naming + duplicate analysis
-gtm-debug-agent (SKILL.md) → optional browser validation
-```
+`tidy-gtm` itself is not deprecated — after `gtm-audit-pro` produces findings, `tidy-gtm` is still the tool that
+actually applies fixes (renames, dedup, folder reorganization, republish). `gtm-audit-pro` is read-only by design
+and never writes to your container; `tidy-gtm` is where you go once you know what to fix.
 
 ## Required MCP
 - Stape GTM MCP (`gtm-mcp.stape.ai`)
-
-## Example
-```
-/gtm-audit 6073868004 52905187
-```
