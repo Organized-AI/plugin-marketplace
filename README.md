@@ -299,7 +299,7 @@ Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publ
 **Features:**
 - Multi-platform tracking deployment (LinkedIn, Meta, GA4, TikTok, Pinterest, Google Ads)
 - Client-side + Server-side CAPI support
-- Container auditing with duplicate/naming detection
+- Container auditing with duplicate/naming detection — *read-only audits now use `gtm-audit-pro`; this stays for the write/remediation path*
 - Web ↔ sGTM correlation validation
 - Pre-publish audit with critical issue blocking
 - Visual before/after ASCII diagram generation
@@ -694,7 +694,7 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 | --- | --- |
 | `gtm-ai` | Full GTM container automation via MCP — deploy, audit, manage tags/triggers/variables |
 | `data-audit` | Meta Ads account auditing — Pixel/CAPI/Stape evaluation, architecture diagrams |
-| `tidy-gtm` | Container hygiene — duplicate removal, naming standardization, sGTM correlation |
+| `tidy-gtm` | Container hygiene — duplicate removal, naming standardization, sGTM correlation *(read-only audit superseded by `gtm-audit-pro`; this skill remains for applying fixes)* |
 | `gtm-debug-agent` | Browser-based GTM debugging — tag firing, dataLayer inspection, consent mode |
 | `gads-to-gtm-programmatic` | End-to-end: create Google Ads conversions via API → wire labels into GTM via MCP |
 | `gads-conversion-flow` | Lightweight: create Google Ads conversions and retrieve labels for GTM |
@@ -720,6 +720,32 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 * `stape-mcp-server` (Stape container management)
 * `google-ads-mcp` (TrueClicks GAQL)
 * `pipeboard-meta` (Meta Ads auditing)
+
+### gtm-audit-pro ⭐ NEW
+
+AI-assisted, **read-only** GTM + GA4 audit: 72 checkpoints from MeasureU's frozen 33-question base through consent/privacy, data-layer integrity, Google Ads + Meta reconciliation, sGTM delivery and cross-container dedup, performance/security, version history and drift, and offline-conversion / Data Manager API coverage. Outputs a scored report with a tiered (fix-now / next / structural) recommendation per finding.
+
+```
+/plugin install gtm-audit-pro@organized-ai-marketplace
+```
+
+**2 Skills:**
+
+| Skill | Description |
+| --- | --- |
+| `gtm-audit-pro` | The audit engine — 72 checkpoints, scored report, tiered recommendations |
+| `gtm-mcp-setup` | Five-minute connector preflight (GTM required, Ads/Meta optional) before the first audit |
+
+**Relationship to tidy-gtm.** `gtm-audit-pro` supersedes tidy-gtm's read-only audit phase (duplicate/orphan/naming
+detection, tag-trigger-variable correlation, sGTM correlation) — it covers the same ground plus consent, data-layer
+integrity, and offline-conversion checks, with a scored report instead of a health number. It never writes to your
+container. Once you have findings, `tidy-gtm` (in `gtm-ai-plugin`, `gads-gtm-plugin`, or `fix-your-tracking`) is
+still the tool that applies them — renames, dedup, folder reorganization, republish.
+
+**Requires:** GTM MCP (any vendor exposing the standard `gtm_*` tool surface). Google Ads and Meta Ads MCPs are
+optional — they unlock ad-account reconciliation but the core audit runs without them.
+
+---
 
 ## Plugin Structure
 
@@ -750,6 +776,7 @@ plugin-name/
 | gtm-ai-plugin | Commands, Skills, Hooks | Organized AI |
 | blade-linkedin-plugin | Commands | Organized AI |
 | fix-your-tracking | Agents, Commands, Skills, MCP | Organized AI |
+| gtm-audit-pro | Skills (2) — read-only audit, successor to tidy-gtm's audit phase | Organized AI |
 | frontend-design | Skills | Anthropic Official |
 | agent-sdk-dev | Commands, Agents | Anthropic Official |
 | hookify | Commands, Agents, Skills, Hooks | Anthropic Official |
