@@ -1,5 +1,12 @@
 # /gtm-audit
 
+> **Report-only audits are now `gtm-audit-pro`.** This command's plain audit (no `--fix`) is superseded by the
+> `gtm-audit-pro` plugin — same inventory and correlation checks, plus consent, data-layer integrity, sGTM dedup,
+> version history/drift, and offline-conversion coverage, with a scored report. `--fix` still lives here, since
+> that's tidy-gtm applying changes, which `gtm-audit-pro` deliberately never does.
+
+
+
 Audit GTM container for issues, duplicates, and naming violations.
 
 ## Usage
