@@ -1,11 +1,17 @@
 ---
 name: tidy-gtm
-description: Analyzes and organizes Google Tag Manager containers (web AND server-side) for consistency, removes duplicates, standardizes naming conventions, validates correlations between tags/triggers/variables, verifies GTM-to-sGTM connections, and ensures workspace health. Use when user wants to audit a GTM container, clean up tags, standardize naming, find duplicates, verify tag correlations, check sGTM setup, or mentions "tidy gtm", "clean up gtm", "audit container", "gtm analysis", "standardize tags", "organize gtm", "check sgtm", or "server-side correlation".
+description: Applies fixes to Google Tag Manager containers (web AND server-side) — removes duplicates, standardizes naming conventions, reorganizes into folders, verifies GTM-to-sGTM connections, and republishes. For the read-only audit and inventory that used to live here (duplicate/orphan/naming detection, tag-trigger-variable correlation, sGTM correlation), use the gtm-audit-pro plugin instead — it covers the same ground plus consent, data-layer integrity, and offline-conversion / Data Manager API checks, with a scored report. Use tidy-gtm once you already know what needs fixing and want it applied: "clean up gtm", "fix these duplicate tags", "standardize naming", "reorganize into folders", "apply the audit findings", "check sgtm", or "server-side correlation".
 ---
 
 # Tidy GTM
 
 Analyzes and organizes Google Tag Manager containers (both **web** and **server-side**) for consistency, cleanliness, and best practices. **Default behavior**: audit all components, identify issues, standardize naming, verify correlations, and validate GTM↔sGTM connections.
+
+> **Superseded for audit-only use.** For a read-only assessment (find issues without changing anything), use the
+> `gtm-audit-pro` plugin — it covers everything Phases 1–5 below do, plus consent/privacy, data-layer integrity,
+> version history and drift, and offline-conversion / Data Manager API coverage, with a scored, tiered-recommendation
+> report. Come back to `tidy-gtm` once you know what to fix and want the changes actually applied — renames,
+> dedup, folder reorganization, and republish are still tidy-gtm's job; `gtm-audit-pro` never writes to your container.
 
 > **Container-Aware**: This skill adapts to whatever GTM container it's applied to. Always analyze the current container state first before making changes. The standards below are guides that can be customized per client.
 
