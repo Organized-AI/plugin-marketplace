@@ -723,7 +723,11 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 
 ### gtm-audit-pro ⭐ NEW
 
-AI-assisted, **read-only** GTM + GA4 audit: 72 checkpoints from MeasureU's frozen 33-question base through consent/privacy, data-layer integrity, Google Ads + Meta reconciliation, sGTM delivery and cross-container dedup, performance/security, version history and drift, and offline-conversion / Data Manager API coverage. Outputs a scored report with a tiered (fix-now / next / structural) recommendation per finding.
+GTM-only static configuration audits with an optional background change monitor
+and bounded Autoresearch candidates. The shared runtime is maintained in Fix Your
+Tracking and bundled into GTM AI and this standalone package. This 0.1 rebuild
+implements six heuristic quality dimensions; the previously advertised
+72-checkpoint engine was not included in the repository and is not claimed here.
 
 ```
 /plugin install gtm-audit-pro@organized-ai-marketplace
@@ -733,17 +737,19 @@ AI-assisted, **read-only** GTM + GA4 audit: 72 checkpoints from MeasureU's froze
 
 | Skill | Description |
 | --- | --- |
-| `gtm-audit-pro` | The audit engine — 72 checkpoints, scored report, tiered recommendations |
-| `gtm-mcp-setup` | Five-minute connector preflight (GTM required, Ads/Meta optional) before the first audit |
+| `gtm-audit-pro` | Report-only static checks, scored findings, workshop questions |
+| `gtm-autoresearch-loop` | Shared change watcher and score/propose/validate/keep-or-revert runtime |
 
-**Relationship to tidy-gtm.** `gtm-audit-pro` supersedes tidy-gtm's read-only audit phase (duplicate/orphan/naming
-detection, tag-trigger-variable correlation, sGTM correlation) — it covers the same ground plus consent, data-layer
-integrity, and offline-conversion checks, with a scored report instead of a health number. It never writes to your
-container. Once you have findings, `tidy-gtm` (in `gtm-ai-plugin`, `gads-gtm-plugin`, or `fix-your-tracking`) is
-still the tool that applies them — renames, dedup, folder reorganization, republish.
+**Relationship to tidy-gtm.** The audit checks references, duplicate configurations,
+naming, unused components, legacy UA tags, and folders. Live firing, consent,
+server delivery, and cross-platform reconciliation remain unverified. `tidy-gtm`
+remains the separately authorized live remediation path. Autoresearch only saves
+local metadata-edit candidates; it never imports or publishes.
 
-**Requires:** GTM MCP (any vendor exposing the standard `gtm_*` tool surface). Google Ads and Meta Ads MCPs are
-optional — they unlock ad-account reconciliation but the core audit runs without them.
+**Requires:** Node.js 22 and either a complete exported container or a Google
+read-only token provider for direct GTM polling. A model command is optional for
+candidate optimization. Background mode needs a running host; installing the
+plugin alone does not enable it. See [setup](gtm-audit-pro/README.md).
 
 ---
 
