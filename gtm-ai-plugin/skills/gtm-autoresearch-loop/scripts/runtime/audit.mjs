@@ -1,3 +1,4 @@
+import { iterate, dominates } from './shared/core.mjs';
 import { createHash } from 'node:crypto';
 
 export const groups = { tag: 'tagId', trigger: 'triggerId', variable: 'variableId', folder: 'folderId' };
@@ -117,23 +118,12 @@ export function applyOperations(input, operations) {
   return container(c);
 }
 
-export async function optimize(input, propose, {maxRounds=5, maxFailures=2, plateauRounds=2}={}) {
-  for (const n of [maxRounds,maxFailures,plateauRounds]) if (!Number.isInteger(n)||n<1||n>30) throw Error('Loop bounds must be integers from 1 to 30');
-  let best=container(input), report=audit(best), failures=0, plateau=0;
-  const baseline=report, rounds=[];
-  for(let round=1;round<=maxRounds;round++) {
-    try {
-      const operations=await propose({container:structuredClone(best),audit:structuredClone(report),round});
-      const candidate=applyOperations(best,operations), next=audit(candidate);
-      // No dimension may regress, even when the aggregate score rises.
-      const accepted=next.score>report.score && next.criticalCount<=report.criticalCount && dimensions.every(d=>next.dimensions[d]>=report.dimensions[d]);
-      rounds.push({round,accepted,score:next.score,operations});
-      if(accepted){best=candidate;report=next;plateau=0;}else plateau++;
-      if(plateau>=plateauRounds) break;
-    } catch(error) {
-      rounds.push({round,accepted:false,error:error.message});
-      if(++failures>=maxFailures) break;
-    }
-  }
-  return {baseline,report,candidate:best,rounds,published:false};
+export async function optimize(input, propose, options={}) {
+  const result=await iterate(container(input), {
+    evaluate:audit,
+    propose:({candidate,report,round})=>propose({container:candidate,audit:report,round}),
+    apply:applyOperations,
+    accept:(before,after)=>dominates(before,after)&&after.criticalCount<=before.criticalCount
+  },options);
+  return {...result,rounds:result.rounds.map(({change,...round})=>change===undefined?round:{...round,operations:change})};
 }

@@ -130,6 +130,11 @@
       "name": "organized-meta-wiring",
       "source": "./organized-meta-wiring",
       "description": "Framework for wiring Meta APIs into a Cloudflare Worker \u2014 spin up Meta Apps and system users, the self-refreshing 60-day token vault, Business Use Case rate limiting, and multi-ad-account fan-out. Covers Marketing API, Conversions API, Business Management, Catalog, Instagram, WhatsApp, Pages and Lead Ads, plus the Meta Ads CLI and hosted Ads MCP server."
+    },
+    {
+      "name": "skill-loop",
+      "source": "./plugins/skill-loop",
+      "description": "Detect skill effectiveness drift and stage tested fixes. By Jordaaan; shared engine with GTM Autoresearch."
     }
   ]
 }

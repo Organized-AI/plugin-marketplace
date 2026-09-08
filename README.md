@@ -828,3 +828,12 @@ Simplified branded social carousel workflow: capture the source argument, turn i
 - optional HyperFrames-style preview MP4 wrapper
 
 **Triggers:** "social carousel", "turn this into slides", "instagram carousel", "linkedin carousel", "info-only carousel"
+
+### Skill Loop — effectiveness drift
+
+[Skill Loop by Jordaaan](plugins/skill-loop/README.md) runs fixed skill tests,
+saves baselines, flags lost passing checks, and stages researched improvements
+for review. Its bounded iteration core is shared with GTM Autoresearch; GTM's
+configuration checks and allowed mutations remain domain-specific.
+Start with the no-login offline demo. See the plugin README for CLI/MCP setup,
+current compatibility limits, and the local HTML review report.
