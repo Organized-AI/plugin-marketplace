@@ -1,7 +1,7 @@
 ---
 description: Synchronize data between GoHighLevel, TripleWhale, and ad platforms
 argument-hint: <location-id>
-allowed-tools: Bash(bash:*), Pipeboard Meta:*
+allowed-tools: Bash(bash:*), meta-ads:*, Bash(meta ads:*)
 ---
 
 # Sync Data Command

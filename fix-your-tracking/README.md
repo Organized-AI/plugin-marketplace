@@ -6,7 +6,7 @@ A comprehensive Claude Code plugin for marketing tracking infrastructure, ad pla
 
 - **6 Autonomous Agents**: Meta Ads, Google Ads, GTM Automation, Tracking Infrastructure, Data Sync, Audit Coordinator
 - **8 Slash Commands**: GTM deploy/audit/status/rollback, full-audit, analyze-performance, setup-tracking, sync-data
-- **6 MCP Servers**: GTM, Stape, Meta Ads, Google Ads, Gateway, GoHighLevel
+- **6 MCP Servers**: GTM, Stape, Meta Ads (Meta's official hosted server), Google Ads, Gateway, GoHighLevel
 - **9 Specialized Skills**: tidy-gtm, gtm-AI, gtm-autoresearch-loop, linkedin-capi-setup, triple-whale-bridge, and more
 - **8 Lifecycle Hooks**: Pre/post phase validation, pre-publish audit, diagram generation
 
@@ -35,8 +35,9 @@ Copy the following to your project root:
 ```bash
 # Create .env file with your credentials
 STAPE_API_KEY=your_stape_api_key
-META_APP_ID=your_meta_app_id
-PIPEBOARD_API_TOKEN=your_pipeboard_token
+# Meta Ads uses Meta's official hosted MCP server (mcp.facebook.com/ads) with
+# Facebook Login for Business OAuth on first use - no Meta env vars required.
+# Optional scripted/CI access: Meta's official Ads CLI (pip/uv, Python 3.12+).
 GOOGLE_ADS_CREDENTIALS_PATH=/path/to/credentials.json
 GOOGLE_ADS_DEVELOPER_TOKEN=your_developer_token
 GHL_API_KEY=your_ghl_api_key
@@ -101,6 +102,7 @@ Use the `gtm-autoresearch-loop` skill to run a Karpathy-style optimize/validate/
 
 - Node.js >= 18.0.0
 - Python >= 3.10 (for Google Ads MCP)
+- Python >= 3.12 with pip or uv (optional, for Meta's official Ads CLI)
 - Claude Code CLI or Claude Code extension
 
 ## Included Skill

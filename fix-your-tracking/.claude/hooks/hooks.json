@@ -44,10 +44,10 @@
       "name": "meta-ads-auth-check",
       "description": "Validates Meta Ads authentication before API calls",
       "event": "before_tool",
-      "tool_pattern": "meta-ads-mcp:*",
+      "tool_pattern": "meta-ads:*",
       "action": {
         "type": "validate",
-        "content": "Verify PIPEBOARD_API_TOKEN or META_APP_ID is configured. If not authenticated, prompt user to run meta-ads login flow."
+        "content": "Verify the official Ads MCP server (mcp.facebook.com/ads) has completed Facebook Login for Business OAuth. If not authenticated, prompt the user to approve the OAuth flow, or configure a user access token with business_management for programmatic use."
       }
     },
     {

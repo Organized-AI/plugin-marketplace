@@ -32,7 +32,7 @@ Complete marketing tracking infrastructure toolkit with autonomous agents for Me
 This plugin uses the following MCP servers:
 - `google-tag-manager-mcp-server` - GTM API operations
 - `stape-mcp-server` - Server-side GTM management
-- `meta-ads-mcp` - Meta Ads API
+- `meta-ads` - Meta's official hosted Ads MCP server (mcp.facebook.com/ads, Facebook Login for Business OAuth). For scripted/CI work, use Meta's official Ads CLI (`meta ads ...`, Python 3.12+, pip/uv).
 - `google-ads-mcp` - Google Ads API
 - `gateway-mcp` - Meta CAPI Gateway
 - `ghl-mcp` - GoHighLevel CRM
@@ -43,9 +43,10 @@ This plugin uses the following MCP servers:
 # GTM/Stape
 STAPE_API_KEY=your_stape_api_key
 
-# Meta Ads
-META_APP_ID=your_meta_app_id
-PIPEBOARD_API_TOKEN=your_pipeboard_token
+# Meta Ads (official connectors - no env vars needed for the MCP server)
+# The hosted Ads MCP server authenticates via Facebook Login for Business OAuth on first use.
+# Optional, for scripted/CI work: install Meta's official Ads CLI (pip/uv, Python 3.12+)
+# and configure its token via environment variable per Meta's developer docs.
 
 # Google Ads
 GOOGLE_ADS_CREDENTIALS_PATH=/path/to/credentials.json

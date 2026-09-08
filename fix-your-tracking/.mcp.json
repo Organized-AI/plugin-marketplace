@@ -18,19 +18,12 @@
       },
       "optional": true
     },
-    "meta-ads-mcp": {
-      "command": "python",
-      "args": ["-m", "meta_ads_mcp"],
-      "description": "Meta Ads MCP server for Facebook/Instagram advertising. Provides campaign management, insights, creative analysis, and CAPI integration.",
-      "env": {
-        "META_APP_ID": "${META_APP_ID}",
-        "PIPEBOARD_API_TOKEN": "${PIPEBOARD_API_TOKEN}"
-      },
-      "cwd": "${PLUGIN_DIR}/mcp-servers/meta_ads_mcp"
-    },
     "google-ads-mcp": {
       "command": "python",
-      "args": ["-m", "google_ads_mcp"],
+      "args": [
+        "-m",
+        "google_ads_mcp"
+      ],
       "description": "Google Ads MCP server for campaign analysis and GAQL queries. Supports OAuth and service account authentication.",
       "env": {
         "GOOGLE_ADS_CREDENTIALS_PATH": "${GOOGLE_ADS_CREDENTIALS_PATH}",
@@ -42,7 +35,9 @@
     },
     "gateway-mcp": {
       "command": "node",
-      "args": ["build/index.js"],
+      "args": [
+        "build/index.js"
+      ],
       "description": "Gateway MCP for Meta CAPI Gateway and Signals Gateway infrastructure management.",
       "env": {
         "META_PIXEL_ID": "${META_PIXEL_ID}",
@@ -52,7 +47,9 @@
     },
     "ghl-mcp": {
       "command": "node",
-      "args": ["build/index.js"],
+      "args": [
+        "build/index.js"
+      ],
       "description": "GoHighLevel MCP server for CRM operations - contacts, opportunities, pipelines, and webhooks.",
       "env": {
         "GHL_API_KEY": "${GHL_API_KEY}",
@@ -60,6 +57,15 @@
       },
       "cwd": "${PLUGIN_DIR}/mcp-servers/ghl_mcp",
       "optional": true
+    },
+    "meta-ads": {
+      "type": "url",
+      "url": "https://mcp.facebook.com/ads",
+      "description": "Meta's official hosted Ads MCP server. Campaign, ad set, ad, and creative management; reporting and insights; catalogs; signals and datasets; A/B tests and conversion lift studies; activity logs.",
+      "auth": {
+        "type": "oauth",
+        "note": "On first use the client opens Facebook Login for Business; approve the scoped permissions. No Meta app or token setup required. Programmatic alternative: user access token with business_management, sent as Authorization: Bearer."
+      }
     }
   }
 }

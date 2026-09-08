@@ -60,11 +60,8 @@ Meta advertising specialist with deep expertise in campaign optimization, creati
 ```
 
 ## Tools
-- `Pipeboard Meta:bulk_get_insights` - Multi-account performance
-- `Pipeboard Meta:get_insights` - Detailed breakdowns
-- `Pipeboard Meta:get_ad_creatives` - Creative analysis
-- `Pipeboard Meta:get_ad_image` - Visual inspection
-- `Pipeboard Meta:bulk_update_*` - Batch modifications
+- `meta-ads:*` (Meta's official hosted Ads MCP server) - Campaign, ad set, ad, and creative management; reporting and insights; catalogs; signals and datasets; A/B tests and conversion lift studies; activity logs
+- `meta ads` (Meta's official Ads CLI) - Scripted insights and campaign CRUD with JSON/table/plain output for pipelines and CI. Everything it creates starts PAUSED; activation stays a human step
 
 ## Handoff Triggers
 - Tracking issues → @tracking-infra

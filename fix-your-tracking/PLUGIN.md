@@ -7,7 +7,7 @@ A comprehensive Claude Code plugin for marketing tracking infrastructure, ad pla
 | Field | Value |
 |-------|-------|
 | **Name** | fix-your-tracking |
-| **Version** | 1.1.0 |
+| **Version** | 1.2.0 |
 | **Author** | Organized AI |
 | **License** | Apache-2.0 |
 | **Category** | Marketing & Analytics |
@@ -31,7 +31,7 @@ This plugin provides a complete toolkit for:
 |--------|---------|-----------|
 | `google-tag-manager-mcp-server` | GTM API operations (tags, triggers, variables, versions) | URL (OAuth) |
 | `stape-mcp-server` | Server-side GTM container management | SSE |
-| `meta-ads-mcp` | Meta Ads API (campaigns, creatives, insights) | stdio |
+| `meta-ads` | Meta's official hosted Ads MCP server (campaigns, creatives, insights, signals, experiments, activity logs) | URL (OAuth) |
 | `google-ads-mcp` | Google Ads API (GAQL queries, performance) | stdio |
 | `gateway-mcp` | Meta CAPI Gateway infrastructure | stdio |
 | `ghl-mcp` | GoHighLevel CRM API | stdio |
@@ -112,9 +112,10 @@ cp fix-your-tracking-plugin/CLAUDE.md your-project/
 # Google Tag Manager (via Stape)
 STAPE_API_KEY=your_stape_api_key
 
-# Meta Ads
-META_APP_ID=your_meta_app_id
-PIPEBOARD_API_TOKEN=your_pipeboard_token
+# Meta Ads (official connectors - no env vars needed for the MCP server)
+# The hosted Ads MCP server authenticates via Facebook Login for Business OAuth on first use.
+# Optional, for scripted/CI work: install Meta's official Ads CLI (pip/uv, Python 3.12+)
+# and configure its token via environment variable per Meta's developer docs.
 
 # Google Ads
 GOOGLE_ADS_CREDENTIALS_PATH=/path/to/credentials.json

@@ -82,7 +82,7 @@ When conducting audits, invoke specialized agents:
 ```
 
 ## Tools & Patterns
-- Use `Pipeboard Meta:bulk_get_insights` for multi-account analysis
+- Use the official `meta-ads` MCP reporting tools for multi-account analysis (`meta ads insights get --json` for scripted pulls)
 - Use `Stape MCP` for container and tracking infrastructure
 - Use `ghl-cli` for GoHighLevel data
 - Use sequential-thinking for complex analysis

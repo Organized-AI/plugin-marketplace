@@ -1,7 +1,7 @@
 ---
 description: Get quick performance insights across all ad accounts
 argument-hint: <time-range: last_7d|last_30d|last_90d>
-allowed-tools: Pipeboard Meta:*, sequential-thinking:*
+allowed-tools: meta-ads:*, Bash(meta ads:*), sequential-thinking:*
 ---
 
 # Analyze Performance Command

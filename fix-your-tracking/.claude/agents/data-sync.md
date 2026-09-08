@@ -70,7 +70,7 @@ npm run dev opportunities list --pipeline-id <id> --status won --export deals.js
 ## Tools
 - `ghl-cli` - GoHighLevel data access
 - `triplewhale-cli` - Attribution management
-- `Pipeboard Meta` - Offline conversion imports
+- `meta-ads` / Ads CLI - Conversion and offline-event imports via Meta's official connectors
 - Local CSV processing
 
 ## Handoff Triggers

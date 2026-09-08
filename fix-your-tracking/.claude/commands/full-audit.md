@@ -1,6 +1,6 @@
 ---
 description: Run comprehensive tracking and advertising audit across all platforms
-allowed-tools: Bash(bash:*), Pipeboard Meta:*, stape-mcp-server:*, google-tag-manager-mcp-server:*
+allowed-tools: Bash(bash:*), meta-ads:*, Bash(meta ads:*), stape-mcp-server:*, google-tag-manager-mcp-server:*
 ---
 
 # Full Audit Command
