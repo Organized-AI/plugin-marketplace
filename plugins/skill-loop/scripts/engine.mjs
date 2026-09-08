@@ -184,11 +184,12 @@ export async function loop(file,options={}) {
 
 export async function finishApproval(c,{proposal:p,result,baseline:base},write=atomic) {
   const now=await snapshot(c),currentBase=await readJSON(join(c.state,'baseline.json'),null);
-  if(now.conditions!==p.conditions||![p.beforeHash,hash(p.candidate)].includes(now.skillHash)||![base.id,result.id].includes(currentBase?.id))throw Error('Approval recovery conflicts with external edits');
-  if(result.skillHash!==hash(p.candidate)||compare(base,result).status!=='improved')throw Error('Approval recovery evidence is invalid');
+  const targetBaseline=p.versionChoice&&result.conditions!==now.conditions?null:result;
+  if(now.conditions!==p.conditions||![p.beforeHash,hash(p.candidate)].includes(now.skillHash)||![base?.id,targetBaseline?.id].includes(currentBase?.id))throw Error('Approval recovery conflicts with external edits');
+  if(result.skillHash!==hash(p.candidate)||(!p.versionChoice&&compare(base,result).status!=='improved'))throw Error('Approval recovery evidence is invalid');
   await write(join(c.state,'backups',p.id+'.md'),p.before);
   await write(c.skill,p.candidate);
-  await write(join(c.state,'baseline.json'),result);
+  await write(join(c.state,'baseline.json'),targetBaseline);
   p.status='approved';p.decidedAt=new Date().toISOString();
   await write(join(c.state,'proposals',p.id+'.json'),p);
   await fs.rm(join(c.state,'approval-journal.json'),{force:true});
@@ -208,4 +209,27 @@ export async function replay(file,id) {
   if(!r.suite)throw Error('This older run did not store its suite; make a new run first');
   const result=score(r.suite,r.response);
   return {sourceRun:id,kind:'historical-replay',newModelRun:false,...result,matchesRecorded:JSON.stringify(result.checks)===JSON.stringify(r.checks)};
+}
+export async function versions(file) {
+  const c=await load(file),now=await snapshot(c);
+  const files=await fs.readdir(join(c.state,'runs')).catch(e=>{if(e.code==='ENOENT')return [];throw e;});
+  const rows=await Promise.all(files.filter(x=>x.endsWith('.json')).map(x=>readJSON(join(c.state,'runs',x))));
+  const unique=new Map();
+  for(const r of rows.sort((a,b)=>a.createdAt.localeCompare(b.createdAt)))unique.set(r.skillHash,r);
+  return {activeHash:now.skillHash,versions:[...unique.values()].map(r=>({version:r.skillHash,runId:r.id,createdAt:r.createdAt,active:r.skillHash===now.skillHash,score:r.score,passed:r.passed,total:r.total,qa:r.conditions===now.conditions?'tested under current conditions':'historical test; conditions differ'}))};
+}
+export async function selectVersion(file,version) {
+  if(!/^[a-f0-9]{64}$/.test(version))throw Error('Use a full version hash from versions');
+  const c=await load(file);return mutate(c,async()=>{
+    const now=await snapshot(c),history=await versions(file),entry=history.versions.find(v=>v.version===version);
+    if(!entry)throw Error('Unknown saved version');
+    const result=await readJSON(join(c.state,'runs',entry.runId+'.json'));
+    if(hash(result.skill)!==version)throw Error('Saved version content does not match its fingerprint');
+    if(now.skillHash===version)return {status:'already-active',version};
+    const base=await readJSON(join(c.state,'baseline.json'),null);
+    const p={id:randomUUID(),createdAt:new Date().toISOString(),status:'pending',versionChoice:true,beforeHash:now.skillHash,before:now.skill,candidate:result.skill,conditions:now.conditions,baselineId:base?.id??null,runId:result.id,eligible:false,evidence:'Explicit user version preference; this selection does not claim a QA improvement.'};
+    await atomic(join(c.state,'proposals',p.id+'.json'),p);
+    const transaction={proposal:p,result,baseline:base};await atomic(join(c.state,'approval-journal.json'),transaction);
+    const decision=await finishApproval(c,transaction);return {...decision,version,qa:entry.qa,score:entry.score,preferenceOverride:true};
+  });
 }

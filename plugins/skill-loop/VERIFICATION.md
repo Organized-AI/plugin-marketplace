@@ -1,6 +1,6 @@
 # Verification — September 8, 2026
 
-- 15 Skill Loop tests pass, including real subprocess demo, MCP stdio discovery
+- 16 Skill Loop tests pass, including real subprocess demo, MCP stdio discovery
   and prepare, private-check omission, strict results, stale requests/proposals,
   non-regressing improvement gates, timeout handling, filtered environment, and
   failure-injected approval recovery.

@@ -4,6 +4,13 @@ Detect **effectiveness drift**, test a researched fix, and review it before it c
 an active skill. This first local engine uses the same bounded iteration core as
 GTM Autoresearch. It requires Node.js 22 or later and no npm dependencies.
 
+## One-command QA demo
+
+From the plugin directory, run `node scripts/cli.mjs demo ~/skill-loop-demo`.
+Use an empty destination. It runs real declarative rules, saves a baseline, tests
+a prepared correction, and returns the visual report path without changing the
+active skill. No account, model, cloud service, or result-id copying is required.
+
 ## Five-minute offline demo
 
 From this plugin directory:
@@ -158,3 +165,16 @@ and review status. Missing sources are explicitly labeled. Source metadata is
 part of the versioned test conditions. This makes the output a reviewable QA
 record; it does not certify that the operator's source or expected answers are
 correct, complete, current, or independently verified.
+
+## Version history and user preference
+
+`versions CONFIG` lists the saved skill versions, active version, QA scores and
+whether test conditions are still comparable. Approved QA improvements become the
+new active default. Staged candidates do not silently replace it.
+
+`select-version CONFIG FULL_VERSION_HASH` explicitly activates a saved version,
+even if the user prefers it over a higher-scoring candidate. This is recorded as a
+**preference override**, not a QA improvement. A current-condition run becomes the
+selected version's baseline; historical conditions clear the baseline until a fresh
+run. The selection preserves the previous text and supports interrupted-write recovery.
+A host assistant must get the user's explicit version choice before invoking it.

@@ -98,3 +98,8 @@ test('inventory distinguishes discovery from effectiveness and registry verifies
  const registry=join(dir,'registry.json');await atomic(registry,{version:1,entries:[{skill:'skill.md',config},{skill:'skills/one/SKILL.md'},{skill:'skills/one/SKILL.md',config}]});
  const results=await checkAll(registry);assert.equal(results.summary.untested,1);assert.equal(results.summary.errors,1);assert.equal(results.results[0].status,'no-baseline');
 });
+test('user can select a saved version without presenting it as a QA improvement',async t=>{
+ const {config}=await fixture(t);const old=await e.run(config);await e.baseline(config,old.id);const improved=await e.loop(config);await e.decide(config,improved.proposalId,'approve');
+ assert.notEqual((await e.versions(config)).activeHash,old.skillHash);const selected=await e.selectVersion(config,old.skillHash);assert.equal(selected.preferenceOverride,true);assert.equal(selected.score,50);assert.equal((await e.versions(config)).activeHash,old.skillHash);
+ await assert.rejects(e.selectVersion(config,'a'.repeat(64)),/Unknown/);
+});

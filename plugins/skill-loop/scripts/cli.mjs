@@ -25,14 +25,24 @@ export async function init(folder,{demo=false,rules=false}={}) {
 }
 export async function main(args) {
   const [action,file,...rest]=args;
+  if(action==='demo') {
+    const setup=await init(file??'skill-loop-demo',{rules:true});
+    const first=await engine.run(setup.config);await engine.baseline(setup.config,first.id);
+    const folder=dirname(setup.config),policy=await readJSON(join(folder,'skill.json'));
+    policy.rules.push({when:[{path:'/consent',op:'equals',value:'denied'},{path:'/events',op:'equals',value:0}],output:{verdict:'PASS'}});
+    const candidate=join(folder,'candidate.json');await atomic(candidate,policy);
+    const proposal=await engine.stage(setup.config,candidate,'Prepared workshop policy correction: denied consent requires zero events. Deterministic rules example, not an AI benchmark.');
+    return {mode:'rules-only demonstration',baseline:first.score,candidate:proposal.comparison.status,proposal:proposal.id,activeSkillChanged:false,...await report(setup.config)};
+  }
   if(action==='inventory')return inventory(file?[file,...rest]:undefined);
   if(action==='check-all')return checkAll(file);
   if(action==='init')return init(file??'skill-loop-workspace',{demo:rest.includes('--demo'),rules:rest.includes('--rules')});
   if(action==='connect')return {mcpServers:{'skill-loop':{command:process.execPath,args:[join(here,'mcp.mjs')]}}};
   if(action==='doctor')return {node:process.version,required:'Node.js 22+',engine:'ready',integration:'CLI and MCP transport available; individual host installation must be tested'};
   if(!file)throw Error('Usage: node cli.mjs init DIR [--demo] | doctor | connect | run|prepare|ingest|baseline|stage|approve|reject|loop|watch|report|status CONFIG [arguments]');
-  if(['run','prepare','status','loop'].includes(action))return engine[action](resolve(file));
+  if(['run','prepare','status','loop','versions'].includes(action))return engine[action](resolve(file));
   if(action==='ingest')return engine.ingest(file,await readJSON(rest[0]));
+  if(action==='select-version')return engine.selectVersion(file,rest[0]);
   if(action==='replay')return engine.replay(file,rest[0]);
   if(action==='baseline')return engine.baseline(file,rest[0]);
   if(action==='stage')return engine.stage(file,resolve(rest[0]),rest.slice(1).join(' '));
