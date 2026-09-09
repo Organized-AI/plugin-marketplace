@@ -178,3 +178,19 @@ even if the user prefers it over a higher-scoring candidate. This is recorded as
 selected version's baseline; historical conditions clear the baseline until a fresh
 run. The selection preserves the previous text and supports interrupted-write recovery.
 A host assistant must get the user's explicit version choice before invoking it.
+
+## Interactive mode
+
+Every generated report includes interactive review. Ask your desktop assistant to
+open the Skill Loop report: choose two saved versions, highlight changed lines,
+and compare their per-check evidence and QA conditions. Large files use labeled
+position-based highlights.
+
+Edit a draft without changing the installed skill. Drafts immediately show as
+untested; download and attach the draft with the generated test request. Version
+choices and revision requests are copied back to the assistant for execution and
+review. The HTML never applies changes itself. Regenerate it after any run or
+decision. Unsaved draft edits are lost when the page closes.
+
+The report is self-contained HTML opened in a browser or compatible desktop
+preview. This is not a verified embedded Claude Chat or Cowork widget.

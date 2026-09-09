@@ -103,3 +103,29 @@ test('user can select a saved version without presenting it as a QA improvement'
  assert.notEqual((await e.versions(config)).activeHash,old.skillHash);const selected=await e.selectVersion(config,old.skillHash);assert.equal(selected.preferenceOverride,true);assert.equal(selected.score,50);assert.equal((await e.versions(config)).activeHash,old.skillHash);
  await assert.rejects(e.selectVersion(config,'a'.repeat(64)),/Unknown/);
 });
+
+test('interactive report safely embeds version text and keeps QA conditions separate',async t=>{
+ const {config,dir}=await fixture(t);
+ const attack='\n</script><script>window.injected=true</script>';
+ await fs.appendFile(join(dir,'skill.md'),attack);
+ const a=await e.run(config);await e.baseline(config,a.id);
+ const suite=await readJSON(join(dir,'suite.json'));suite.source={title:'Changed QA source',version:'2'};await atomic(join(dir,'suite.json'),suite);
+ await fs.appendFile(join(dir,'skill.md'),'\nSecond saved version');await e.run(config);
+ const active=await fs.readFile(join(dir,'skill.md'),'utf8');
+ const page=await fs.readFile((await report(config)).report,'utf8');
+ const payload=JSON.parse(page.match(/<script type="application\/json" id="review-data">([\s\S]*?)<\/script>/)[1]);
+ assert.equal(payload.versions.length,2);assert.notEqual(payload.versions[0].conditions,payload.versions[1].conditions);
+ assert.ok(payload.versions[0].skill.includes(attack));assert.ok(!page.includes('<script>window.injected=true</script>'));
+ assert.match(page,/Untested draft/);assert.match(page,/Prepare version choice/);
+ assert.equal(await fs.readFile(join(dir,'skill.md'),'utf8'),active);
+});
+
+test('large interactive diffs expose duplicate additions and positional limitations',async()=>{
+ const source=await fs.readFile(new URL('../scripts/review-ui.js',import.meta.url),'utf8');
+ const {runInNewContext}=await import('node:vm');
+ const diff=runInNewContext(source.slice(source.indexOf('function lines('),source.indexOf('function drawCode('))+';lines');
+ const a=Array.from({length:710},(_,i)=>`line ${i}`).join('\n');
+ const result=diff(a,a+'\nline 0');
+ assert.equal(result.approximate,true);assert.equal(result.right.at(-1).changed,true);
+ const small=diff('a\nb','a\nx\nb');assert.equal(small.right.filter(x=>x.changed).length,1);assert.equal(small.left.filter(x=>x.changed).length,0);
+});
