@@ -242,3 +242,58 @@ Regular Chat works with skills and QA sources uploaded or explicitly provided in
 the conversation. It does not enumerate or update skills on the participant's
 computer. Node.js 22+ must be available inside code execution. Return revisions
 and evidence as files; there is no separate coding CLI login for this route.
+
+
+## Package assessment is the default
+
+For participant skills, keep the whole downloaded package and point `skill` at
+its SKILL.md. Put the QA workspace outside that package. Intake (`assess`),
+inventory and every new evaluation include a package inventory, supporting text
+context, content fingerprint and per-component coverage. Standard entrypoints
+scan their skill directory or enclosing plugin; explicit `package.root` handles
+other layouts. Custom `skill.md`/`skill.json` workspaces scan the entry and common
+support directories and disclose other root files as excluded. No extra beginner
+button or terminal action is required when the desktop assistant follows the skill.
+
+```json
+{
+  "version": 1,
+  "skill": "../my-plugin/skills/example/SKILL.md",
+  "suite": "suite.json",
+  "state": ".skill-loop",
+  "runner": {"label": "my verified desktop host and model"},
+  "package": {
+    "root": "../my-plugin",
+    "tests": [{
+      "id": "formatter-fixture",
+      "kind": "script",
+      "component": "scripts/check.mjs",
+      "command": ["node", "scripts/check.mjs"],
+      "stdoutContains": ["CHECK OK"],
+      "timeoutMs": 30000
+    }]
+  }
+}
+```
+
+`assess CONFIG` inventories without execution. `assess CONFIG --execute`, `run`
+and `ingest` execute only the explicitly configured script checks. These execute
+on the host against a temporary copy of the tested package, including candidate
+entry bytes. This is not an OS sandbox. Use a
+working copy/test environment and deliberate argv/assertions. Merely discovering
+a file never authorizes execution. Missing references, unsafe links, context
+limits and excluded files are visible. Configured command, hook and external-tool
+checks remain unsupported until a real host adapter is implemented and verified;
+calling a script directly does not prove hook/event integration.
+
+Reports distinguish instruction scores, file inventory and actual component-test
+evidence. Untested references/executables stay untested. A failing configured
+component check blocks automatic improvement acceptance. Package edits invalidate
+stale pending requests, approvals and current evidence; changed suite/runner/test
+configuration is incomparable. Old runs remain historical single-file evidence.
+
+Version history now preserves package-only changes. Entry revisions preserve
+file permissions and are checked against the full supporting package. Selecting
+an old version whose supporting files differ is blocked without modifying the
+workspace. Multi-file automatic apply/rollback and real host hook/tool adapters
+remain future work; do not advertise universal end-to-end execution support.

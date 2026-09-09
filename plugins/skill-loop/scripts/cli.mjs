@@ -44,6 +44,7 @@ export async function main(args) {
   if(action==='doctor')return {node:process.version,required:'Node.js 22+',engine:'ready',integration:'CLI and MCP transport available; individual host installation must be tested'};
   if(!file)throw Error('Usage: node cli.mjs init DIR [--demo] | doctor | connect | run|prepare|ingest|baseline|stage|approve|reject|loop|watch|report|status CONFIG [arguments]');
   if(['run','prepare','status','loop','versions'].includes(action))return engine[action](resolve(file));
+  if(action==='assess')return engine.assess(file,{execute:rest.includes('--execute')});
   if(action==='ingest')return engine.ingest(file,await readJSON(rest[0]));
   if(action==='select-version')return engine.selectVersion(file,rest[0]);
   if(action==='replay')return engine.replay(file,rest[0]);

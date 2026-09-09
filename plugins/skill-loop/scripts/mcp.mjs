@@ -7,6 +7,7 @@ import { inventory,checkAll } from './inventory.mjs';
 import { report } from './report.mjs';
 const field={type:'string'};
 const specs=[
+ ['skill_loop_assess','Assess the complete selected package; optionally run explicitly configured script checks. Unsupported host integrations remain visible.',{config:field,execute:{type:'boolean'}},['config']],
  ['skill_loop_inventory','Discover skills under explicit roots; mark effectiveness untested until enrolled.',{roots:{type:'array',items:field}},[]],
  ['skill_loop_check_all','Run the configured evaluations in a skill registry; preserve untested and error states.',{registry:field},['registry']],
  ['skill_loop_versions','List saved skill versions, active selection and current or historical QA status.',{config:field},['config']],
@@ -23,7 +24,7 @@ const specs=[
  ['skill_loop_status','Read the latest run and baseline.',{config:field},['config']],
  ['skill_loop_report','Write a local HTML report with test evidence and candidate comparison.',{config:field},['config']]
 ];
-const handlers={skill_loop_versions:a=>e.versions(a.config),skill_loop_select_version:a=>e.selectVersion(a.config,a.version),skill_loop_inventory:a=>inventory(a.roots),skill_loop_check_all:a=>checkAll(a.registry),skill_loop_replay:a=>e.replay(a.config,a.runId),skill_loop_init:a=>init(a.directory,{demo:a.demo??false,rules:a.rules??false}),skill_loop_prepare:a=>e.prepare(a.config),skill_loop_ingest:a=>e.ingest(a.config,a.response),skill_loop_run:a=>e.run(a.config),skill_loop_baseline:a=>e.baseline(a.config,a.runId),skill_loop_stage:a=>e.stage(a.config,a.candidate,a.evidence),skill_loop_loop:a=>e.loop(a.config),skill_loop_decide:a=>e.decide(a.config,a.proposalId,a.decision),skill_loop_status:a=>e.status(a.config),skill_loop_report:a=>report(a.config)};
+const handlers={skill_loop_assess:a=>e.assess(a.config,{execute:a.execute??false}),skill_loop_versions:a=>e.versions(a.config),skill_loop_select_version:a=>e.selectVersion(a.config,a.version),skill_loop_inventory:a=>inventory(a.roots),skill_loop_check_all:a=>checkAll(a.registry),skill_loop_replay:a=>e.replay(a.config,a.runId),skill_loop_init:a=>init(a.directory,{demo:a.demo??false,rules:a.rules??false}),skill_loop_prepare:a=>e.prepare(a.config),skill_loop_ingest:a=>e.ingest(a.config,a.response),skill_loop_run:a=>e.run(a.config),skill_loop_baseline:a=>e.baseline(a.config,a.runId),skill_loop_stage:a=>e.stage(a.config,a.candidate,a.evidence),skill_loop_loop:a=>e.loop(a.config),skill_loop_decide:a=>e.decide(a.config,a.proposalId,a.decision),skill_loop_status:a=>e.status(a.config),skill_loop_report:a=>report(a.config)};
 const send=o=>process.stdout.write(JSON.stringify(o)+'\n');
 for await(const line of createInterface({input:process.stdin,crlfDelay:Infinity})) {
   let request;

@@ -7,7 +7,8 @@ export const hash = value => createHash('sha256').update(typeof value === 'strin
 export async function atomic(path, data) {
   await fs.mkdir(dirname(path), {recursive:true, mode:0o700});
   const tmp = `${path}.${randomUUID()}.tmp`;
-  try { await fs.writeFile(tmp, typeof data === 'string' ? data : JSON.stringify(data,null,2)+'\n', {mode:0o600}); await fs.rename(tmp,path); }
+  const mode=await fs.stat(path).then(s=>s.mode&0o777,e=>{if(e.code==='ENOENT')return 0o600;throw e;});
+  try { await fs.writeFile(tmp, typeof data === 'string' ? data : JSON.stringify(data,null,2)+'\n', {mode}); await fs.chmod(tmp,mode); await fs.rename(tmp,path); }
   finally { await fs.rm(tmp,{force:true}); }
 }
 export async function readJSON(path, fallback) {

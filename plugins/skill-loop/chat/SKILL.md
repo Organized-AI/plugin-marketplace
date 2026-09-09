@@ -53,7 +53,7 @@ QA source if missing. A skill without task-specific checks is untested.
 
 Use `init` for a working copy and a versioned suite. Each case includes observable
 checks and a named source of truth. For a skill that needs reasoning, `prepare`
-returns only skill text and case inputs; evaluate those inputs without reading
+returns skill text, supporting package context, and case inputs; evaluate those inputs without reading
 private expected checks and return the requestId and outputs through `ingest`.
 This is procedural separation, not an independent or blinded benchmark of the
 assistant. Automatic `run` and candidate `stage` require a configured trusted
@@ -67,3 +67,37 @@ After a completed run or authorized decision, regenerate `report CONFIG` and
 update the chat artifact. Run fresh holdout cases before claiming broader quality.
 Workspaces in code execution are not a permanent installation on the user's PC;
 return requested revised skill files and evidence as downloadable outputs.
+
+
+## Default: assess the supplied package
+
+When a participant supplies a real skill, preserve its complete package directory,
+including references, scripts, commands, hooks, assets, and dependency manifests.
+Do not copy only SKILL.md into an empty workspace. Keep QA suite/config/state
+outside the package and point `skill` to the original entrypoint in a working
+copy. For a standard SKILL.md, the engine discovers the containing plugin root
+when present; otherwise it inventories the skill directory. Set `package.root`
+explicitly for nonstandard layouts. Custom lowercase entry files use a bounded
+support-directory scan whose exclusions are shown; use an explicit root for all
+associated root files. Single-file mode is an explicit limited opt-out.
+
+Run `assess CONFIG` at intake; this does not execute discovered files. Package
+context and fingerprints are also included by default in prepare, run, ingest,
+inventory, and generated reports. Associated-file changes invalidate pending
+outputs and approvals. Preserve component statuses and exclusions in the artifact.
+
+Only configure executable checks that are appropriate for the selected test
+workspace. A configured script check uses explicit argv, expected stdout and a
+finite timeout, and is executed during run/ingest or `assess CONFIG --execute`.
+Do not automatically execute scripts found in a downloaded package. Script checks
+use a copied package snapshot and are host subprocesses, not an OS sandbox. Commands, hooks and external
+tools without a verified host adapter are reported unsupported. Do not label a
+script invocation as successful hook registration or a live connector test.
+References without their own behavioral evidence and unconfigured components
+remain untested. Full-package inventory is not full-package certification.
+
+Entry-file proposals are guarded by the entire package fingerprint. History
+preserves package-only versions. Restoring a historical entry while its supporting
+files differ is blocked before any write; automatic multi-file restoration is
+not yet supported. Return the complete reviewed package for manual installation
+when needed, and never describe a downloaded export as an active installation.

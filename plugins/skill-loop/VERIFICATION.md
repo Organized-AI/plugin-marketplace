@@ -1,5 +1,30 @@
 # Verification
 
+## September 9, 2026 — package assessment and actionable workshop review
+
+- All 55 Skill Loop and shared GTM tests pass, including candidate script execution
+  in a copied package, absolute working-directory remapping, preserved file modes,
+  stale supporting-file evidence, package-only history, and component failure gates.
+- Standard SKILL.md packages are inventoried by default, including references,
+  scripts, commands, hooks and dependencies. An exported GTM Debug Agent package
+  was assessed: 13 files inventoried, 0 execution-tested, 13 untested, 0 blocked.
+- Assessment is not universal package certification. Hook/command host adapters
+  and automatic multi-file apply/rollback remain unsupported. Only explicitly
+  configured script tests execute; temporary copies are not an OS sandbox.
+- Independent review cleared the package execution and version-handling fixes.
+- A fresh Chat ZIP extraction includes the package engine, runs the standalone
+  demo and assessment, and generates the interactive report. Plugin and both
+  skill validators pass.
+- In regular Claude Desktop Chat, the four-example HTML opened Funnel Map and
+  Tracking Health Check cases side by side. Accept, dismiss-with-reason and reopen
+  were exercised; QA scores and original skills remained unchanged. Temporary
+  review decisions were reopened. Empty dismissal reasons are also rejected on
+  import; imported notes are trimmed and stale evidence is rejected.
+- The original eight Claude outputs scored 38/38 deterministic checks. Separate
+  prose findings remain pending for Funnel Map and Tracking Health Check; this
+  result does not certify either skill or its complete installed package.
+
+
 ## September 9, 2026 — live Humanizer and matching artifact design
 
 - Selected the enabled Humanizer skill from Jordaaan’s Claude Desktop Skills list.
