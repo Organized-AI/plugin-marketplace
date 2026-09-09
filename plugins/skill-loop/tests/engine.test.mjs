@@ -13,8 +13,8 @@ async function fixture(t){const dir=await fs.mkdtemp(join(tmpdir(),'skill-loop-t
 test('real subprocess demo improves, stages, approves and reports',async t=>{
  const {config,dir}=await fixture(t);const first=await e.run(config);assert.equal(first.score,50);await e.baseline(config,first.id);
  const result=await e.loop(config);assert.equal(result.report.score,100);assert.ok(result.proposalId);assert.equal(result.published,false);
- assert.match(await fs.readFile(join(dir,'skill.md'),'utf8'),/otherwise FAIL/);
- await e.decide(config,result.proposalId,'approve');assert.match(await fs.readFile(join(dir,'skill.md'),'utf8'),/consent is denied/);
+ assert.match(await fs.readFile(join(dir,'skill.md'),'utf8'),/replace em dashes/);
+ await e.decide(config,result.proposalId,'approve');assert.match(await fs.readFile(join(dir,'skill.md'),'utf8'),/and en dashes/);
  assert.equal((await e.run(config)).comparison.status,'unchanged');const out=await report(config);assert.match(await fs.readFile(out.report,'utf8'),/Jordaaan/);
  await assert.rejects(e.decide(config,result.proposalId,'approve'),/already decided/);
 });
@@ -83,14 +83,14 @@ test('interrupted approval recovers on repeated explicit approval',async t=>{
  const proposal=await readJSON(join(c.state,'proposals',result.proposalId+'.json'));const transaction={proposal,result:await readJSON(join(c.state,'runs',proposal.runId+'.json')),baseline:await readJSON(join(c.state,'baseline.json'))};
  await atomic(join(c.state,'approval-journal.json'),transaction);let writes=0;
  await assert.rejects(e.finishApproval(c,transaction,async(path,data)=>{if(++writes===3)throw Error('simulated disk interruption');return atomic(path,data);}),/simulated/);
- assert.match(await fs.readFile(join(dir,'skill.md'),'utf8'),/consent is denied/);
+ assert.match(await fs.readFile(join(dir,'skill.md'),'utf8'),/and en dashes/);
  await e.decide(config,proposal.id,'approve');assert.equal((await e.status(config)).baseline.id,transaction.result.id);assert.equal((await e.status(config)).interruptedApproval,null);
 });
-test('declarative policy runs without a model and saved outputs replay exactly',async t=>{
+test('punctuation adaptation runs without a model and saved outputs replay exactly',async t=>{
  const dir=await fs.mkdtemp(join(tmpdir(),'skill-loop-rules-'));t.after(()=>fs.rm(dir,{recursive:true,force:true}));const {config}=await init(dir,{rules:true});
  const r=await e.run(config);assert.equal(r.score,50);assert.equal((await e.replay(config,r.id)).matchesRecorded,true);assert.equal((await e.replay(config,r.id)).newModelRun,false);
- await e.baseline(config,r.id);const policy=await readJSON(join(dir,'skill.json'));policy.rules.push({when:[{path:'/consent',op:'equals',value:'denied'},{path:'/events',op:'equals',value:0}],output:{verdict:'PASS'}});
- await atomic(join(dir,'candidate.json'),policy);const p=await e.stage(config,join(dir,'candidate.json'),'Written consent rule: denied means zero events');assert.equal(p.eligible,true);assert.equal(p.comparison.status,'improved');
+ await e.baseline(config,r.id);const policy=await readJSON(join(dir,'skill.json'));policy.replaceEnDashes=true;
+ await atomic(join(dir,'candidate.json'),policy);const p=await e.stage(config,join(dir,'candidate.json'),'Humanizer section 14 covers en dashes too');assert.equal(p.eligible,true);assert.equal(p.comparison.status,'improved');
 });
 test('inventory distinguishes discovery from effectiveness and registry verifies skill identity',async t=>{
  const {inventory,checkAll}=await import('../scripts/inventory.mjs');const {dir,config}=await fixture(t);const root=join(dir,'skills');await fs.mkdir(join(root,'one'),{recursive:true});await fs.writeFile(join(root,'one','SKILL.md'),'---\nname: one\ndescription: test\n---\nRun test');
@@ -128,4 +128,32 @@ test('large interactive diffs expose duplicate additions and positional limitati
  const result=diff(a,a+'\nline 0');
  assert.equal(result.approximate,true);assert.equal(result.right.at(-1).changed,true);
  const small=diff('a\nb','a\nx\nb');assert.equal(small.right.filter(x=>x.changed).length,1);assert.equal(small.left.filter(x=>x.changed).length,0);
+});
+
+test('negative content checks fail closed and preserve positive-check semantics',()=>{
+ const suite={version:1,cases:[{id:'a',input:{},checks:[{path:'/text',op:'notContains',value:'—'},{path:'/text',op:'contains',value:'12'}]}]};
+ const check=output=>e.score(suite,{outputs:[{id:'a',output}]});
+ assert.equal(check({text:'12 drafts'}).passed,2);
+ assert.equal(check({text:'12 — drafts'}).passed,1);
+ assert.equal(check({}).passed,0);assert.equal(check({text:12}).passed,0);
+ const array={version:1,cases:[{id:'a',input:{},checks:[{path:'',op:'notContains',value:{bad:true}}]}]};
+ assert.equal(e.score(array,{outputs:[{id:'a',output:[{bad:true}]}]}).passed,0);
+ assert.equal(e.score(array,{outputs:[{id:'a',output:[]}]}).passed,1);
+});
+test('Humanizer setup preserves installed source and needs actual assistant output',async t=>{
+ const {initHumanizer}=await import('../scripts/humanizer-demo.mjs');
+ const dir=await fs.mkdtemp(join(tmpdir(),'humanizer-test-'));t.after(()=>fs.rm(dir,{recursive:true,force:true}));
+ const {config}=await initHumanizer(dir);const req=await e.prepare(config);
+ assert.equal(req.skill,await fs.readFile(new URL('../examples/humanizer/SKILL.md',import.meta.url),'utf8'));
+ assert.equal(req.cases.length,2);assert.equal(req.cases[0].checks,undefined);
+ await assert.rejects(e.run(config),/No runner command/);
+ assert.equal((await e.status(config)).latest,null);
+ await assert.rejects(initHumanizer(dir),/empty directory/);
+});
+test('punctuation adaptation transforms unseen input and validates config',async()=>{
+ const {punctuate}=await import('../scripts/punctuation-runner.mjs');
+ const policy={version:1,replaceEmDashes:true,replaceEnDashes:true};
+ assert.deepEqual(punctuate(policy,{text:'A — B – C'}),{text:'A, B, C'});
+ assert.deepEqual(punctuate({...policy,replaceEnDashes:false},{text:'A — B – C'}),{text:'A, B – C'});
+ assert.throws(()=>punctuate(policy,{text:4}),/needs text/);
 });

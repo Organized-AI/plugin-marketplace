@@ -1,6 +1,6 @@
 {
   "name": "skill-loop",
-  "version": "0.1.0+codex.20260909205809",
+  "version": "0.1.0+codex.20260909211357",
   "description": "Detect skill effectiveness drift, test researched revisions, and review changes with a shared iteration engine.",
   "author": {
     "name": "Jordaaan"

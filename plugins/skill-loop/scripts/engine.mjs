@@ -24,7 +24,7 @@ export function validateSuite(suite) {
     if(typeof c.id!=='string'||!c.id||ids.has(c.id)||!Object.hasOwn(c,'input'))throw Error('Cases require unique ids and input');ids.add(c.id);
     if(!Array.isArray(c.checks)||!c.checks.length)throw Error('Every case needs checks');
     for(const check of c.checks) {
-      if(typeof check.path!=='string'||(check.path!==''&&!check.path.startsWith('/'))||!['equals','contains','exists'].includes(check.op))throw Error('Invalid check path or operation');
+      if(typeof check.path!=='string'||(check.path!==''&&!check.path.startsWith('/'))||!['equals','contains','notContains','exists'].includes(check.op))throw Error('Invalid check path or operation');
       if(check.op!=='exists'&&!Object.hasOwn(check,'value'))throw Error('Check value required');
     }
   }
@@ -53,8 +53,10 @@ export function score(suite, response) {
   if(outputs.size!==suite.cases.length||suite.cases.some(c=>!outputs.has(c.id)))throw Error('Response case ids must exactly match the suite');
   const checks=suite.cases.flatMap(c=>c.checks.map((check,index)=>{
     const actual=pointer(outputs.get(c.id),check.path);
-    const passed=check.op==='exists'?actual!==undefined:check.op==='equals'?equal(actual,check.value):
-      typeof actual==='string'&&typeof check.value==='string'?actual.includes(check.value):Array.isArray(actual)&&actual.some(v=>equal(v,check.value));
+    const validContainer=(typeof actual==='string'&&typeof check.value==='string')||Array.isArray(actual);
+    const contains=typeof actual==='string'&&typeof check.value==='string'?actual.includes(check.value):Array.isArray(actual)&&actual.some(v=>equal(v,check.value));
+    const passed=check.op==='notContains'?validContainer&&!contains:check.op==='exists'?actual!==undefined:check.op==='equals'?equal(actual,check.value):
+      contains;
     return {caseId:c.id,index,path:check.path,op:check.op,expected:check.value,actual:actual??null,passed:!!passed};
   }));
   const passed=checks.filter(c=>c.passed).length;
@@ -70,7 +72,7 @@ async function snapshot(config, candidate) {
   const skill=await fs.readFile(candidate?resolve(candidate):config.skill,'utf8');
   if(!skill.trim())throw Error('Skill must not be empty');
   const suite=validateSuite(await readJSON(config.suite));
-  return {skill,suite,skillHash:hash(skill),conditions:hash({suite,runner:config.runner,scorer:1})};
+  return {skill,suite,skillHash:hash(skill),conditions:hash({suite,runner:config.runner,scorer:2})};
 }
 function requestFor(snap) {
   return {requestId:randomUUID(),skill:snap.skill,cases:snap.suite.cases.map(({id,input})=>({id,input})),

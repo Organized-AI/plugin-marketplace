@@ -11,27 +11,30 @@ export async function init(folder,{demo=false,rules=false}={}) {
   folder=resolve(folder);await fs.mkdir(folder,{recursive:true});
   // A dedicated empty directory avoids overwriting a user's skill or config.
   if((await fs.readdir(folder)).length)throw Error('Choose an empty directory for setup');
-  await atomic(join(folder,'skill.md'),'Check the event count. Exactly one event is PASS; otherwise FAIL. Return JSON with verdict.\n');
-  await atomic(join(folder,'suite.json'),{version:1,source:{title:'Workshop consent policy',reference:'Local fictional exercise',version:'1'},coverage:'Two event-count cases; no live tracking, security or business-outcome validation',cases:[{id:'granted',input:{consent:'granted',events:1},checks:[{path:'/verdict',op:'equals',value:'PASS'}]},{id:'denied',input:{consent:'denied',events:0},checks:[{path:'/verdict',op:'equals',value:'PASS'}]}]});
+  await atomic(join(folder,'skill.md'),'Humanizer punctuation practice: replace em dashes with commas, removing adjacent spaces. Return JSON with text. Teaching adaptation, not the full Humanizer skill.\n');
+  await atomic(join(folder,'suite.json'),{version:1,source:{title:'Humanizer 2.9.1 · punctuation rule',reference:'examples/humanizer/SKILL.md §14; no author voice sample supplied',version:'2.9.1'},coverage:'Two punctuation cases in a teaching adaptation; not a live run of the full Humanizer skill or a measure of writing quality',cases:[{id:'em-dashes',input:{text:'Brain Gainz — with Jordaaan — starts Thursday.'},checks:[{path:'/text',op:'equals',value:'Brain Gainz, with Jordaaan, starts Thursday.'}]},{id:'en-dashes',input:{text:'Brain Gainz – with Jordaaan – starts Thursday.'},checks:[{path:'/text',op:'equals',value:'Brain Gainz, with Jordaaan, starts Thursday.'}]}]});
   const runner=demo?{label:'deterministic-demo-not-an-AI-model',command:[process.execPath,join(here,'../examples/demo-runner.mjs')]}:{label:'my-assistant'};
   const config={version:1,skill:'skill.md',suite:'suite.json',state:'.skill-loop',runner};
   if(demo)config.proposerCommand=[process.execPath,join(here,'../examples/demo-proposer.mjs')];
   if(rules) {
-    config.skill='skill.json';config.runner={label:'declarative-rules-no-model',command:[process.execPath,join(here,'rules-runner.mjs')]};delete config.proposerCommand;
+    config.skill='skill.json';config.runner={label:'humanizer-punctuation-adaptation-no-model',command:[process.execPath,join(here,'punctuation-runner.mjs')]};delete config.proposerCommand;
     await fs.rm(join(folder,'skill.md'));
-    await atomic(join(folder,'skill.json'),{version:1,rules:[{when:[{path:'/consent',op:'equals',value:'granted'},{path:'/events',op:'equals',value:1}],output:{verdict:'PASS'}}],defaultOutput:{verdict:'FAIL'}});
+    await atomic(join(folder,'skill.json'),{version:1,replaceEmDashes:true,replaceEnDashes:false});
   }
   const path=join(folder,'skill-loop.json');await atomic(path,config);return {config:path,mode:rules?'declarative rules, no model':demo?'offline demonstration':'assistant prepare/ingest',next:demo?'run, baseline, loop, report, review':'prepare, ask your assistant to run the returned cases, ingest, baseline'};
 }
 export async function main(args) {
   const [action,file,...rest]=args;
+  if(action==='humanizer-init') {
+    const {initHumanizer}=await import('./humanizer-demo.mjs');return initHumanizer(file??'humanizer-workshop');
+  }
   if(action==='demo') {
     const setup=await init(file??'skill-loop-demo',{rules:true});
     const first=await engine.run(setup.config);await engine.baseline(setup.config,first.id);
     const folder=dirname(setup.config),policy=await readJSON(join(folder,'skill.json'));
-    policy.rules.push({when:[{path:'/consent',op:'equals',value:'denied'},{path:'/events',op:'equals',value:0}],output:{verdict:'PASS'}});
+    policy.replaceEnDashes=true;
     const candidate=join(folder,'candidate.json');await atomic(candidate,policy);
-    const proposal=await engine.stage(setup.config,candidate,'Prepared workshop policy correction: denied consent requires zero events. Deterministic rules example, not an AI benchmark.');
+    const proposal=await engine.stage(setup.config,candidate,'Prepared correction to the Humanizer punctuation teaching adaptation: handle en dashes as well as em dashes. The installed Humanizer already states both rules; this is not a measured defect in it.');
     return {mode:'rules-only demonstration',baseline:first.score,candidate:proposal.comparison.status,proposal:proposal.id,activeSkillChanged:false,...await report(setup.config)};
   }
   if(action==='inventory')return inventory(file?[file,...rest]:undefined);

@@ -4,12 +4,44 @@ Detect **effectiveness drift**, test a researched fix, and review it before it c
 an active skill. This first local engine uses the same bounded iteration core as
 GTM Autoresearch. It requires Node.js 22 or later and no npm dependencies.
 
+## Start in Claude Desktop: test Humanizer
+
+The workshop uses **Humanizer 2.9.1**, exported from Jordaaan’s enabled Claude
+skill. It rewrites a short paragraph while preserving the facts. Its original
+MIT license and attribution are bundled in `examples/humanizer/`.
+
+Open regular Claude Chat with code execution and file creation enabled. Send:
+
+> Use Skill Loop from https://github.com/Organized-AI/plugin-marketplace/tree/codex/skill-loop-engine/plugins/skill-loop to test the bundled Humanizer skill. Follow the Humanizer first-run guide in its README. Run the actual paragraph cases and return the Organized AI interactive QA artifact here in regular Chat. Preserve the installed skill and report actual results, even if everything already passes.
+
+The assistant runs `humanizer-init EMPTY_DIR`, records its model in the generated
+runner label, then uses `prepare CONFIG`. Follow the returned Humanizer skill and
+case inputs, returning `{text: "the final rewrite"}` for each case with the exact
+request ID. Save those actual outputs and use `ingest CONFIG response.json`.
+Save the completed run as baseline and generate `report CONFIG`. Display the
+returned HTML in Claude’s Preview pane. No upload or Cowork session is required.
+
+The evaluator checks specified names, numbers, and phrases directly in the saved
+text. It does not score “human-ness,” infer authorship, or certify all facts and
+writing quality. Review meaning and tone separately. If checks all pass, keep the
+skill. Do not invent a failure or weaken the original to manufacture an improvement.
+Draft revisions require a new test; automated `stage` needs a configured runner.
+The chat route currently tests the supplied working copy with prepare/ingest.
+
+This runs in Claude’s code-execution workspace; it does not permanently install
+Skill Loop or access skills elsewhere on your computer. The earlier repo-to-HTML
+flow was verified in regular Claude Desktop; see [verification](VERIFICATION.md).
+
 ## One-command QA demo
 
 From the plugin directory, run `node scripts/cli.mjs demo ~/skill-loop-demo`.
-Use an empty destination. It runs real declarative rules, saves a baseline, tests
+Use an empty destination. It runs a small executable adaptation of Humanizer’s punctuation rule, saves a baseline, tests
 a prepared correction, and returns the visual report path without changing the
 active skill. No account, model, cloud service, or result-id copying is required.
+
+The offline adaptation initially handles em dashes, then adds en dashes. The full
+Humanizer already describes both; this is a teaching example, not a defect found
+in the installed skill. Use the live Humanizer route above for actual model outputs.
 
 ## Five-minute offline demo
 
@@ -120,7 +152,7 @@ npm test
 
 ## All skills in a coding environment
 
-The consent example is only a starter fixture. Inventory any skill directory:
+The Humanizer example is only a starter fixture. Inventory any skill directory:
 
 ```sh
 node scripts/cli.mjs inventory
@@ -192,5 +224,21 @@ choices and revision requests are copied back to the assistant for execution and
 review. The HTML never applies changes itself. Regenerate it after any run or
 decision. Unsaved draft edits are lost when the page closes.
 
-The report is self-contained HTML opened in a browser or compatible desktop
-preview. This is not a verified embedded Claude Chat or Cowork widget.
+The default deliverable is an interactive QA artifact in the desktop task.
+Regular Claude Chat displays the self-contained HTML as an interactive output
+artifact in its Preview pane. Preserve the generated evidence. This flow was
+verified in Claude Desktop; see [verification](VERIFICATION.md). If a host cannot
+render it, attach the HTML and disclose that limitation.
+
+## Optional persistent Claude Chat skill
+
+The link-first demo above needs no upload. For repeat use, an optional Chat skill
+package can be built with `python3 scripts/package-chat.py /path/to/skill-loop-claude-chat.zip`.
+It contains a top-level `skill-loop/SKILL.md` and the same engine. Its extraction
+and execution are tested locally; the Customize → Skills upload flow has not been
+verified end to end. This is separate from a Claude Code or Cowork plugin.
+
+Regular Chat works with skills and QA sources uploaded or explicitly provided in
+the conversation. It does not enumerate or update skills on the participant's
+computer. Node.js 22+ must be available inside code execution. Return revisions
+and evidence as files; there is no separate coding CLI login for this route.
