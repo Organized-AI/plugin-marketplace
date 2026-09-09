@@ -110,3 +110,27 @@ preserves package-only versions. Restoring a historical entry while its supporti
 files differ is blocked before any write; automatic multi-file restoration is
 not yet supported. Return the complete reviewed package for manual installation
 when needed, and never describe a downloaded export as an active installation.
+
+
+## Optional connected history (Chumbo + Supabase)
+
+Cloud storage is opt-in. Once the user chooses it and connects the deployed
+Chumbo server, use stable history.project and history.skillId names in the
+workspace config. Default to summary mode; full evidence mode uploads source
+text, package content, tests and actual outputs and requires the user's choice.
+Use the engine's history-export operation, then save each exact generated record
+with the signed-in connector's save_history_record tool. Never invent hashes or
+ask for database credentials in chat. A successful local run is not a successful
+cloud save until the connector returns its acknowledgement.
+
+Open the saved history with open_skill_history. Use get_history_record for exact
+QA evidence and add_review_finding for prose findings bound to that record.
+The connected app saves accept/dismiss/reopen decisions through the user's
+existing authenticated connection. Accepting a finding requests a fix; candidate
+approval and local skill changes still require the ordinary review workflow.
+
+Do not describe the connected service as live until this deployment's login,
+private save/read, and UI actions have been verified. If no connector is available,
+keep the existing local artifact and export. Setup and limitations are documented
+in storage/chumbo/README.md. The Cloudflare Worker is only a proxy; Chumbo and
+Supabase handle the user's database access. No D1/KV fallback is automatic.

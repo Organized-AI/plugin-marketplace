@@ -2,11 +2,16 @@
 // Minimal MCP stdio transport: newline-delimited JSON-RPC, no network listener.
 import { createInterface } from 'node:readline';
 import * as e from './engine.mjs';
+import {syncHistory,readHistory,historyReport,exportHistory} from './history.mjs';
 import { init } from './cli.mjs';
 import { inventory,checkAll } from './inventory.mjs';
 import { report } from './report.mjs';
 const field={type:'string'};
 const specs=[
+ ['skill_loop_history_export','Prepare saved QA records for upload through a signed-in Chumbo connector; no credentials required.',{config:field,reviewFile:field},['config']],
+ ['skill_loop_history_sync','Archive QA snapshots to the explicitly configured private history service. Evidence mode uploads source and outputs; summary mode does not.',{config:field,reviewFile:field},['config']],
+ ['skill_loop_history','Read saved history from the configured private service.',{config:field},['config']],
+ ['skill_loop_history_report','Create a dated HTML history view from the private archive without embedding credentials.',{config:field},['config']],
  ['skill_loop_assess','Assess the complete selected package; optionally run explicitly configured script checks. Unsupported host integrations remain visible.',{config:field,execute:{type:'boolean'}},['config']],
  ['skill_loop_inventory','Discover skills under explicit roots; mark effectiveness untested until enrolled.',{roots:{type:'array',items:field}},[]],
  ['skill_loop_check_all','Run the configured evaluations in a skill registry; preserve untested and error states.',{registry:field},['registry']],
@@ -24,7 +29,7 @@ const specs=[
  ['skill_loop_status','Read the latest run and baseline.',{config:field},['config']],
  ['skill_loop_report','Write a local HTML report with test evidence and candidate comparison.',{config:field},['config']]
 ];
-const handlers={skill_loop_assess:a=>e.assess(a.config,{execute:a.execute??false}),skill_loop_versions:a=>e.versions(a.config),skill_loop_select_version:a=>e.selectVersion(a.config,a.version),skill_loop_inventory:a=>inventory(a.roots),skill_loop_check_all:a=>checkAll(a.registry),skill_loop_replay:a=>e.replay(a.config,a.runId),skill_loop_init:a=>init(a.directory,{demo:a.demo??false,rules:a.rules??false}),skill_loop_prepare:a=>e.prepare(a.config),skill_loop_ingest:a=>e.ingest(a.config,a.response),skill_loop_run:a=>e.run(a.config),skill_loop_baseline:a=>e.baseline(a.config,a.runId),skill_loop_stage:a=>e.stage(a.config,a.candidate,a.evidence),skill_loop_loop:a=>e.loop(a.config),skill_loop_decide:a=>e.decide(a.config,a.proposalId,a.decision),skill_loop_status:a=>e.status(a.config),skill_loop_report:a=>report(a.config)};
+const handlers={skill_loop_history_export:a=>exportHistory(a.config,{reviewFile:a.reviewFile}),skill_loop_history_sync:a=>syncHistory(a.config,{reviewFile:a.reviewFile}),skill_loop_history:a=>readHistory(a.config),skill_loop_history_report:a=>historyReport(a.config),skill_loop_assess:a=>e.assess(a.config,{execute:a.execute??false}),skill_loop_versions:a=>e.versions(a.config),skill_loop_select_version:a=>e.selectVersion(a.config,a.version),skill_loop_inventory:a=>inventory(a.roots),skill_loop_check_all:a=>checkAll(a.registry),skill_loop_replay:a=>e.replay(a.config,a.runId),skill_loop_init:a=>init(a.directory,{demo:a.demo??false,rules:a.rules??false}),skill_loop_prepare:a=>e.prepare(a.config),skill_loop_ingest:a=>e.ingest(a.config,a.response),skill_loop_run:a=>e.run(a.config),skill_loop_baseline:a=>e.baseline(a.config,a.runId),skill_loop_stage:a=>e.stage(a.config,a.candidate,a.evidence),skill_loop_loop:a=>e.loop(a.config),skill_loop_decide:a=>e.decide(a.config,a.proposalId,a.decision),skill_loop_status:a=>e.status(a.config),skill_loop_report:a=>report(a.config)};
 const send=o=>process.stdout.write(JSON.stringify(o)+'\n');
 for await(const line of createInterface({input:process.stdin,crlfDelay:Infinity})) {
   let request;

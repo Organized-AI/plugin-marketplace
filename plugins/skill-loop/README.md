@@ -297,3 +297,16 @@ file permissions and are checked against the full supporting package. Selecting
 an old version whose supporting files differ is blocked without modifying the
 workspace. Multi-file automatic apply/rollback and real host hook/tool adapters
 remain future work; do not advertise universal end-to-end execution support.
+
+
+## Persistent history with Chumbo
+
+The optional [connected history backend](storage/chumbo/README.md) adds private
+Supabase archives and an authenticated MCP App for review decisions. A Cloudflare
+Worker managed by Wrangler can proxy the Chumbo endpoint. The deterministic QA
+engine is shared; the local artifact remains available without cloud setup.
+
+This package includes the migration, Edge Function, bundled Organized AI review
+UI, Worker proxy, and local tests. Deploy and verify your own Supabase/OAuth setup
+before advertising the connected experience as ready. No hosted database is
+included merely by installing the skill.

@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import { resolve,join,dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as engine from './engine.mjs';
+import {syncHistory,readHistory,historyReport,exportHistory} from './history.mjs';
 import { inventory,checkAll } from './inventory.mjs';
 import { atomic,readJSON } from './shared/io.mjs';
 import { report } from './report.mjs';
@@ -44,6 +45,10 @@ export async function main(args) {
   if(action==='doctor')return {node:process.version,required:'Node.js 22+',engine:'ready',integration:'CLI and MCP transport available; individual host installation must be tested'};
   if(!file)throw Error('Usage: node cli.mjs init DIR [--demo] | doctor | connect | run|prepare|ingest|baseline|stage|approve|reject|loop|watch|report|status CONFIG [arguments]');
   if(['run','prepare','status','loop','versions'].includes(action))return engine[action](resolve(file));
+  if(action==='history-export')return exportHistory(file,{reviewFile:rest[0]});
+  if(action==='history-sync')return syncHistory(file,{reviewFile:rest[0]});
+  if(action==='history')return readHistory(file);
+  if(action==='history-report')return historyReport(file);
   if(action==='assess')return engine.assess(file,{execute:rest.includes('--execute')});
   if(action==='ingest')return engine.ingest(file,await readJSON(rest[0]));
   if(action==='select-version')return engine.selectVersion(file,rest[0]);

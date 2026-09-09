@@ -1,5 +1,24 @@
 # Verification
 
+## September 9, 2026 — connected history (local proof)
+
+- Chumbo 0.11.0 + Supabase backend, SQL migration, bundled MCP App and a Wrangler
+  proxy are implemented. The original shared engine now exports its pure scorer
+  for the server; the verification script checks cloud/local copies match.
+- Isolated PostgreSQL migration tests pass: two-user isolation, owner spoof
+  rejection, immutable history, stale decision rejection, transactional audit
+  events, whitespace reasons, and a concurrent-safe 100-finding cap.
+- All 57 parent engine/package tests pass. Four Deno tests pass, including real Chumbo transport with fixture identities,
+  canonical archive validation, raw evidence rejected in summary mode, recomputed
+  scores, user-scoped reads, OAuth challenge, and Worker forwarding boundaries.
+- UI bundle, Deno type check, and Wrangler deployment dry-run pass.
+- Full local Supabase startup is blocked by an unresponsive Docker daemon.
+  Hosted Supabase OAuth, Claude connected-app operation, and Codex integration
+  have not been verified for this deployment. No production database was created.
+- Independent review fixes include bounded findings, summary privacy checks,
+  preserved server QA in exports, retained component counts and safe packaging.
+
+
 ## September 9, 2026 — package assessment and actionable workshop review
 
 - All 55 Skill Loop and shared GTM tests pass, including candidate script execution

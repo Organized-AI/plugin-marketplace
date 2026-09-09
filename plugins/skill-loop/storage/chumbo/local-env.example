@@ -1,0 +1,3 @@
+# Copy privately into supabase/functions/.env.local; never commit actual secrets.
+# Local Chumbo must advertise the route served by wrangler dev.
+MCP_PUBLIC_URL=http://127.0.0.1:8787/mcp
