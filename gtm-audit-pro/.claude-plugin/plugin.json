@@ -1,0 +1,8 @@
+{
+  "name": "gtm-audit-pro",
+  "version": "0.1.0",
+  "description": "GTM static configuration audits and optional change-triggered Autoresearch candidates. Reuses Fix Your Tracking's shared runtime; never publishes.",
+  "author": { "name": "Organized AI" },
+  "repository": "https://github.com/Organized-AI/plugin-marketplace",
+  "license": "MIT"
+}

@@ -1,11 +1,6 @@
 # /gtm-audit
 
-> **Report-only audits are now `gtm-audit-pro`.** This command's plain audit (no `--fix`) is superseded by the
-> `gtm-audit-pro` plugin — same inventory and correlation checks, plus consent, data-layer integrity, sGTM dedup,
-> version history/drift, and offline-conversion coverage, with a scored report. `--fix` still lives here, since
-> that's tidy-gtm applying changes, which `gtm-audit-pro` deliberately never does.
-
-
+> **For the workshop baseline, use the bundled `gtm-audit-pro` skill.** It runs six static configuration checks and can start the shared change watcher. Live consent, data-layer behavior, sGTM delivery, and offline conversions require separate verification. The existing `tidy-gtm` workflow below remains available for broader agent-led review and `--fix`.
 
 Audit GTM container for issues, duplicates, and naming violations.
 

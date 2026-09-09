@@ -1,0 +1,18 @@
+{
+  "name": "gtm-audit-pro",
+  "version": "0.1.0",
+  "description": "Read-only GTM configuration audits with optional background monitoring and local Autoresearch candidates.",
+  "author": {
+    "name": "Organized AI"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GTM Audit Skill Pro",
+    "shortDescription": "Audit GTM changes and review optimization candidates.",
+    "longDescription": "Static GTM checks, stable-snapshot monitoring, and bounded metadata optimization. No live publishing.",
+    "developerName": "Organized AI",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Use GTM Audit Skill Pro to audit my GTM container and save findings."
+  }
+}

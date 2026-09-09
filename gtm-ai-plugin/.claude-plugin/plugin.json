@@ -1,6 +1,6 @@
 {
   "name": "gtm-ai-plugin",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers with pre-publish validation",
   "author": {
     "name": "GTM Automation",

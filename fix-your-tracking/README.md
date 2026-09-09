@@ -85,7 +85,7 @@ Create `CONFIG/config.json`:
 
 ### Run GTM Autoresearch
 
-Use the `gtm-autoresearch-loop` skill to run a Karpathy-style optimize/validate/revert loop on a GTM container using enriched Meta + Google Ads snapshots.
+Use the `gtm-autoresearch-loop` skill for static GTM audits, optional background change monitoring, and bounded metadata candidate optimization. The shared Node.js runtime requires no ad-platform connections. See [.claude/skills/gtm-autoresearch-loop/references/audit-integration.md](.claude/skills/gtm-autoresearch-loop/references/audit-integration.md).
 
 ## Supported Platforms
 
@@ -107,7 +107,7 @@ Use the `gtm-autoresearch-loop` skill to run a Karpathy-style optimize/validate/
 
 ## Included Skill
 
-- `gtm-autoresearch-loop` - Autonomous GTM optimization loop with 12-dimension scoring, mutation prompts, validation gates, and winning-config tracking
+- `gtm-autoresearch-loop` - GTM static audit and change watcher with six heuristic quality dimensions, metadata proposals, and keep/revert validation
 
 ## License
 

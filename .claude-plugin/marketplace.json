@@ -104,7 +104,7 @@
     {
       "name": "gtm-audit-pro",
       "source": "./gtm-audit-pro",
-      "description": "AI-assisted GTM + GA4 audit: 72 read-only checkpoints across MeasureU's base 33, consent/privacy, data-layer quality, Google Ads + Meta reconciliation, sGTM delivery and cross-container dedup, performance/security, version history and drift, and offline-conversion / Data Manager API coverage. Produces a scored, tiered-recommendation report. Successor to the audit portion of tidy-gtm (gtm-ai-plugin, gads-gtm-plugin, fix-your-tracking) \u2014 tidy-gtm's write/remediation phase remains the tool for actually applying fixes."
+      "description": "GTM-only static configuration audits across six quality dimensions, optional background change monitoring, and bounded local Autoresearch candidates. Shared runtime with Fix Your Tracking and GTM AI. No live publishing; live firing and cross-platform reconciliation are not verified."
     },
     {
       "name": "openclaw-tools",
