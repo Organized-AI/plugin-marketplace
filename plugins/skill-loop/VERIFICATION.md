@@ -1,6 +1,26 @@
 # Verification
 
-## September 9, 2026 — regular Claude Desktop Chat
+## September 9, 2026 — live Humanizer and matching artifact design
+
+- Selected the enabled Humanizer skill from Jordaaan’s Claude Desktop Skills list.
+  Exported version 2.9.1; bundled skill and MIT license exactly match that export.
+- A fresh regular Claude Chat fetched the GitHub branch and followed the new
+  Humanizer first-run README: humanizer-init, prepare, actual rewrites, ingest,
+  baseline, report. No skill upload or Cowork session was used.
+- Actual engine run: 15/15 checks (9 first paragraph, 6 second), baseline saved.
+  The working skill remained byte-identical to the export; no revision was needed.
+- The returned interactive HTML rendered in Claude’s native Preview with source
+  paragraphs and actual rewrites. Colors, monospace headings, wordmark and gold
+  accents use the live Skill Loop homepage design; Organized AI / Jordaaan shown.
+- Conversation: [Testing Humanizer skill with Skill Loop](https://claude.ai/chat/f60c513f-ee9d-430e-bb54-c5a4f9896fd3) (account access required).
+- Independent review confirmed source preservation, negative checks failing on
+  missing/wrong-type output, HTML escaping, and the branding match.
+- Browser fallback verified through all three clicks: 2/3 → 3/3 → chosen version.
+  It is explicitly a punctuation teaching adaptation, not the full Humanizer.
+- Scope: literal anchors and selected unwanted strings only. Meaning and tone
+  require human review. A passing baseline is retained; no failure is invented.
+
+## September 9, 2026 — initial regular Claude Desktop Chat verification
 
 - Started a new regular Chat with the public GitHub branch URL and a request to
   run the included demo and return an interactive artifact. No skill ZIP upload,

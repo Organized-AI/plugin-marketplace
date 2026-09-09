@@ -157,3 +157,9 @@ test('punctuation adaptation transforms unseen input and validates config',async
  assert.deepEqual(punctuate({...policy,replaceEnDashes:false},{text:'A — B – C'}),{text:'A, B – C'});
  assert.throws(()=>punctuate(policy,{text:4}),/needs text/);
 });
+
+test('report identifies the newly saved baseline before any comparison run',async t=>{
+ const {config}=await fixture(t);const first=await e.run(config);await e.baseline(config,first.id);
+ const html=await fs.readFile((await report(config)).report,'utf8');
+ assert.match(html,/Effectiveness drift<strong class="number">Baseline saved/);
+});
