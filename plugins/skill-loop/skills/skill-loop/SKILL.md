@@ -171,3 +171,8 @@ Do not execute bundled hooks or external writes merely to discover requirements.
 Retain “untested” only for checks that have not run, with a concrete reason and a
 next-step action. A generated suite is not a run, and a static inspection is not a
 behavioral test. Record the suite/version before establishing a comparable baseline.
+
+
+## Default Claude artifact layout
+
+Use `scripts/skill-loop-all-skills-layout-preview.html` as the approved visual reference (relative to the package root), also available at https://skill.organizedai.vip/workshop/files/skill-loop-all-skills-layout-preview.html. Read its HTML before producing the artifact. Keep its Organized AI wordmark, charcoal/gold palette, Jordaaan LinkedIn attribution, overview, selectable per-skill cards, separate QA and coverage states, case comparison, findings and next-step actions. Populate the layout with this run’s actual discovered skills and evidence. The reference contains saved example scores and hypothetical gap cards: do not copy those into a new assessment or imply they were just tested. Remove hypothetical cards unless explicitly demonstrating the layout. Preserve the engine’s evidence, version review, actionable request handoffs, compact Cloudflare summary save/readback, and separately configured package-backup path. Do not inherit the reference’s disabled preview-only controls into a real report, or claim a save/repair succeeded before verified execution. If only preview evidence is available, retain the preview label and disabled write controls.
