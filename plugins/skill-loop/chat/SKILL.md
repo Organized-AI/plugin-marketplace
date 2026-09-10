@@ -15,6 +15,8 @@ report an unavailable runtime rather than inventing a test result.
 
 For a first run, use the bundled renderer instead of writing a new dashboard:
 `node /absolute/package/scripts/cli.mjs overview /absolute/empty/qa-output [accessible-skill-root ...]`.
+Choose a new output folder (add a timestamp if needed). Never delete or clear an
+existing directory to prepare the report; the engine refuses overwrites.
 This scans the selected roots and writes `inventory.json` and `report.html` without
 running an LLM or executing discovered skills. In terminal agents, omitting roots
 uses common local skill locations; in Claude Chat, pass the roots actually exposed
