@@ -86,3 +86,16 @@ test('component checks execute candidate entry bytes rather than the original en
  const f=await fixture(t);const custom=join(f.root,'Skill.TXT');await fs.writeFile(custom,'Preserve numbers');await fs.writeFile(join(f.root,'helper.py'),'print(1)');
  const p=await packageSnapshot({skill:custom,base:f.root});assert.match(p.coverage,/Complete selected-root/);assert(p.files.some(x=>x.path==='helper.py'));
  });
+
+test('long cyclic reference graph is not directory nesting',async t=>{
+ const f=await fixture(t);
+ for(let i=0;i<35;i++)await fs.writeFile(join(f.pkg,'references',`chain${i}.md`),`[next](chain${(i+1)%35}.md)`);
+ const p=await packageSnapshot({skill:join(f.pkg,'skills/example/SKILL.md'),package:{root:f.pkg}});
+ assert.equal(p.files.filter(x=>x.path.includes('/chain')).length,35);
+ assert(!p.issues.some(x=>x.reason.includes('depth')));
+});
+test('binary assets retain metadata without claiming text review is required',async t=>{
+ const f=await fixture(t);await fs.writeFile(join(f.pkg,'logo.png'),Buffer.from([0,1,2]));
+ const p=packageContext(await packageSnapshot({skill:join(f.pkg,'skills/example/SKILL.md'),package:{root:f.pkg}}));
+ const asset=p.files.find(x=>x.path==='logo.png');assert.equal(asset.contextStatus,'not-supplied');assert.equal(asset.requiresContentReview,false);assert.equal(asset.omissionType,'file-content-unavailable');assert(asset.sha256);
+});

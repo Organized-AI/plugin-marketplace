@@ -28,13 +28,13 @@ export async function packageSnapshot(config,{entryText}={}) {
  const whole=!!config.package?.root||/^skill\.(md|markdown|txt)$/i.test(basename(skill));
  const excluded=await Promise.all([config.suite,config.state,config.configFile,...(config.package?.exclude??[]).map(p=>resolve(root,p))].filter(Boolean).map(async p=>fs.realpath(resolve(p)).catch(()=>resolve(p))));
  async function add(path,force=false,depth=0){
-  if(depth>25)throw Error('Package directory depth exceeds 25');
   if(seen.has(path))return;seen.add(path);
   const rel=relative(root,path).split(sep).join('/');
   if(!within(root,path)){issues.push({path:rel,status:'blocked',reason:'Reference leaves the selected package root'});return;}
   if(excluded.some(p=>within(p,path))||ignored.has(basename(path))||secret(basename(path))){exclusions.push({path:rel,reason:'Evaluation state, excluded path, dependency cache, or sensitive filename'});return;}
   const st=await fs.lstat(path).catch(e=>{if(e.code==='ENOENT'){issues.push({path:rel,status:'blocked',reason:'Referenced file is missing'});return null;}throw e;});if(!st)return;
   if(st.isSymbolicLink()){issues.push({path:rel,status:'blocked',reason:'Symlink must be resolved into a reviewed package copy'});return;}
+  if(st.isDirectory()&&rel.split('/').filter(Boolean).length>25){issues.push({path:rel,status:'blocked',reason:'Directory nesting exceeds assessment depth limit; partial inventory retained'});return;}
   if(st.isDirectory()){for(const n of (await fs.readdir(path)).sort()){if(whole||depth>0||force||support.has(n)||resolve(path,n)===skill)await add(join(path,n),force,depth+1);else exclusions.push({path:relative(root,join(path,n)),reason:'Outside the custom-entry support-directory scan; use package.root to include all root files'});}return;}
   if(!st.isFile())return;
   if(files.length>=2000||st.size>20_000_000||(bytes+=st.size)>50_000_000)throw Error('Package exceeds assessment limits; select a narrower package root');
@@ -56,7 +56,7 @@ export async function packageSnapshot(config,{entryText}={}) {
 }
 export function packageContext(pkg) {
  let used=0;
- return {...pkg,root:undefined,files:pkg.files.map(f=>{const content=f.content;if(content===undefined||used+Buffer.byteLength(content)>1_000_000)return {...f,content:undefined,contextStatus:'not-supplied',reason:'Binary, oversized, or context budget exceeded'};used+=Buffer.byteLength(content);return {...f,contextStatus:'supplied'};})};
+ return {...pkg,root:undefined,files:pkg.files.map(f=>{const content=f.content;if(content===undefined||used+Buffer.byteLength(content)>1_000_000)return {...f,content:undefined,contextStatus:'not-supplied',reason:content===undefined?'Binary, unsupported text format, or oversized file; metadata inventoried':'Text context budget exceeded; load on demand',omissionType:content===undefined?'file-content-unavailable':'text-budget',requiresContentReview:['instructions','reference','script','command','hook','dependency'].includes(f.kind)};used+=Buffer.byteLength(content);return {...f,contextStatus:'supplied'};})};
 }
 async function executeSnapshotTest(pkg,test) {
  const copy=await fs.mkdtemp(join(tmpdir(),'skill-loop-component-'));
