@@ -23,3 +23,9 @@ The installed Cloudflare Developer Platform connector was tested for D1 SQL acce
 ## Native connector transfer capacity
 
 New checkpoints use layout version 2 and separate storage keys, with 3,000-character chunks and SQL length guards. Version-1 receipts remain readable. The D1 exporter rejects manifests over 2,400 UTF-8 bytes before returning a plan; large packages need a file-capable adapter. This limit is explicit because large model-mediated SQL arguments failed integrity checks in rehearsal. A prepared KV/R2 plan is not proof of a working content adapter. Do not promise that arbitrary-sized packages can be saved through the native connector.
+
+## Exact transfer through model-mediated tools
+
+Use the generated SQL from `cloudflare-export`, including its repetition expressions and segmented readback queries. Repeated base64 must not be manually expanded: SQL reconstructs it with `replace(hex(zeroblob(count)),'00',pattern)`. Readback returns actual stored literal segments and repetition patterns, with a database check that the entire repeated span matches. `cloudflare-verify` expands these bounded segments and checks hashes against the manifest. A length match alone is insufficient. Commit only after all returned bytes verify.
+
+For QA-only HTML snapshots, apply the same mechanical encoding in code. If a chunk cannot be transferred exactly, stop with an unverified result. Never infer success from generated SQL or a model's reconstruction of the source.
