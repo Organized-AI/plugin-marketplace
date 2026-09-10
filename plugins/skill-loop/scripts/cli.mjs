@@ -9,7 +9,19 @@ import { inventory,checkAll } from './inventory.mjs';
 import { atomic,readJSON } from './shared/io.mjs';
 import { report } from './report.mjs';
 const here=dirname(fileURLToPath(import.meta.url));
-export async function init(folder,{demo=false,rules=false}={}) {
+export async function init(folder,{demo=false,rules=false,skill,suite}={}) {
+  if(!demo&&!rules) {
+    if(!skill||!suite)throw Error('Choose your existing skill and QA suite: init DIR --skill PATH --suite PATH. To discover skills first, use inventory [DIRECTORY]. No example is selected automatically.');
+    skill=resolve(skill);suite=resolve(suite);
+    await fs.access(skill);await fs.access(suite);
+    folder=resolve(folder);
+    const path=join(folder,'skill-loop.json');
+    // Keep the QA workspace separate from the skill package and leave originals intact.
+    await fs.mkdir(folder,{recursive:true});
+    if((await fs.readdir(folder)).length)throw Error('Choose an empty directory for setup');
+    await atomic(path,{version:1,skill,suite,state:'.skill-loop',runner:{label:'my-assistant'}});
+    return {config:path,mode:'your skill; assistant prepare/ingest',next:'assess, prepare, run the returned cases with your assistant, ingest, report'};
+  }
   folder=resolve(folder);await fs.mkdir(folder,{recursive:true});
   // A dedicated empty directory avoids overwriting a user's skill or config.
   if((await fs.readdir(folder)).length)throw Error('Choose an empty directory for setup');
@@ -41,7 +53,7 @@ export async function main(args) {
   }
   if(action==='inventory')return inventory(file?[file,...rest]:undefined);
   if(action==='check-all')return checkAll(file);
-  if(action==='init')return init(file??'skill-loop-workspace',{demo:rest.includes('--demo'),rules:rest.includes('--rules')});
+  if(action==='init') {const option=name=>{const i=rest.indexOf(name);return i>=0?rest[i+1]:undefined;};return init(file??'skill-loop-workspace',{demo:rest.includes('--demo'),rules:rest.includes('--rules'),skill:option('--skill'),suite:option('--suite')});}
   if(action==='connect')return {mcpServers:{'skill-loop':{command:process.execPath,args:[join(here,'mcp.mjs')]}}};
   if(action==='doctor')return {node:process.version,required:'Node.js 22+',engine:'ready',integration:'CLI and MCP transport available; individual host installation must be tested'};
   if(!file)throw Error('Usage: node cli.mjs init DIR [--demo] | doctor | connect | run|prepare|ingest|baseline|stage|approve|reject|loop|watch|report|status CONFIG [arguments]');
