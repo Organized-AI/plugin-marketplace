@@ -11,6 +11,23 @@ local terminal, separate coding-agent login, or local MCP setup is needed for th
 route. The runtime still needs Node.js 22+ inside code execution; check it first and
 report an unavailable runtime rather than inventing a test result.
 
+## Fast first overview
+
+For a first run, use the bundled renderer instead of writing a new dashboard:
+`node /absolute/package/scripts/cli.mjs overview /absolute/empty/qa-output [accessible-skill-root ...]`.
+This scans the selected roots and writes `inventory.json` and `report.html` without
+running an LLM or executing discovered skills. In terminal agents, omitting roots
+uses common local skill locations; in Claude Chat, pass the roots actually exposed
+inside code execution or provided by authorized connectors. List additional sources
+that cannot be accessed. Do not claim an exhaustive machine scan.
+
+Present this HTML immediately using the host's artifact/file preview. Do not wait
+for behavioral suites or redraw the layout before showing the first useful result.
+Then run appropriate deeper checks for the discovered skills and update their results.
+No suite or `init` is needed for an overview. An absent skill source needs an upload
+or authorized connection, not a sample. Missing Node requires the host's runtime
+setup; an expired coding-agent login requires that agent's normal sign-in.
+
 ## Default first run: all accessible skills
 
 When the user says “run this” or “run this for all skills,” assess all skills you can access in the current session. Do not start with a bundled example unless the user explicitly asks for a demo. Use code execution and file creation; do not switch to Cowork.

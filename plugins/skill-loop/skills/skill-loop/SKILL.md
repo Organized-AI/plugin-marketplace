@@ -9,8 +9,10 @@ The bundled Node.js 22+ engine shares iteration mechanics with GTM Autoresearch.
 Read `../../README.md` for setup and transport details. All paths below are relative
 to this skill directory; resolve them to absolute paths before invoking commands.
 
-1. Run `node ../../scripts/cli.mjs doctor`. Create a persistent workspace outside
-   the plugin cache with `init /absolute/empty/directory`. Add `--demo` only for
+1. Run `node ../../scripts/cli.mjs doctor`. For first-run discovery, use `overview`
+   as described below. For behavioral QA, create a workspace outside the plugin cache
+   with `init /absolute/empty/directory --skill /absolute/skill --suite /absolute/suite.json`.
+   Add `--demo` only for
    the clearly labeled deterministic demonstration, which is not an AI benchmark.
 2. For a real skill, configure its path and a versioned JSON test suite. Agree on
    task, observable checks, source of truth, and test cases. Keep private data out
@@ -48,6 +50,23 @@ MCP tests establish transport behavior, not every host integration.
 After a completed test, demo, revision, or version decision, generate a fresh
 report and return **Skill Loop QA Review · Jordaaan** as the task's artifact. The
 report result includes its file path, MIME type, and preferred presentation.
+## Fast first overview
+
+For a first run, use the bundled renderer instead of writing a new dashboard:
+`node /absolute/package/scripts/cli.mjs overview /absolute/empty/qa-output [accessible-skill-root ...]`.
+This scans the selected roots and writes `inventory.json` and `report.html` without
+running an LLM or executing discovered skills. In terminal agents, omitting roots
+uses common local skill locations; in Claude Chat, pass the roots actually exposed
+inside code execution or provided by authorized connectors. List additional sources
+that cannot be accessed. Do not claim an exhaustive machine scan.
+
+Present this HTML immediately using the host's artifact/file preview. Do not wait
+for behavioral suites or redraw the layout before showing the first useful result.
+Then run appropriate deeper checks for the discovered skills and update their results.
+No suite or `init` is needed for an overview. An absent skill source needs an upload
+or authorized connection, not a sample. Missing Node requires the host's runtime
+setup; an expired coding-agent login requires that agent's normal sign-in.
+
 ## Default first run: all accessible skills
 
 When the user says “run this” or “run this for all skills,” assess all skills you can access in the current session. Do not start with a bundled example unless the user explicitly asks for a demo. In regular Claude Desktop Chat, follow `chat/SKILL.md` (the ZIP bundles this as its root `SKILL.md`). Use code execution and file creation; do not switch to Cowork.

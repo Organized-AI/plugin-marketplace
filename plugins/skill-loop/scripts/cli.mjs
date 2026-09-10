@@ -8,6 +8,7 @@ import {exportCloudflare,verifyCloudflare,restoreCloudflare} from './cloudflare-
 import { inventory,checkAll } from './inventory.mjs';
 import { atomic,readJSON } from './shared/io.mjs';
 import { report } from './report.mjs';
+import { overview } from './overview.mjs';
 const here=dirname(fileURLToPath(import.meta.url));
 export async function init(folder,{demo=false,rules=false,skill,suite}={}) {
   if(!demo&&!rules) {
@@ -51,6 +52,7 @@ export async function main(args) {
     const proposal=await engine.stage(setup.config,candidate,'Prepared correction to the Humanizer punctuation teaching adaptation: handle en dashes as well as em dashes. The installed Humanizer already states both rules; this is not a measured defect in it.');
     return {mode:'rules-only demonstration',baseline:first.score,candidate:proposal.comparison.status,proposal:proposal.id,activeSkillChanged:false,...await report(setup.config)};
   }
+  if(action==='overview')return overview(file,rest);
   if(action==='inventory')return inventory(file?[file,...rest]:undefined);
   if(action==='check-all')return checkAll(file);
   if(action==='init') {const option=name=>{const i=rest.indexOf(name);return i>=0?rest[i+1]:undefined;};return init(file??'skill-loop-workspace',{demo:rest.includes('--demo'),rules:rest.includes('--rules'),skill:option('--skill'),suite:option('--suite')});}
