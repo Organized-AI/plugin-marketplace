@@ -64,6 +64,16 @@ recalculate scores in the presentation layer. Return the artifact in the task
 and use its preview when available. A website button, localhost URL, raw file
 path, or prose summary alone does not fulfill artifact delivery.
 
+
+Include **Save My History** from the generated report. It prepares a short,
+file-backed request for the participant's Cloudflare Developer Platform connector.
+Read the actual HTML evidence in code execution and verify its embedded hash;
+never retype or summarize the payload. Preserve and validate current review choices.
+Report saved only after exact D1 readback verification. If the HTML file is absent,
+request it through the host artifact Download menu. No automatic background save
+or direct artifact MCP bridge is implied. See `../../storage/cloudflare/README.md`
+for the tested connector path, full-package checkpoint commands and limitations.
+
 Keep Jordaaan branding, charcoal surfaces, gold controls, and readable side-by-side
 comparison. Artifact edits remain untested drafts until the engine retests them.
 Version choices and revisions still use the engine's existing approval flow.

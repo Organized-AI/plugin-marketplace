@@ -125,3 +125,12 @@ private save/read, and UI actions have been verified. If no connector is availab
 keep the existing local artifact and export. Setup and limitations are documented
 in storage/chumbo/README.md. The Cloudflare Worker is only a proxy; Chumbo and
 Supabase handle the user's database access. No D1/KV fallback is automatic.
+
+## Optional Save My History
+
+Preserve the generated report's Save My History button and checksum-bound evidence.
+Follow `storage/cloudflare/README.md`. Read the actual HTML file in code execution;
+never reconstruct QA JSON from pasted text. Use the participant's confirmed D1
+through Cloudflare Developer Platform, and verify full readback before saying saved.
+The first QA run does not require a connector. This is a guided chat handoff, not
+an automatic background save. Keep the HTML available for a later save request.

@@ -4,6 +4,7 @@ import { resolve,join,dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as engine from './engine.mjs';
 import {syncHistory,readHistory,historyReport,exportHistory} from './history.mjs';
+import {exportCloudflare,verifyCloudflare,restoreCloudflare} from './cloudflare-state.mjs';
 import { inventory,checkAll } from './inventory.mjs';
 import { atomic,readJSON } from './shared/io.mjs';
 import { report } from './report.mjs';
@@ -45,6 +46,9 @@ export async function main(args) {
   if(action==='doctor')return {node:process.version,required:'Node.js 22+',engine:'ready',integration:'CLI and MCP transport available; individual host installation must be tested'};
   if(!file)throw Error('Usage: node cli.mjs init DIR [--demo] | doctor | connect | run|prepare|ingest|baseline|stage|approve|reject|loop|watch|report|status CONFIG [arguments]');
   if(['run','prepare','status','loop','versions'].includes(action))return engine[action](resolve(file));
+  if(action==='cloudflare-export')return exportCloudflare(file,{backend:rest[0]??'d1',skillId:rest[1]??'my-skill',reviewFile:rest[2]});
+  if(action==='cloudflare-verify')return verifyCloudflare(file);
+  if(action==='cloudflare-restore')return restoreCloudflare(file,rest[0]);
   if(action==='history-export')return exportHistory(file,{reviewFile:rest[0]});
   if(action==='history-sync')return syncHistory(file,{reviewFile:rest[0]});
   if(action==='history')return readHistory(file);
