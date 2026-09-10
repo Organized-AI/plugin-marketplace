@@ -48,12 +48,17 @@ MCP tests establish transport behavior, not every host integration.
 After a completed test, demo, revision, or version decision, generate a fresh
 report and return **Skill Loop QA Review · Jordaaan** as the task's artifact. The
 report result includes its file path, MIME type, and preferred presentation.
-For the workshop first run, follow the README’s Humanizer guide: humanizer-init,
-prepare, actual assistant outputs, ingest, baseline, report. Use the supplied full
-Humanizer skill and preserve actual outcomes, including an all-pass result.
-The offline `demo /absolute/empty/directory` runs only an explicitly labeled
-punctuation adaptation with a prepared correction. Do not substitute it for a
-requested live Humanizer evaluation.
+## Default first run: all accessible skills
+
+When the user says “run this” or “run this for all skills,” assess all skills you can access in the current session. Do not start with a bundled example unless the user explicitly asks for a demo. In regular Claude Desktop Chat, follow `chat/SKILL.md` (the ZIP bundles this as its root `SKILL.md`). Use code execution and file creation; do not switch to Cowork.
+
+Inventory skills exposed through available skill tools, readable local directories, connected sources, and uploaded packages. Report the discovery sources and scope. A visible skill name does not prove its files are readable, and this session does not automatically have access to the user's entire computer. Keep inaccessible entries in the overview with the missing access stated; continue with accessible packages.
+
+For each readable skill, inspect its complete package, including references, scripts, commands, hooks, assets, and dependencies. Interpret imperfect formatting without requiring a particular filename or frontmatter. Preserve package identities and originals. Use existing task-specific checks on actual outputs. When checks are absent, draft source-grounded cases and run appropriate checks where supported, clearly labeling inferred expectations and limited coverage. Do not execute discovered hooks or external actions simply to inventory them. Keep static package findings separate from behavioral results; unreadable packages are Inaccessible, unrun checks Untested, unavailable host execution Unsupported, and judgment calls Needs review. Never manufacture scores, failures, or revisions.
+
+Return the approved Organized AI / Jordaaan interactive HTML layout with a selectable report for each discovered skill, actual evidence, coverage gaps, and contextual next-step requests. Show available results first; do not promise background work unless an actual runner is active. Keep baseline, drift, version review, and optional Cloudflare history behavior defined in the package guides. An artifact button prepares a request; it does not itself repair or save anything.
+
+
 
 In regular Claude Chat in Claude Desktop, use the host's available artifact capability to create
 or update an interactive artifact from the generated self-contained HTML. Keep

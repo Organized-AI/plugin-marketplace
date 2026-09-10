@@ -4,33 +4,27 @@ Detect **effectiveness drift**, test a researched fix, and review it before it c
 an active skill. This first local engine uses the same bounded iteration core as
 GTM Autoresearch. It requires Node.js 22 or later and no npm dependencies.
 
-## Start in Claude Desktop: test Humanizer
-
-The workshop uses **Humanizer 2.9.1**, exported from Jordaaan’s enabled Claude
-skill. It rewrites a short paragraph while preserving the facts. Its original
-MIT license and attribution are bundled in `examples/humanizer/`.
+## Start in Claude Desktop
 
 Open regular Claude Chat with code execution and file creation enabled. Send:
 
-> Use Skill Loop from https://github.com/Organized-AI/plugin-marketplace/tree/codex/skill-loop-engine/plugins/skill-loop to test the bundled Humanizer skill. Follow the Humanizer first-run guide in its README. Run the actual paragraph cases and return the Organized AI interactive QA artifact here in regular Chat. Preserve the installed skill and report actual results, even if everything already passes.
+https://github.com/Organized-AI/plugin-marketplace/tree/codex/skill-loop-engine/plugins/skill-loop
 
-The assistant runs `humanizer-init EMPTY_DIR`, records its model in the generated
-runner label, then uses `prepare CONFIG`. Follow the returned Humanizer skill and
-case inputs, returning `{text: "the final rewrite"}` for each case with the exact
-request ID. Save those actual outputs and use `ingest CONFIG response.json`.
-Save the completed run as baseline and generate `report CONFIG`. Display the
-returned HTML in Claude’s Preview pane. No upload or Cowork session is required.
+> Let’s run Skill Loop for all skills you can access in this Claude Desktop session and show the results in an interactive HTML artifact.
 
-The evaluator checks specified names, numbers, and phrases directly in the saved
-text. It does not score “human-ness,” infer authorship, or certify all facts and
-writing quality. Review meaning and tone separately. If checks all pass, keep the
-skill. Do not invent a failure or weaken the original to manufacture an improvement.
-Draft revisions require a new test; automated `stage` needs a configured runner.
-The chat route currently tests the supplied working copy with prepare/ingest.
+## Default first run: all accessible skills
 
-This runs in Claude’s code-execution workspace; it does not permanently install
-Skill Loop or access skills elsewhere on your computer. The earlier repo-to-HTML
-flow was verified in regular Claude Desktop; see [verification](VERIFICATION.md).
+When the user says “run this” or “run this for all skills,” assess all skills you can access in the current session. Do not start with a bundled example unless the user explicitly asks for a demo. In regular Claude Desktop Chat, follow `chat/SKILL.md` (the ZIP bundles this as its root `SKILL.md`). Use code execution and file creation; do not switch to Cowork.
+
+Inventory skills exposed through available skill tools, readable local directories, connected sources, and uploaded packages. Report the discovery sources and scope. A visible skill name does not prove its files are readable, and this session does not automatically have access to the user's entire computer. Keep inaccessible entries in the overview with the missing access stated; continue with accessible packages.
+
+For each readable skill, inspect its complete package, including references, scripts, commands, hooks, assets, and dependencies. Interpret imperfect formatting without requiring a particular filename or frontmatter. Preserve package identities and originals. Use existing task-specific checks on actual outputs. When checks are absent, draft source-grounded cases and run appropriate checks where supported, clearly labeling inferred expectations and limited coverage. Do not execute discovered hooks or external actions simply to inventory them. Keep static package findings separate from behavioral results; unreadable packages are Inaccessible, unrun checks Untested, unavailable host execution Unsupported, and judgment calls Needs review. Never manufacture scores, failures, or revisions.
+
+Return the approved Organized AI / Jordaaan interactive HTML layout with a selectable report for each discovered skill, actual evidence, coverage gaps, and contextual next-step requests. Show available results first; do not promise background work unless an actual runner is active. Keep baseline, drift, version review, and optional Cloudflare history behavior defined in the package guides. An artifact button prepares a request; it does not itself repair or save anything.
+
+## Optional examples
+
+Bundled examples are available only when explicitly requested. They are not the default assessment scope.
 
 ## One-command QA demo
 
@@ -41,7 +35,7 @@ active skill. No account, model, cloud service, or result-id copying is required
 
 The offline adaptation initially handles em dashes, then adds en dashes. The full
 Humanizer already describes both; this is a teaching example, not a defect found
-in the installed skill. Use the live Humanizer route above for actual model outputs.
+in the installed skill. Use `humanizer-init` only when explicitly requesting that example with actual model outputs.
 
 ## Five-minute offline demo
 

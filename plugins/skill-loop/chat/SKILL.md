@@ -11,14 +11,17 @@ local terminal, separate coding-agent login, or local MCP setup is needed for th
 route. The runtime still needs Node.js 22+ inside code execution; check it first and
 report an unavailable runtime rather than inventing a test result.
 
-## First run
+## Default first run: all accessible skills
 
-Resolve `scripts/cli.mjs` relative to this SKILL.md, using a canonical absolute path.
-Run its `doctor` command. For the workshop, use `humanizer-init` in a new empty workspace, record the model
-in runner.label, then prepare and evaluate the returned full Humanizer skill and
-paragraphs. Ingest the actual outputs, save a baseline, and generate report. Keep
-an all-pass outcome; do not force a revision. The optional `demo` command runs
-only a deterministic punctuation adaptation, not the full skill or a model.
+When the user says “run this” or “run this for all skills,” assess all skills you can access in the current session. Do not start with a bundled example unless the user explicitly asks for a demo. Use code execution and file creation; do not switch to Cowork.
+
+Inventory skills exposed through available skill tools, readable local directories, connected sources, and uploaded packages. Report the discovery sources and scope. A visible skill name does not prove its files are readable, and this session does not automatically have access to the user's entire computer. Keep inaccessible entries in the overview with the missing access stated; continue with accessible packages.
+
+For each readable skill, inspect its complete package, including references, scripts, commands, hooks, assets, and dependencies. Interpret imperfect formatting without requiring a particular filename or frontmatter. Preserve package identities and originals. Use existing task-specific checks on actual outputs. When checks are absent, draft source-grounded cases and run appropriate checks where supported, clearly labeling inferred expectations and limited coverage. Do not execute discovered hooks or external actions simply to inventory them. Keep static package findings separate from behavioral results; unreadable packages are Inaccessible, unrun checks Untested, unavailable host execution Unsupported, and judgment calls Needs review. Never manufacture scores, failures, or revisions.
+
+Return the approved Organized AI / Jordaaan interactive HTML layout with a selectable report for each discovered skill, actual evidence, coverage gaps, and contextual next-step requests. Show available results first; do not promise background work unless an actual runner is active. Keep baseline, drift, version review, and optional Cloudflare history behavior defined in the package guides. An artifact button prepares a request; it does not itself repair or save anything.
+
+Resolve `scripts/cli.mjs` from the package root and run `doctor`. Prepare a separate working configuration for each assessed skill; use prepare/ingest for actual assistant outputs, then baseline and report as appropriate. Preserve all-pass outcomes. Do not run bundled fixtures as a substitute for the requested skills.
 
 ## Required result: artifact in this chat
 
