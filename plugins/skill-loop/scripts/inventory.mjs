@@ -13,13 +13,14 @@ export async function inventory(roots=defaultRoots()) {
     if(seen.has(real))return;seen.add(real);
     if(++visited>10000)throw Error('Inventory exceeds directory limit; choose narrower roots');
     let entries;try{entries=await fs.readdir(real,{withFileTypes:true});}catch(e){unavailable.push({path,reason:e.code});return;}
-    if(entries.some(e=>e.name==='SKILL.md'&&e.isFile())) {
+    const entrypoints=entries.filter(e=>e.isFile()&&/^skill\.(md|markdown|txt)$/i.test(e.name));
+    for(const entrypoint of entrypoints) {
       try {
-        const text=await fs.readFile(join(real,'SKILL.md'),'utf8');
-        const pkg=await packageSnapshot({skill:join(real,'SKILL.md'),base:real});
+        const text=await fs.readFile(join(real,entrypoint.name),'utf8');
+        const pkg=await packageSnapshot({skill:join(real,entrypoint.name),base:real});
         const assessment=await assessPackage({},pkg);
-        skills.push({packageHash:pkg.hash,packageAssessment:assessment,name:text.match(/^name:\s*(.+)$/m)?.[1]?.trim()??real.split('/').at(-1),path:join(real,'SKILL.md'),contentHash:hash(text),effectiveness:'untested',reason:'No task-specific evaluation has been associated with this inventory entry'});
-      }catch(e){unavailable.push({path:join(real,'SKILL.md'),reason:e.code});}
+        skills.push({packageHash:pkg.hash,packageAssessment:assessment,name:text.match(/^name:\s*(.+)$/m)?.[1]?.trim()??real.split('/').at(-1),path:join(real,entrypoint.name),contentHash:hash(text),effectiveness:'untested',reason:'No task-specific evaluation has been associated with this inventory entry'});
+      }catch(e){unavailable.push({path:join(real,entrypoint.name),reason:e.code??e.message});}
     }
     for(const entry of entries)if((entry.isDirectory()||entry.isSymbolicLink())&&!['node_modules','.git','.venv','__pycache__'].includes(entry.name))await walk(join(real,entry.name),depth+1);
   }

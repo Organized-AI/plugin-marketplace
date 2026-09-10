@@ -9,12 +9,12 @@ const within=(root,p)=>p===root||p.startsWith(root+sep);
 const ignored=new Set(['.git','node_modules','.venv','venv','__pycache__','.skill-loop']);
 const support=new Set(['references','reference','resources','scripts','commands','hooks','assets','.claude-plugin','.codex-plugin','package.json','package-lock.json','requirements.txt','pyproject.toml']);
 const secret=n=>/^\.env(?:\.|$)/i.test(n)||/^(credentials|secrets|tokens)(?:\.|$)/i.test(n)||/\.(pem|key)$/i.test(n);
-function kind(path,entry){if(path===entry)return 'instructions';if(/(^|\/)hooks?(\/|\.)/.test(path))return 'hook';if(/(^|\/)commands\//.test(path))return 'command';if(/\.(m?[cj]s|py|sh|bash|ps1)$/i.test(path))return 'script';if(/(package(?:-lock)?\.json|requirements.*\.txt|pyproject\.toml|.*lock)$/.test(path))return 'dependency';if(/\.md$/i.test(path))return 'reference';return 'resource';}
+function kind(path,entry){if(path===entry)return 'instructions';if(/(^|\/)hooks?(\/|\.)/.test(path))return 'hook';if(/(^|\/)commands\//.test(path))return 'command';if(/\.(m?[cj]s|py|sh|bash|ps1)$/i.test(path))return 'script';if(/(package(?:-lock)?\.json|requirements.*\.txt|pyproject\.toml|.*lock)$/.test(path))return 'dependency';if(/\.(md|markdown|txt)$/i.test(path))return 'reference';return 'resource';}
 export async function packageSnapshot(config,{entryText}={}) {
  const skill=await fs.realpath(resolve(config.skill)),entryDir=dirname(skill);
  if(config.package?.mode==='single-file')return {version:1,mode:'single-file',root:entryDir,entry:basename(skill),hash:hash(entryText??await fs.readFile(skill,'utf8')),files:[],issues:[],exclusions:[],coverage:'Explicit single-file mode; associated components are not assessed'};
  let root=config.package?.root?resolve(config.base??entryDir,config.package.root):entryDir;
- if(!config.package?.root&&basename(skill)==='SKILL.md') {
+ if(!config.package?.root&&/^skill\.(md|markdown|txt)$/i.test(basename(skill))) {
   let dir=entryDir;
   for(let i=0;i<4;i++) {
    if(await fs.stat(join(dir,'.claude-plugin/plugin.json')).then(()=>true,()=>false)||await fs.stat(join(dir,'.codex-plugin/plugin.json')).then(()=>true,()=>false)){root=dir;break;}
@@ -25,7 +25,7 @@ export async function packageSnapshot(config,{entryText}={}) {
  root=await fs.realpath(root);
  if(!within(root,await fs.realpath(skill)))throw Error('Skill entrypoint must be inside the package root');
  const entry=relative(root,skill).split(sep).join('/'),files=[],issues=[],exclusions=[],seen=new Set();let bytes=0;
- const whole=!!config.package?.root||basename(skill)==='SKILL.md';
+ const whole=!!config.package?.root||/^skill\.(md|markdown|txt)$/i.test(basename(skill));
  const excluded=await Promise.all([config.suite,config.state,config.configFile,...(config.package?.exclude??[]).map(p=>resolve(root,p))].filter(Boolean).map(async p=>fs.realpath(resolve(p)).catch(()=>resolve(p))));
  async function add(path,force=false,depth=0){
   if(depth>25)throw Error('Package directory depth exceeds 25');
@@ -39,10 +39,10 @@ export async function packageSnapshot(config,{entryText}={}) {
   if(!st.isFile())return;
   if(files.length>=2000||st.size>20_000_000||(bytes+=st.size)>50_000_000)throw Error('Package exceeds assessment limits; select a narrower package root');
   const buf=path===skill&&entryText!==undefined?Buffer.from(entryText):await fs.readFile(path);
-  const isText=!buf.includes(0)&&['.md','.txt','.json','.yaml','.yml','.toml','.js','.mjs','.cjs','.py','.sh','.bash','.ps1','.html','.css','.csv'].includes(extname(path).toLowerCase());
+  const isText=!buf.includes(0)&&['.md','.markdown','.txt','.json','.yaml','.yml','.toml','.js','.mjs','.cjs','.py','.sh','.bash','.ps1','.html','.css','.csv'].includes(extname(path).toLowerCase());
   const content=isText&&buf.length<=200_000?buf.toString('utf8'):undefined;
   files.push({path:rel,kind:kind(rel,entry),sha256:digest(buf),bytes:buf.length,mode:st.mode&0o777,...(content===undefined?{}:{content})});
-  if(content!==undefined&&/\.md$/i.test(path)) {
+  if(content!==undefined&&/\.(md|markdown|txt)$/i.test(path)) {
    const refs=[...content.matchAll(/\]\(([^\s)]+)(?:\s+[^)]*)?\)/g)].map(m=>m[1]);
    for(const m of content.matchAll(/`((?:\.\.?\/|references?\/|resources\/|scripts\/|assets\/|commands\/|hooks\/)[^`\s]+\.[a-z0-9]+)`/gi))refs.push(m[1]);
    for(let ref of refs){if(/^[a-z][a-z\d+.-]*:/i.test(ref)||ref.startsWith('#'))continue;ref=ref.split('#')[0];if(!ref||/[<>{}*]/.test(ref))continue;await add(resolve(dirname(path),ref),true,depth+1);}

@@ -70,7 +70,7 @@ test('configured component regression blocks otherwise improved behavioral score
  const blocked={...base,packageAssessment:{tests:[{id:'script',status:'untested'}],issues:[]}};assert.equal(compare(blocked,next).status,'needs-component-verification');
 });
 test('custom entry scan discloses root files outside its bounded support scope',async t=>{
- const f=await fixture(t);const custom=join(f.root,'skill.md');await fs.writeFile(custom,'a custom skill');await fs.writeFile(join(f.root,'helper.py'),'print(1)');
+ const f=await fixture(t);const custom=join(f.root,'guide.md');await fs.writeFile(custom,'a custom skill');await fs.writeFile(join(f.root,'helper.py'),'print(1)');
  const p=await packageSnapshot({skill:custom,base:f.root});assert.match(p.coverage,/Custom entrypoint/);assert(p.exclusions.some(x=>x.path==='helper.py'));
 });
 
@@ -81,3 +81,8 @@ test('component checks execute candidate entry bytes rather than the original en
  const candidate=await packageSnapshot(config,{entryText:'INVALID candidate'});assert.equal((await assessPackage(config,candidate,{execute:true})).tests[0].status,'failed');assert(!String(await fs.readFile(join(f.pkg,'skills/example/SKILL.md'))).includes('INVALID'));
  config.package.tests[0].cwd=await fs.realpath(f.pkg);assert.equal((await assessPackage(config,candidate,{execute:true})).tests[0].status,'failed');
 });
+
+ test('case-insensitive skill text entry includes adjacent supporting files',async t=>{
+ const f=await fixture(t);const custom=join(f.root,'Skill.TXT');await fs.writeFile(custom,'Preserve numbers');await fs.writeFile(join(f.root,'helper.py'),'print(1)');
+ const p=await packageSnapshot({skill:custom,base:f.root});assert.match(p.coverage,/Complete selected-root/);assert(p.files.some(x=>x.path==='helper.py'));
+ });

@@ -144,3 +144,30 @@ private save/read, and UI actions have been verified. If no connector is availab
 keep the existing local artifact and export. Setup and limitations are documented
 in storage/chumbo/README.md. The Cloudflare Worker is only a proxy; Chumbo and
 Supabase handle the user's database access. No D1/KV fallback is automatic.
+
+
+## Tolerant intake and initial checks
+
+Assess every readable skill, even without YAML frontmatter, standard headings,
+or a canonical filename. Accept plain instructions, Markdown, text, and uploaded
+package contents. Preserve original bytes and paths; create a separate working
+interpretation recording the entrypoint, purpose, inputs, outputs, requirements,
+references, and uncertain assumptions. Do not rewrite the source just to parse it.
+For a custom entrypoint such as README.md, explicitly select package.root so all
+associated files are inventoried. Do not treat every README as a separate skill.
+If multiple plausible entrypoints exist, expose the ambiguity rather than silently
+merging their instructions. Resolve readable references within the selected package;
+list inaccessible or unsupported components while continuing the accessible checks.
+
+Do not stop at “untested” solely because a suite is absent. Draft a small initial
+suite from explicit requirements: a normal case, a relevant edge case, and an
+observable invariant when applicable. Record the exact QA source for each assertion.
+Label inferred expectations separately and avoid inventing requirements. Run safe,
+isolated cases when the host supports execution, keeping evaluator expectations
+separate from the skill response. Report “initial checks passed” with the actual
+coverage, not full verification. Subjective judgments need review. If requirements
+are too ambiguous to score, ask one focused question and continue other skills.
+Do not execute bundled hooks or external writes merely to discover requirements.
+Retain “untested” only for checks that have not run, with a concrete reason and a
+next-step action. A generated suite is not a run, and a static inspection is not a
+behavioral test. Record the suite/version before establishing a comparable baseline.
