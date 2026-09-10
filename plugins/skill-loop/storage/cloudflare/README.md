@@ -6,9 +6,9 @@ Run QA first. Cloud storage is optional. Use the participant's existing Cloudfla
 
 The generated report contains a **Save My History** button and inert JSON evidence. The short request identifies the evidence by SHA-256. Read the actual HTML file in code execution, extract the indicated script element without executing HTML, and verify the raw text hash before parsing. Never reconstruct large evidence from chat text. If the file is missing, request the HTML using Claude's artifact-level Download menu (not a Blob download inside the preview).
 
-The workshop dashboard passes current review choices separately, bound to its run identities and evidenceKey. Validate those before merging. Generic engine reports save the recorded runs, versions, proposals, and assessment; unsaved browser drafts are not saved.
+The workshop dashboard passes current review choices separately, bound to its run identities and evidenceKey. Validate those before merging, including the SHA-256 of the compact UTF-8 review-decision JSON. Generic engine reports save the recorded runs, versions, proposals, and assessment; unsaved browser drafts are not saved.
 
-Use immutable snapshots in D1, transfer exact generated values, fetch every stored value back, and verify hashes before reporting saved. Return the complete fetched receipt and database/snapshot identity for future retrieval. Failure, truncation, a missing file, or mismatched hashes means **not verified**, never success. Creating a new database requires the participant's chosen destination and authorization.
+Use immutable snapshots in D1, transfer exact generated values in chunks of at most 3,000 characters, check stored lengths, fetch every stored value back, and verify hashes before reporting saved. Return the complete fetched receipt and database/snapshot identity for future retrieval. Failure, truncation, a missing file, or mismatched hashes means **not verified**, never success. Creating a new database requires the participant's chosen destination and authorization.
 
 ## Full current-package checkpoint (engine)
 
@@ -19,3 +19,7 @@ Use immutable snapshots in D1, transfer exact generated values, fetch every stor
 ## Capability limits
 
 The installed Cloudflare Developer Platform connector was tested for D1 SQL access. Its KV and R2 tools exposed namespace/bucket management, not value/object content operations. KV/R2 export plans are prepared formats only until a content-capable adapter is verified. A custom Worker remains an optional future adapter. Neither a prepared request nor local browser storage establishes cloud persistence.
+
+## Native connector transfer capacity
+
+New checkpoints use layout version 2 and separate storage keys, with 3,000-character chunks and SQL length guards. Version-1 receipts remain readable. The D1 exporter rejects manifests over 2,400 UTF-8 bytes before returning a plan; large packages need a file-capable adapter. This limit is explicit because large model-mediated SQL arguments failed integrity checks in rehearsal. A prepared KV/R2 plan is not proof of a working content adapter. Do not promise that arbitrary-sized packages can be saved through the native connector.
