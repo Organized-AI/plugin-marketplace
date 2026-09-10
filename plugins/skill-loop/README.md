@@ -1,0 +1,329 @@
+# Skill Loop by Jordaaan
+
+Detect **effectiveness drift**, test a researched fix, and review it before it changes
+an active skill. This first local engine uses the same bounded iteration core as
+GTM Autoresearch. It requires Node.js 22 or later and no npm dependencies.
+
+## Start in Claude Desktop
+
+Open regular Claude Chat with code execution and file creation enabled. Send:
+
+https://github.com/Organized-AI/plugin-marketplace/tree/codex/skill-loop-engine/plugins/skill-loop
+
+> Let’s run Skill Loop for all skills you can access in this Claude Desktop session and show the results in an interactive HTML artifact.
+
+## Fast first overview
+
+For a first run, use the bundled renderer instead of writing a new dashboard:
+`node /absolute/package/scripts/cli.mjs overview /absolute/empty/qa-output [accessible-skill-root ...]`.
+Choose a new output folder (add a timestamp if needed). Never delete or clear an
+existing directory to prepare the report; the engine refuses overwrites.
+This scans the selected roots and writes `inventory.json` and `report.html` without
+running an LLM or executing discovered skills. In terminal agents, omitting roots
+uses common local skill locations; in Claude Chat, pass the roots actually exposed
+inside code execution or provided by authorized connectors. List additional sources
+that cannot be accessed. Do not claim an exhaustive machine scan.
+
+Present this HTML immediately using the host's artifact/file preview. Do not wait
+for behavioral suites or redraw the layout before showing the first useful result.
+Then run appropriate deeper checks for the discovered skills and update their results.
+No suite or `init` is needed for an overview. An absent skill source needs an upload
+or authorized connection, not a sample. Missing Node requires the host's runtime
+setup; an expired coding-agent login requires that agent's normal sign-in.
+
+## Default first run: all accessible skills
+
+When the user says “run this” or “run this for all skills,” assess all skills you can access in the current session. Do not start with a bundled example unless the user explicitly asks for a demo. In regular Claude Desktop Chat, follow `chat/SKILL.md` (the ZIP bundles this as its root `SKILL.md`). Use code execution and file creation; do not switch to Cowork.
+
+Inventory skills exposed through available skill tools, readable local directories, connected sources, and uploaded packages. Report the discovery sources and scope. A visible skill name does not prove its files are readable, and this session does not automatically have access to the user's entire computer. Keep inaccessible entries in the overview with the missing access stated; continue with accessible packages. If no skill package is readable, ask the user to attach one or connect an authorized source; do not substitute a bundled example.
+
+For each readable skill, inspect its complete package, including references, scripts, commands, hooks, assets, and dependencies. Interpret imperfect formatting without requiring a particular filename or frontmatter. Preserve package identities and originals. Use existing task-specific checks on actual outputs. When checks are absent, draft source-grounded cases and run appropriate checks where supported, clearly labeling inferred expectations and limited coverage. Do not execute discovered hooks or external actions simply to inventory them. Keep static package findings separate from behavioral results; unreadable packages are Inaccessible, unrun checks Untested, unavailable host execution Unsupported, and judgment calls Needs review. Never manufacture scores, failures, or revisions.
+
+Return the approved Organized AI / Jordaaan interactive HTML layout with a selectable report for each discovered skill, actual evidence, coverage gaps, and contextual next-step requests. Show available results first; do not promise background work unless an actual runner is active. Keep baseline, drift, version review, and optional Cloudflare history behavior defined in the package guides. An artifact button prepares a request; it does not itself repair or save anything.
+
+## Terminal: use your own skills
+
+Run `node scripts/cli.mjs inventory` to discover accessible local skills, or add a directory to choose the scope. Inventory reports package findings, not behavioral scores. For a skill with an existing QA suite, run `node scripts/cli.mjs init NEW_WORKSPACE --skill /path/to/SKILL.md --suite /path/to/suite.json`, then use assess, prepare/ingest, and report. Without a suite, draft checks from the skill's requirements first; label that skill Untested until checks run. Plain init never picks an example for you.
+
+## Optional examples
+
+Bundled examples are available only when explicitly requested. They are not the default assessment scope.
+
+## One-command QA demo
+
+From the plugin directory, run `node scripts/cli.mjs demo ~/skill-loop-demo`.
+Use an empty destination. It runs a small executable adaptation of Humanizer’s punctuation rule, saves a baseline, tests
+a prepared correction, and returns the visual report path without changing the
+active skill. No account, model, cloud service, or result-id copying is required.
+
+The offline adaptation initially handles em dashes, then adds en dashes. The full
+Humanizer already describes both; this is a teaching example, not a defect found
+in the installed skill. Use `humanizer-init` only when explicitly requesting that example with actual model outputs.
+
+## Five-minute offline demo
+
+From this plugin directory:
+
+```sh
+node scripts/cli.mjs doctor
+node scripts/cli.mjs init ~/skill-loop-demo --demo
+node scripts/cli.mjs run ~/skill-loop-demo/skill-loop.json
+```
+
+Copy the returned run `id` into the baseline command, then iterate:
+
+```sh
+node scripts/cli.mjs baseline ~/skill-loop-demo/skill-loop.json RUN_ID
+node scripts/cli.mjs loop ~/skill-loop-demo/skill-loop.json
+node scripts/cli.mjs report ~/skill-loop-demo/skill-loop.json
+```
+
+Open the returned report file. The supplied deterministic adapter scores 1/2,
+then stages a prepared 2/2 candidate. It does not call an AI model, browse sources,
+or prove general skill reliability. The original skill remains intact. After
+review, use `approve CONFIG PROPOSAL_ID` or `reject CONFIG PROPOSAL_ID`.
+
+## Connect your assistant
+
+The Claude Code marketplace entry and Codex plugin both expose the `skill-loop`
+skill. Ask your installed assistant to help initialize and run Skill Loop.
+The skill resolves its bundled CLI path; keep your workspace outside the plugin cache.
+
+For clients supporting local stdio MCP, run:
+
+```sh
+node scripts/cli.mjs connect
+```
+
+This prints the exact command and absolute argument path for this installation.
+Add the returned server entry through your client's MCP settings; it does not
+rewrite existing client configuration. Restart/reconnect as required by the host,
+then call `skill_loop_init`, `skill_loop_prepare`, and `skill_loop_ingest`.
+Claude Desktop, Codex, OpenClaw and Hermes require host-specific installation
+verification. The transport is tested; this is not a blanket compatibility claim.
+
+The engine also works without MCP: `prepare CONFIG` returns only the skill and
+case inputs, and `ingest CONFIG response.json` scores the assistant's response.
+The response must copy the requestId and contain exactly one `{id, output}` per
+case. Private checks are withheld by prepare and command execution. This is
+procedural isolation, not a security sandbox against an agent that can read disk.
+
+For automated runs set `runner.command` to a trusted executable argv array.
+It receives the prepared JSON on stdin and must return the same response shape
+on stdout. `scripts/claude-runner.mjs` is an optional Claude Code adapter using
+existing host authentication. It disables tools for the evaluation request.
+No credentials are bundled, and no account setup is performed automatically.
+
+## What drift means
+
+- **Effectiveness drift:** a previously passing check now fails under the same
+  versioned suite, scorer and runner configuration. Score drops and lost checks
+  are recorded. Model randomness can cause failures; investigate and repeat.
+- **Conditions changed:** suite or runner settings changed, making the old baseline
+  incomparable. Model changes behind the same configured model alias can still be
+  detected as output drift; actual model identity should be recorded by the operator.
+- **GTM configuration drift:** the container snapshot changed. The GTM adapter
+  separately checks whether any of its static audit dimensions worsened. It does
+  not establish whether live conversion tracking broke.
+
+## Research, iteration and approval
+
+Research belongs to the domain assistant, using cited authoritative rules and
+observed failures. `stage CONFIG candidate.md "source and rationale"` tests a
+manual candidate. A trusted `proposerCommand` enables `loop`; it receives skill
+text and test feedback, and returns `{text, evidence}`. Feedback contains expected
+training answers. Use a separate holdout suite for a generalization check.
+
+The shared core stops at a round limit, plateau, or failure limit. Domain adapters
+own permissible changes and acceptance. Skill Loop requires a strict score
+improvement with no lost passing check. GTM retains metadata-only edits, no lost
+audit dimension, no increase in critical findings, and no live import/publish.
+
+Proposal creation never applies a change. Approval verifies the current skill,
+suite, baseline and candidate evidence; saves a backup; and uses a recovery journal
+for interrupted writes. If interrupted, repeat approval for that same proposal.
+Do not delete a lock until its recorded process has ended. Reports, inputs and
+outputs remain local in the workspace state directory and may contain test data.
+
+## Watching and limits
+
+`watch CONFIG INTERVAL_SECONDS MAX_RUNS` repeats tests in the foreground; Ctrl-C
+stops between runs. It stops after three consecutive execution failures. This first
+release does not provision Cloudflare, D1, a scheduler, or a background service.
+No watch starts on install. Use your host's supervisor only after validating setup.
+
+This engine is local, dependency-free, and fixture-based. It does not automatically
+verify source credibility, causal model regressions, adversarial skill behavior,
+or every agent host. Do not install the unrelated unscoped npm `skill-loop` package.
+
+## Shared source and tests
+
+Canonical mechanics live in `shared/iteration-engine` at the marketplace root.
+Run its sync script, then the GTM bundle sync before release; both support `--check`.
+Bundled copies make each plugin independently installable. The GTM adapter comes
+from the existing `codex/reuse-gtm-autoresearch` implementation.
+
+```sh
+npm test
+```
+
+## All skills in a coding environment
+
+The Humanizer example is only a starter fixture. Inventory any skill directory:
+
+```sh
+node scripts/cli.mjs inventory
+node scripts/cli.mjs inventory /path/to/project/skills /path/to/plugin/cache
+```
+
+Defaults cover personal Codex, Claude, Agents and Hermes skill directories plus
+project Claude/Agents directories. They do not discover every application's
+plugin cache automatically. The report lists scanned roots and unreadable paths.
+Each discovered skill is **untested**, not assumed effective. Associate each skill
+with its own config and test suite in a registry:
+
+```json
+{"version":1,"entries":[{"skill":"skills/a/SKILL.md","config":"tests/a/skill-loop.json"},{"skill":"skills/b/SKILL.md"}]}
+```
+
+`check-all registry.json` runs the enrolled evaluations sequentially. Missing
+configs remain untested; failures stay errors. It verifies config-to-skill identity.
+There is no universal correctness test for arbitrary skills: each needs observable
+outputs, executable checks and its authoritative rules. Screenshots, files, API
+results or compiler/test outcomes can be normalized by a command adapter into JSON.
+
+## More deterministic outputs
+
+- `init DIR --rules` creates a declarative JSON rule skill executed without an LLM.
+  Rules use explicit JSON paths, comparisons, first-match priority and a default
+  output; no dynamic code evaluation is used. It supports rule-shaped work, not
+  arbitrary natural-language reasoning.
+- `replay CONFIG RUN_ID` rescores saved outputs with the saved suite, without a
+  new model call. This reproduces evidence; it does not measure fresh drift.
+- CLI and MCP invoke the same functions. Neither transport makes model inference
+  deterministic. Slash commands are convenient entry points, not deterministic
+  substitutes for executable checks.
+- Keep fixtures, scorer and model/harness settings versioned. A code-based checker
+  supplies repeatable judgments even when the upstream model output varies.
+
+## QA record and source of truth
+
+Add `source: {title, reference, version}` and `coverage` to each suite. The report
+shows that source, actual versus expected outputs, lost checks, candidate evidence,
+and review status. Missing sources are explicitly labeled. Source metadata is
+part of the versioned test conditions. This makes the output a reviewable QA
+record; it does not certify that the operator's source or expected answers are
+correct, complete, current, or independently verified.
+
+## Version history and user preference
+
+`versions CONFIG` lists the saved skill versions, active version, QA scores and
+whether test conditions are still comparable. Approved QA improvements become the
+new active default. Staged candidates do not silently replace it.
+
+`select-version CONFIG FULL_VERSION_HASH` explicitly activates a saved version,
+even if the user prefers it over a higher-scoring candidate. This is recorded as a
+**preference override**, not a QA improvement. A current-condition run becomes the
+selected version's baseline; historical conditions clear the baseline until a fresh
+run. The selection preserves the previous text and supports interrupted-write recovery.
+A host assistant must get the user's explicit version choice before invoking it.
+
+## Interactive mode
+
+Every generated report includes interactive review. Ask your desktop assistant to
+open the Skill Loop report: choose two saved versions, highlight changed lines,
+and compare their per-check evidence and QA conditions. Large files use labeled
+position-based highlights.
+
+Edit a draft without changing the installed skill. Drafts immediately show as
+untested; download and attach the draft with the generated test request. Version
+choices and revision requests are copied back to the assistant for execution and
+review. The HTML never applies changes itself. Regenerate it after any run or
+decision. Unsaved draft edits are lost when the page closes.
+
+The default deliverable is an interactive QA artifact in the desktop task.
+Regular Claude Chat displays the self-contained HTML as an interactive output
+artifact in its Preview pane. Preserve the generated evidence. This flow was
+verified in Claude Desktop; see [verification](VERIFICATION.md). If a host cannot
+render it, attach the HTML and disclose that limitation.
+
+## Optional persistent Claude Chat skill
+
+The link-first demo above needs no upload. For repeat use, an optional Chat skill
+package can be built with `python3 scripts/package-chat.py /path/to/skill-loop-claude-chat.zip`.
+It contains a top-level `skill-loop/SKILL.md` and the same engine. Its extraction
+and execution are tested locally; the Customize → Skills upload flow has not been
+verified end to end. This is separate from a Claude Code or Cowork plugin.
+
+Regular Chat works with skills and QA sources uploaded or explicitly provided in
+the conversation. It does not enumerate or update skills on the participant's
+computer. Node.js 22+ must be available inside code execution. Return revisions
+and evidence as files; there is no separate coding CLI login for this route.
+
+
+## Package assessment is the default
+
+For participant skills, keep the whole downloaded package and point `skill` at
+its SKILL.md. Put the QA workspace outside that package. Intake (`assess`),
+inventory and every new evaluation include a package inventory, supporting text
+context, content fingerprint and per-component coverage. Standard entrypoints
+scan their skill directory or enclosing plugin; explicit `package.root` handles
+other layouts. Custom `skill.md`/`skill.json` workspaces scan the entry and common
+support directories and disclose other root files as excluded. No extra beginner
+button or terminal action is required when the desktop assistant follows the skill.
+
+```json
+{
+  "version": 1,
+  "skill": "../my-plugin/skills/example/SKILL.md",
+  "suite": "suite.json",
+  "state": ".skill-loop",
+  "runner": {"label": "my verified desktop host and model"},
+  "package": {
+    "root": "../my-plugin",
+    "tests": [{
+      "id": "formatter-fixture",
+      "kind": "script",
+      "component": "scripts/check.mjs",
+      "command": ["node", "scripts/check.mjs"],
+      "stdoutContains": ["CHECK OK"],
+      "timeoutMs": 30000
+    }]
+  }
+}
+```
+
+`assess CONFIG` inventories without execution. `assess CONFIG --execute`, `run`
+and `ingest` execute only the explicitly configured script checks. These execute
+on the host against a temporary copy of the tested package, including candidate
+entry bytes. This is not an OS sandbox. Use a
+working copy/test environment and deliberate argv/assertions. Merely discovering
+a file never authorizes execution. Missing references, unsafe links, context
+limits and excluded files are visible. Configured command, hook and external-tool
+checks remain unsupported until a real host adapter is implemented and verified;
+calling a script directly does not prove hook/event integration.
+
+Reports distinguish instruction scores, file inventory and actual component-test
+evidence. Untested references/executables stay untested. A failing configured
+component check blocks automatic improvement acceptance. Package edits invalidate
+stale pending requests, approvals and current evidence; changed suite/runner/test
+configuration is incomparable. Old runs remain historical single-file evidence.
+
+Version history now preserves package-only changes. Entry revisions preserve
+file permissions and are checked against the full supporting package. Selecting
+an old version whose supporting files differ is blocked without modifying the
+workspace. Multi-file automatic apply/rollback and real host hook/tool adapters
+remain future work; do not advertise universal end-to-end execution support.
+
+
+## Persistent history with Chumbo
+
+The optional [connected history backend](storage/chumbo/README.md) adds private
+Supabase archives and an authenticated MCP App for review decisions. A Cloudflare
+Worker managed by Wrangler can proxy the Chumbo endpoint. The deterministic QA
+engine is shared; the local artifact remains available without cloud setup.
+
+This package includes the migration, Edge Function, bundled Organized AI review
+UI, Worker proxy, and local tests. Deploy and verify your own Supabase/OAuth setup
+before advertising the connected experience as ready. No hosted database is
+included merely by installing the skill.

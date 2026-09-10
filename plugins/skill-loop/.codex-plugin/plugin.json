@@ -1,0 +1,23 @@
+{
+  "name": "skill-loop",
+  "version": "0.1.0+codex.20260909222627",
+  "description": "Detect skill effectiveness drift, test researched revisions, and review changes with a shared iteration engine.",
+  "author": {
+    "name": "Jordaaan"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Skill Loop",
+    "shortDescription": "Detect effectiveness drift and test fixes.",
+    "longDescription": "Detect skill effectiveness drift, test researched revisions, and review changes with a shared iteration engine.",
+    "developerName": "Jordaaan",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Set up Skill Loop and run the offline demo.",
+      "Check my skill for effectiveness drift."
+    ]
+  },
+  "homepage": "https://skill.organizedai.vip/workshop/",
+  "repository": "https://github.com/Organized-AI/plugin-marketplace"
+}

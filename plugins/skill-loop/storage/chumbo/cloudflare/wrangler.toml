@@ -1,0 +1,11 @@
+name = "skill-loop-connector"
+main = "worker.mjs"
+compatibility_date = "2026-09-09"
+workers_dev = true
+# Replace before production deployment. This is the Supabase Edge Function URL.
+[vars]
+MCP_UPSTREAM = "https://YOUR_PROJECT.supabase.co/functions/v1/skill-loop"
+LOCAL_DEVELOPMENT = "false"
+[env.local.vars]
+MCP_UPSTREAM = "http://127.0.0.1:57421/functions/v1/skill-loop"
+LOCAL_DEVELOPMENT = "true"

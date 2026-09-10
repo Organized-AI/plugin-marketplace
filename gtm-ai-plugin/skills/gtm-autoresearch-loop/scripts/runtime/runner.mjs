@@ -3,31 +3,8 @@ import { resolve, join, dirname } from 'node:path';
 import { spawn } from 'node:child_process';
 import { container, fingerprint, audit, optimize, hash } from './audit.mjs';
 
-export async function atomic(path, data) {
-  await fs.mkdir(dirname(path),{recursive:true,mode:0o700});
-  const tmp=`${path}.${process.pid}.tmp`;
-  await fs.writeFile(tmp,typeof data==='string'?data:JSON.stringify(data,null,2)+'\n',{mode:0o600});
-  await fs.rename(tmp,path);
-}
-export async function readJSON(path, fallback) {
-  try{return JSON.parse(await fs.readFile(path,'utf8'));}catch(e){if(e.code==='ENOENT'&&fallback!==undefined)return fallback;throw e;}
-}
-export function command(argv, input='', {timeoutMs=120000,cwd,env=process.env}={}) {
-  if(!Array.isArray(argv)||!argv.length||argv.some(a=>typeof a!=='string')) throw Error('Command must be an argv array');
-  return new Promise((res,rej)=>{
-    const child=spawn(argv[0],argv.slice(1),{cwd,env,shell:false,stdio:['pipe','pipe','pipe'],detached:process.platform!=='win32'});
-    let out='',size=0,done=false;
-    const kill=()=>{try{if(process.platform!=='win32')process.kill(-child.pid,'SIGKILL');else child.kill('SIGKILL');}catch{}};
-    const end=(error)=>{if(done)return;done=true;clearTimeout(timer);error?rej(error):res(out.trim());};
-    const timer=setTimeout(()=>{kill();end(Error('Command timed out'));},timeoutMs);
-    child.stdout.on('data',chunk=>{size+=chunk.length;if(size>5_000_000){kill();end(Error('Command output limit exceeded'));}else out+=chunk;});
-    child.stderr.on('data',()=>{}); // May contain credentials or raw client data; never mirror it to logs.
-    child.stdin.on('error',()=>{});
-    child.on('error',()=>end(Error('Command could not start; check executable and host configuration')));
-    child.on('close',code=>end(code===0?null:Error(`Command failed with exit code ${code}`)));
-    child.stdin.end(input);
-  });
-}
+export { atomic, readJSON, command } from './shared/io.mjs';
+import { atomic, readJSON, command } from './shared/io.mjs';
 export async function loadConfig(file) {
   const config=await readJSON(file),base=dirname(resolve(file));
   if(!config.source||!['file','gtm'].includes(config.source.type))throw Error('source.type must be file or gtm');
@@ -92,11 +69,14 @@ export function markdown(report) {
   const escape=s=>String(s).replace(/[\r\n|]/g,' ');
   return `# GTM configuration audit\n\n${report.scope}\n\nScore: ${report.score}/100\n\n`+
     report.findings.map(f=>`- **${f.severity}** ${escape(f.kind)} ${escape(f.id)} (${escape(f.name)}): ${escape(f.message)}`).join('\n')+
-    '\n\n## Not verified\n\n'+report.skipped.map(s=>`- ${s}`).join('\n')+'\n';
+    '\n\n## Configuration drift\n\n'+(report.drift?.detected===null?'Initial snapshot; no prior baseline.':report.drift?.detected?'Configuration changed since the prior snapshot.':'No configuration change detected.')+' This is not a live tracking correctness test.\n\n## Not verified\n\n'+report.skipped.map(s=>`- ${s}`).join('\n')+'\n';
 }
 export async function runSnapshot(config,snapshot,{propose}={}) {
   const id=fingerprint(snapshot),folder=join(config.stateDir,'runs',`${Date.now()}-${id.slice(0,12)}`);
   const report=audit(snapshot);
+  const previous=await readJSON(join(config.stateDir,'latest.json'),null);
+  const previousReport=previous?await readJSON(join(previous.folder,'audit.json'),null):null;
+  report.drift={kind:'configuration',detected:previous?previous.fingerprint!==id:null,qualityRegressed:previousReport?Object.keys(report.dimensions).some(key=>report.dimensions[key]<previousReport.dimensions[key]):null,meaning:'A changed configuration is drift; it does not by itself prove broken tracking.'};
   await atomic(join(folder,'snapshot.json'),snapshot);
   await atomic(join(folder,'audit.json'),report);await atomic(join(folder,'audit.md'),markdown(report));
   await atomic(join(folder,'questions.md'),'# Workshop questions\n\n'+report.findings.slice(0,3).map((f,i)=>`${i+1}. How should I investigate ${f.kind} ${f.id}: ${f.message}?`).join('\n')+'\n');

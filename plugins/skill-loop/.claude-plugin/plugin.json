@@ -1,0 +1,10 @@
+{
+  "name": "skill-loop",
+  "version": "0.1.0",
+  "description": "Detect skill effectiveness drift, test researched revisions, and review changes with a shared iteration engine.",
+  "author": {
+    "name": "Jordaaan"
+  },
+  "homepage": "https://skill.organizedai.vip/workshop/",
+  "repository": "https://github.com/Organized-AI/plugin-marketplace"
+}

@@ -1,0 +1,17 @@
+project_id = "skill-loop-history"
+[api]
+port = 57421
+schemas = ["public"]
+[db]
+port = 57422
+shadow_port = 57420
+major_version = 17
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+enable_signup = true
+[analytics]
+enabled = false
+[functions.skill-loop]
+verify_jwt = false
+static_files = ["./functions/skill-loop/dist/index.html"]

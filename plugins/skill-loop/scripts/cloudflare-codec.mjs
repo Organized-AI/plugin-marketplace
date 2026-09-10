@@ -1,0 +1,9 @@
+const quote=s=>"'"+s.replaceAll("'","''")+"'";
+export function parts(value){
+ const out=[];let end=0;const literals=s=>{for(let i=0;i<s.length;i+=240)out.push({value:s.slice(i,i+240),repeat:1})};
+ for(const m of value.matchAll(/([\s\S]{4,128}?)\1{3,}/g)){if(m[0].length<256)continue;literals(value.slice(end,m.index));out.push({value:m[1],repeat:m[0].length/m[1].length});end=m.index+m[0].length;}
+ literals(value.slice(end));return out;
+}
+export function sqlValue(value){return parts(value).map(p=>p.repeat===1?quote(p.value):`replace(hex(zeroblob(${p.repeat})),'00',${quote(p.value)})`).join(' || ')||"''";}
+export function readColumns(value){let offset=1;const expressions=[],checks=[`length(value)=${value.length}`];for(const p of parts(value)){expressions.push(`json_object('value',substr(value,${offset},${p.value.length}),'repeat',${p.repeat})`);if(p.repeat>1)checks.push(`substr(value,${offset},${p.value.length*p.repeat})=replace(hex(zeroblob(${p.repeat})),'00',substr(value,${offset},${p.value.length}))`);offset+=p.value.length*p.repeat;}return `json_array(${expressions.join(',')}) AS segments,length(value) AS length,(${checks.join(' AND ')}) AS complete`;}
+export function decodeChunk(chunk,max){if(typeof chunk.value==='string')return chunk.value;const segments=typeof chunk.segments==='string'?JSON.parse(chunk.segments):chunk.segments;if(!Array.isArray(segments)||segments.length>max||![1,true].includes(chunk.complete))throw Error('Incomplete segment readback');let value='';for(const p of segments){if(typeof p.value!=='string'||!Number.isInteger(p.repeat)||p.repeat<1||p.repeat>max||value.length+p.value.length*p.repeat>max)throw Error('Invalid segment readback');value+=p.value.repeat(p.repeat)}if(value.length!==chunk.length)throw Error('Segment readback length mismatch');return value;}

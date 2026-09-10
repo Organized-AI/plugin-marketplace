@@ -1,0 +1,33 @@
+# Optional Cloudflare history in Claude Chat
+
+Run QA first. Cloud storage is optional. Use the participant's existing Cloudflare Developer Platform connector and their own confirmed D1 database. No custom Worker or Supabase setup is required for this route.
+
+## Artifact handoff
+
+The generated report contains a **Save My History** button and inert JSON evidence. The short request identifies the evidence by SHA-256. Read the actual HTML file in code execution, extract the indicated script element without executing HTML, and verify the raw text hash before parsing. Never reconstruct large evidence from chat text. If the file is missing, request the HTML using Claude's artifact-level Download menu (not a Blob download inside the preview).
+
+The workshop dashboard passes current review choices separately, bound to its run identities and evidenceKey. Validate those before merging, including the SHA-256 of the compact UTF-8 review-decision JSON. Generic engine reports save the recorded runs, versions, proposals, and assessment; unsaved browser drafts are not saved.
+
+Use immutable snapshots in D1, transfer exact generated values in chunks of at most 3,000 characters, check stored lengths, fetch every stored value back, and verify hashes before reporting saved. Return the complete fetched receipt and database/snapshot identity for future retrieval. Failure, truncation, a missing file, or mismatched hashes means **not verified**, never success. Creating a new database requires the participant's chosen destination and authorization.
+
+## Full current-package checkpoint (engine)
+
+`node scripts/cli.mjs cloudflare-export CONFIG d1 STABLE_SKILL_ID [REVIEW_DECISIONS_FILE]` prepares SQL and a gzip/base64 checkpoint in the state directory; it does not save remotely. Execute its setup, writes and commit through the confirmed D1 connector. Read back the manifest and every chunk. Save the fetched `{manifest,chunks}` as a receipt, then run `cloudflare-verify RECEIPT`. Each chunk hash is SHA-256 of its UTF-8 base64 text; manifest.id hashes the decoded compressed bytes; contentHash hashes the decompressed bytes. Do not interchange them.
+
+`cloudflare-restore RECEIPT NEW_DIRECTORY` restores verified files without executing commands or changing an installed skill. Reconnect the runner and review component checks before testing. The checkpoint includes selected current package bytes (including binaries), suite and saved local state. Exclusions are explicit. Historical runs may not contain older binary package versions. Credentials, dependency caches and external symlinks are not part of this restore guarantee. Review sensitive content before uploading; filenames alone are not a secret detector.
+
+## Capability limits
+
+The installed Cloudflare Developer Platform connector was tested for D1 SQL access. Its KV and R2 tools exposed namespace/bucket management, not value/object content operations. KV/R2 export plans are prepared formats only until a content-capable adapter is verified. A custom Worker remains an optional future adapter. Neither a prepared request nor local browser storage establishes cloud persistence.
+
+## Native connector transfer capacity
+
+New checkpoints use layout version 2 and separate storage keys, with 3,000-character chunks and SQL length guards. Version-1 receipts remain readable. The D1 exporter rejects manifests over 2,400 UTF-8 bytes before returning a plan; large packages need a file-capable adapter. This limit is explicit because large model-mediated SQL arguments failed integrity checks in rehearsal. A prepared KV/R2 plan is not proof of a working content adapter. Do not promise that arbitrary-sized packages can be saved through the native connector.
+
+## Exact transfer through model-mediated tools
+
+Use the generated SQL from `cloudflare-export`, including its repetition expressions and segmented readback queries. Repeated base64 must not be manually expanded: SQL reconstructs it with `replace(hex(zeroblob(count)),'00',pattern)`. Readback returns actual stored literal segments and repetition patterns, with a database check that the entire repeated span matches. `cloudflare-verify` expands these bounded segments and checks hashes against the manifest. A length match alone is insufficient. Commit only after all returned bytes verify.
+
+For QA-only HTML snapshots, apply the same mechanical encoding in code. If a chunk cannot be transferred exactly, stop with an unverified result. Never infer success from generated SQL or a model's reconstruction of the source.
+
+A stored `sha256` column is only an expected value, not a database-computed hash. Matching that column and a length does **not** verify content. Hash every actual fetched chunk (or reconstruct from actual fetched segments plus a successful database content-equality check). Never substitute original/source chunk values into a readback receipt or its final hash calculation. If actual readback cannot be completed, label the save unverified even if writes succeeded.
