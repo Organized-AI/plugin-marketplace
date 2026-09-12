@@ -9,6 +9,7 @@ import { inventory,checkAll } from './inventory.mjs';
 import { atomic,readJSON } from './shared/io.mjs';
 import { report } from './report.mjs';
 import { overview } from './overview.mjs';
+import {createSetup,setupStatus,checkSetup,connectSetup} from './setup.mjs';
 const here=dirname(fileURLToPath(import.meta.url));
 export async function init(folder,{demo=false,rules=false,skill,suite}={}) {
   if(!demo&&!rules) {
@@ -40,6 +41,10 @@ export async function init(folder,{demo=false,rules=false,skill,suite}={}) {
 }
 export async function main(args) {
   const [action,file,...rest]=args;
+  if(action==='setup-create')return createSetup(file,rest[0],rest.slice(1));
+  if(action==='setup-status')return setupStatus(file);
+  if(action==='setup-check')return checkSetup(file);
+  if(action==='setup-connect')return connectSetup(file);
   if(action==='humanizer-init') {
     const {initHumanizer}=await import('./humanizer-demo.mjs');return initHumanizer(file??'humanizer-workshop');
   }

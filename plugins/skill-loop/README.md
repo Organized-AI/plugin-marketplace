@@ -327,3 +327,7 @@ This package includes the migration, Edge Function, bundled Organized AI review
 UI, Worker proxy, and local tests. Deploy and verify your own Supabase/OAuth setup
 before advertising the connected experience as ready. No hosted database is
 included merely by installing the skill.
+
+## Guided setup development branch
+
+See [the guided setup flow](setup/README.md) for reusable profiles, first-report checks, optional D1 verification, and the Cloudflare deployment roadmap. Cloudflare Sandbox is the planned default execution backend; SF Compute Autoresearch is an optional advanced experiment provider. The new setup commands do not deploy cloud infrastructure.

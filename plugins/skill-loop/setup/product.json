@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "brand": {"name": "Skill Loop", "author": "Jordaaan", "accent": "#F5D623", "profileUrl": "https://www.linkedin.com/in/jordaaanhill"},
+  "defaults": {"backend": "cloudflare", "history": "optional", "initialCheck": "package-overview", "scheduledChecks": false},
+  "assistants": ["claude-desktop", "codex", "claude-code", "hermes"],
+  "copy": {"welcome": "Set up once. Check your skills whenever you need.", "ready": "Your skills are ready for an initial check."}
+}

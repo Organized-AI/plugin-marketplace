@@ -12,7 +12,7 @@ def ignored(name):
 allowed={'.mjs','.js','.md','.json','.sql','.toml','.ts','.html','.css','.lock','.example','.py','.sh'}
 with ZipFile(out,'w',ZIP_DEFLATED) as z:
  z.write(root/'chat/SKILL.md','skill-loop/SKILL.md')
- for folder in ['scripts','examples','storage']:
+ for folder in ['scripts','examples','storage','setup']:
   for directory,dirs,files in os.walk(root/folder,followlinks=False):
    dirs[:]=sorted(n for n in dirs if not ignored(n) and not (Path(directory)/n).is_symlink())
    for name in sorted(files):
