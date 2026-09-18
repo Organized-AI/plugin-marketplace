@@ -1,0 +1,20 @@
+{
+  "name": "cmp-activity-audit-tools",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "cmp-audit": "./scripts/cmp-audit.mjs",
+    "cmp-audit-diff": "./scripts/cmp-audit-diff.mjs",
+    "cmp-audit-mcp": "./scripts/cmp-audit-mcp.mjs"
+  },
+  "scripts": {
+    "audit": "node ./scripts/cmp-audit.mjs",
+    "diff": "node ./scripts/cmp-audit-diff.mjs",
+    "mcp": "node ./scripts/launch-cmp-audit-mcp.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "playwright-core": "^1.55.0"
+  }
+}

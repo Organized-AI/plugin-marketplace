@@ -1,0 +1,20 @@
+{
+  "url": "https://example.com",
+  "outputDir": "cmp-audits/example",
+  "locale": "en-US",
+  "timezone": "America/Chicago",
+  "settleMs": 3000,
+  "postInteractionMs": 3000,
+  "capturePostData": true,
+  "selectors": {
+    "accept": "button[data-testid='accept-all']",
+    "reject": "button[data-testid='reject-all']",
+    "withdraw": "a[data-testid='privacy-settings']"
+  },
+  "flows": {
+    "withdraw": ["accept", "withdraw", "reject"]
+  },
+  "classifiers": [
+    { "pattern": "analytics\\.example\\.com", "category": "analytics" }
+  ]
+}

@@ -370,6 +370,24 @@ Advertising and tracking audit toolkit for comprehensive platform analysis.
 
 ---
 
+### measureu-cmp-audit-tools
+
+Browser-observable evidence capture for consent management platforms. It exercises consent states and preserves the request, consent-signal, storage, visual, and console evidence needed for an engineering or privacy review; it does not issue a legal-compliance verdict.
+
+```
+/plugin install measureu-cmp-audit-tools@organized-ai-marketplace
+```
+
+**Coverage:**
+- Pre-consent activity, accept, reject, Global Privacy Control, reload persistence, and withdrawal flows
+- Custom category-choice flows through selectors and checkbox toggles
+- Network, request-body, cookie, storage, data-layer, screenshot, and console evidence
+- Regression comparison for tracking hosts, request signatures, cookies, and storage keys
+
+**Requires:** Node.js 20+ and Google Chrome or Chromium. Set `CHROME_PATH` only when the browser is not discoverable automatically. The MCP launcher installs the locked Node dependency on first use.
+
+---
+
 ### organized-meta-wiring ⭐ NEW
 
 Wire Meta APIs into a Cloudflare Worker. Sibling to `organized-google-wiring` — same framework shape, Meta's own sharp edges.
@@ -777,6 +795,7 @@ plugin-name/
 | blade-linkedin-plugin | Commands | Organized AI |
 | fix-your-tracking | Agents, Commands, Skills, MCP | Organized AI |
 | gtm-audit-pro | Skills (2) — read-only audit, successor to tidy-gtm's audit phase | Organized AI |
+| measureu-cmp-audit-tools | Skill, CLI, MCP — browser evidence for consent and CMP behavior | Organized AI |
 | frontend-design | Skills | Anthropic Official |
 | agent-sdk-dev | Commands, Agents | Anthropic Official |
 | hookify | Commands, Agents, Skills, Hooks | Anthropic Official |

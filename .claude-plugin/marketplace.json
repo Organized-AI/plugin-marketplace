@@ -107,6 +107,11 @@
       "description": "AI-assisted GTM + GA4 audit: 72 read-only checkpoints across MeasureU's base 33, consent/privacy, data-layer quality, Google Ads + Meta reconciliation, sGTM delivery and cross-container dedup, performance/security, version history and drift, and offline-conversion / Data Manager API coverage. Produces a scored, tiered-recommendation report. Successor to the audit portion of tidy-gtm (gtm-ai-plugin, gads-gtm-plugin, fix-your-tracking) \u2014 tidy-gtm's write/remediation phase remains the tool for actually applying fixes."
     },
     {
+      "name": "measureu-cmp-audit-tools",
+      "source": "./measureu-cmp-audit-tools",
+      "description": "Browser evidence capture for CMP behavior: pre-consent tracking, accept/reject paths, GPC, persistence, withdrawal, category choices, and regression comparison."
+    },
+    {
       "name": "openclaw-tools",
       "source": "./openclaw-tools",
       "description": "Top 12 OpenClaw skills for Claude Code agents \u2014 TikTok marketing (Larry), self-evolving AI, token savings (QMD), Google Workspace (GOG), Twitter growth, persistent memory (ByteRover), WhatsApp, Playwright browser automation, Mission Control, and more"

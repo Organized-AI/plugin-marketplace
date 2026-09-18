@@ -1,0 +1,23 @@
+{
+  "name": "measureu-cmp-audit-tools",
+  "version": "0.2.0",
+  "description": "Capture browser evidence for consent-management-platform behavior, persistence, and tracking changes.",
+  "author": {
+    "name": "Organized AI",
+    "url": "https://github.com/Organized-AI"
+  },
+  "repository": "https://github.com/Organized-AI/measureu-cmp-audit-tools",
+  "license": "MIT",
+  "keywords": [
+    "cmp",
+    "consent",
+    "privacy",
+    "tracking",
+    "browser-audit",
+    "mcp"
+  ],
+  "category": "data-infrastructure",
+  "skills": [
+    "skills/cmp-audit"
+  ]
+}
