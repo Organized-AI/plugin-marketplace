@@ -4,6 +4,7 @@ import path from "node:path";
 import readline from "node:readline";
 import { audit, auditMany } from "../cmp-audit/audit.mjs";
 import { compareAuditFiles } from "../cmp-audit/compare.mjs";
+import { explainFinding, inspectRequest, queryStorage, readAudit, traceVendor, validateProfile } from "../cmp-audit/evidence.mjs";
 
 const tools = [
   {
@@ -24,6 +25,8 @@ const tools = [
         classifiers: { type: "array", items: { type: "object" } },
         capture_post_data: { type: "boolean" },
         proxy: { type: "object", properties: { server: { type: "string" }, username: { type: "string" }, password: { type: "string" } } },
+        profile: { type: "object" },
+        capture_health: { type: "boolean" },
       },
       required: ["url"],
     },
@@ -44,6 +47,8 @@ const tools = [
         classifiers: { type: "array", items: { type: "object" } },
         capture_post_data: { type: "boolean" },
         proxy: { type: "object", properties: { server: { type: "string" }, username: { type: "string" }, password: { type: "string" } } },
+        profile: { type: "object" },
+        capture_health: { type: "boolean" },
       },
       required: ["urls"],
     },
@@ -63,13 +68,43 @@ const tools = [
     },
   },
   {
+    name: "inspect_cmp_request",
+    description: "Inspect one request by stable evidence ID, including phase, source context, classification trace, payload, and consent signals.",
+    inputSchema: { type: "object", properties: { audit: { type: "string" }, request_id: { type: "string" } }, required: ["audit", "request_id"] },
+  },
+  {
+    name: "explain_cmp_finding",
+    description: "Explain a finding and return the concrete request evidence referenced by it.",
+    inputSchema: { type: "object", properties: { audit: { type: "string" }, finding_id: { type: "string" } }, required: ["audit", "finding_id"] },
+  },
+  {
+    name: "trace_cmp_vendor",
+    description: "Trace a host, URL fragment, or category across every consent scenario with source and classification context.",
+    inputSchema: { type: "object", properties: { audit: { type: "string" }, query: { type: "string" } }, required: ["audit", "query"] },
+  },
+  {
+    name: "query_cmp_storage_events",
+    description: "Read timestamped local/session storage writes and removals, optionally filtered by key.",
+    inputSchema: { type: "object", properties: { audit: { type: "string" }, key: { type: "string" } }, required: ["audit"] },
+  },
+  {
+    name: "check_cmp_capture_health",
+    description: "Read the audit's instrumentation-on/off comparison and positive-control status.",
+    inputSchema: { type: "object", properties: { audit: { type: "string" } }, required: ["audit"] },
+  },
+  {
+    name: "validate_cmp_audit_profile",
+    description: "Validate an expected CMP, consent model, Consent Mode, geography, and behavior profile before running an audit.",
+    inputSchema: { type: "object", properties: { profile: { type: "object" } }, required: ["profile"] },
+  },
+  {
     name: "get_cmp_audit_methodology",
     description: "Explain the CMP activity evidence model and interpretation limits.",
     inputSchema: { type: "object", properties: {} },
   },
 ];
 
-const methodology = `Run clean browser contexts for pre-consent, accept, reject, GPC, accept/reload, reject/reload, and withdrawal. The audit records a timestamped timeline, network requests with response metadata, Consent Mode query signals, storage, visible CMP controls across frames, screenshots, and console output. The action phase is set before each click so click-triggered requests are attributed to that action. Compare scenarios and later baselines to test whether user intent changes browser behavior. Findings are heuristic evidence; server-side collection, first-party proxies, jurisdiction, policy, and vendor purpose require separate review.`;
+const methodology = `Declare expected CMP, consent model, Consent Mode, geography, and scenario behavior when known. Run clean browser contexts for pre-consent, accept, reject, GPC, persistence, and withdrawal. The audit records stable evidence IDs, shared event clocks, network requests with source-frame and classification traces, Consent Mode signals, storage mutations and snapshots, visible CMP controls, screenshots, and console output. It compares instrumented and control runs before marking coverage complete. Use evidence-query tools to move from a finding to its concrete records. Findings remain heuristic; server-side collection, first-party proxies, jurisdiction, policy, and vendor purpose require separate review.`;
 
 function send(id, result, error) {
   process.stdout.write(`${JSON.stringify(error ? { jsonrpc: "2.0", id, error } : { jsonrpc: "2.0", id, result })}\n`);
@@ -93,7 +128,7 @@ function auditUrls(values) {
 
 async function handle(message) {
   const { id, method, params = {} } = message;
-  if (method === "initialize") return send(id, { protocolVersion: "2025-06-18", capabilities: { tools: {} }, serverInfo: { name: "cmp-audit", version: "0.2.0" } });
+  if (method === "initialize") return send(id, { protocolVersion: "2025-06-18", capabilities: { tools: {} }, serverInfo: { name: "cmp-audit", version: "0.3.0" } });
   if (method === "notifications/initialized") return;
   if (method === "ping") return send(id, {});
   if (method === "tools/list") return send(id, { tools });
@@ -113,6 +148,8 @@ async function handle(message) {
         classifiers: args.classifiers,
         capturePostData: args.capture_post_data,
         proxy: args.proxy,
+        profile: args.profile,
+        captureHealth: args.capture_health,
       });
       return send(id, content(`Audit written to ${outputDir}`, { output_dir: outputDir, summary: report.summary, findings: report.findings }));
     }
@@ -128,17 +165,31 @@ async function handle(message) {
         classifiers: args.classifiers,
         capturePostData: args.capture_post_data,
         proxy: args.proxy,
+        profile: args.profile,
+        captureHealth: args.capture_health,
       });
       return send(id, content(`Batch audit written to ${outputDir}`, { output_dir: outputDir, audits: report.audits }));
     }
     if (params.name === "read_cmp_audit") {
       const file = path.resolve(args.audit_dir, "audit.json");
       const report = JSON.parse(await fs.readFile(file, "utf8"));
-      return send(id, content(JSON.stringify({ url: report.url, generatedAt: report.generatedAt, summary: report.summary, findings: report.findings }, null, 2), { audit_file: file }));
+      return send(id, content(JSON.stringify({ url: report.url, generatedAt: report.generatedAt, coverage: report.coverage, captureHealth: report.captureHealth, profile: report.profile, summary: report.summary, findings: report.findings }, null, 2), { audit_file: file }));
     }
     if (params.name === "compare_cmp_audits") {
       const comparison = await compareAuditFiles(args.baseline_file, args.candidate_file);
       return send(id, content(JSON.stringify(comparison, null, 2), comparison));
+    }
+    if (params.name === "validate_cmp_audit_profile") return send(id, content(JSON.stringify(validateProfile(args.profile), null, 2), validateProfile(args.profile)));
+    if (["inspect_cmp_request", "explain_cmp_finding", "trace_cmp_vendor", "query_cmp_storage_events", "check_cmp_capture_health"].includes(params.name)) {
+      const { file, audit: report } = await readAudit(args.audit);
+      let result;
+      if (params.name === "inspect_cmp_request") result = inspectRequest(report, args.request_id);
+      if (params.name === "explain_cmp_finding") result = explainFinding(report, args.finding_id);
+      if (params.name === "trace_cmp_vendor") result = traceVendor(report, args.query);
+      if (params.name === "query_cmp_storage_events") result = queryStorage(report, args.key);
+      if (params.name === "check_cmp_capture_health") result = report.captureHealth || { status: "not-run" };
+      if (result == null) throw new Error("Evidence record was not found");
+      return send(id, content(JSON.stringify(result, null, 2), { audit_file: file, result }));
     }
     return send(id, null, { code: -32602, message: `Unknown tool: ${params.name}` });
   } catch (error) {

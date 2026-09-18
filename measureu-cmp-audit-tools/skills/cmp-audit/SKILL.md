@@ -11,7 +11,9 @@ Start with the target URLs and the browser behaviors that matter. Cover represen
 
 Configure selectors when the CMP controls cannot be found by accessible name. For a category-level choice or multi-step preferences dialog, pass a `flows` object with click and toggle steps. Use the `withdraw` scenario only when the flow reaches a setting or preference control after acceptance.
 
-Read `audit.json` with `read_cmp_audit` after a run. The report records browser-observable evidence: action timing, requests and responses, request-body consent signals, data-layer consent commands, cookies, frame storage, CMP markup, screenshots, and console messages. Compare releases with `compare_cmp_audits`.
+Define a `profile` before auditing when the expected CMP, consent model, Consent Mode, geography, or scenario behavior is known. Validate it with `validate_cmp_audit_profile`. Locale and timezone do not verify geography; record how the network location was established.
+
+Read `audit.json` with `read_cmp_audit` after a run. Use `explain_cmp_finding` for a finding's referenced evidence, `inspect_cmp_request` for a single request, `trace_cmp_vendor` for behavior across scenarios, `query_cmp_storage_events` for writes/removals, and `check_cmp_capture_health` before relying on the result. Compare releases with `compare_cmp_audits`.
 
 Interpret findings as evidence to investigate. A request before consent may be a constrained consent-mode ping; inspect the endpoint, request body, data-layer state, and storage before deciding whether it violates the expected behavior. A clean result applies only to the tested pages, paths, and browser location.
 

@@ -73,6 +73,7 @@ test("captures consent transitions, collection, persistence, withdrawal, toggles
       settleMs: 20,
       postInteractionMs: 20,
       scenarios: ['accept', 'reject', 'persistence-accept', 'withdraw', 'category'],
+      profile: { expected: { consentDefaultRequired: true, consentUpdateRequired: true } },
       flows: {
         category: [
           'accept',
@@ -85,15 +86,24 @@ test("captures consent transitions, collection, persistence, withdrawal, toggles
     const byName = Object.fromEntries(report.scenarios.map((scenario) => [scenario.scenario, scenario]));
     const acceptCollect = byName.accept.requests.find((request) => request.url.includes('/collect'));
     assert.equal(acceptCollect.phase, 'action-accept');
+    assert.match(acceptCollect.id, /^accept:request:/);
+    assert.equal(acceptCollect.classification.classifierVersion, '2026-09-18');
+    assert.equal(acceptCollect.source.frameUrl, fixture.url);
     assert.deepEqual(acceptCollect.consentSignals, { gcd: 'granted', analytics_storage: 'granted', gcs: 'G111' });
     assert.equal(acceptCollect.response.status, 204);
     assert.ok(byName.accept.after.consentState.dataLayerConsentEvents.some((event) => event[1] === 'update' && event[2].analytics_storage === 'granted'));
+    assert.ok(byName.accept.after.consentState.timestampedConsentEvents.some((event) => event.timestampMs >= 0 && event.value[1] === 'update'));
+    assert.ok(byName.accept.after.consentState.storageEvents.some((event) => event.operation === 'set' && event.key === 'cmp_consent'));
     assert.deepEqual(byName['persistence-accept'].persistence.retainedConsentLocalStorageKeys, ['cmp_consent']);
     assert.ok(byName.withdraw.interactions.every((interaction) => interaction.clicked));
     assert.ok(byName.withdraw.after.consentState.dataLayerConsentEvents.some((event) => event[1] === 'update' && event[2].analytics_storage === 'denied'));
     assert.equal(byName.category.interactions.find((interaction) => interaction.action === 'disable-analytics').checkedAfter, false);
     assert.ok(fixture.requests.length > 0);
-    assert.equal(JSON.parse(await fs.readFile(path.join(outputDir, 'single', 'audit.json'), 'utf8')).schemaVersion, '0.3.0');
+    const saved = JSON.parse(await fs.readFile(path.join(outputDir, 'single', 'audit.json'), 'utf8'));
+    assert.equal(saved.schemaVersion, '0.4.0');
+    assert.equal(saved.captureHealth.status, 'pass');
+    assert.equal(saved.coverage.state, 'complete');
+    assert.ok(saved.findings.every((finding) => finding.id));
 
     const batch = await auditMany({
       urls: [`${fixture.url}one`, `${fixture.url}two`],
@@ -101,6 +111,7 @@ test("captures consent transitions, collection, persistence, withdrawal, toggles
       settleMs: 10,
       postInteractionMs: 10,
       scenarios: ['preconsent'],
+      captureHealth: false,
     });
     assert.equal(batch.report.audits.length, 2);
     assert.ok(await fs.stat(path.join(batch.outputDir, 'batch-audit.json')));

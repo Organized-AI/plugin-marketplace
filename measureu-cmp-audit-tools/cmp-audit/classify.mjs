@@ -42,25 +42,38 @@ const CATEGORIES = [
 ];
 
 export function classifyUrl(rawUrl, firstPartyHost, extraPatterns = []) {
+  return classifyUrlDetailed(rawUrl, firstPartyHost, extraPatterns).classification;
+}
+
+export function classifyUrlDetailed(rawUrl, firstPartyHost, extraPatterns = []) {
   let url;
   try {
     url = new URL(rawUrl);
   } catch {
-    return { category: "unknown", hostname: "", firstParty: false };
+    return { classification: { category: "unknown", hostname: "", firstParty: false }, trace: { rule: "invalid-url", confidence: "high" } };
   }
 
-  for (const entry of extraPatterns) {
+  for (const [index, entry] of extraPatterns.entries()) {
     if (new RegExp(entry.pattern, "i").test(url.hostname + url.pathname)) {
-      return { category: entry.category, hostname: url.hostname, firstParty: url.hostname === firstPartyHost };
+      return {
+        classification: { category: entry.category, hostname: url.hostname, firstParty: url.hostname === firstPartyHost },
+        trace: { rule: `custom-${index + 1}`, pattern: entry.pattern, confidence: "configured" },
+      };
     }
   }
   for (const category of CATEGORIES) {
     if (category.patterns.some((pattern) => pattern.test(url.hostname))) {
-      return { category: category.name, hostname: url.hostname, firstParty: url.hostname === firstPartyHost };
+      return {
+        classification: { category: category.name, hostname: url.hostname, firstParty: url.hostname === firstPartyHost },
+        trace: { rule: `known-host:${category.name}`, confidence: "high" },
+      };
     }
   }
   const firstParty = url.hostname === firstPartyHost || url.hostname.endsWith(`.${firstPartyHost}`);
-  return { category: firstParty ? "first-party" : "other-third-party", hostname: url.hostname, firstParty };
+  return {
+    classification: { category: firstParty ? "first-party" : "other-third-party", hostname: url.hostname, firstParty },
+    trace: { rule: firstParty ? "hostname:first-party" : "hostname:unclassified-third-party", confidence: "review" },
+  };
 }
 
 export function consentSignals(rawUrl) {

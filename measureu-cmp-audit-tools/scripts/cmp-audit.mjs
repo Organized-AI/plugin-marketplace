@@ -49,7 +49,7 @@ try {
   const result = urls.length > 1 ? await auditMany(config) : await audit(config);
   console.log(JSON.stringify(urls.length > 1
     ? { outputDir: result.outputDir, audits: result.report.audits.map((item) => ({ url: item.url, outputDir: item.outputDir, findings: item.findings })) }
-    : { outputDir: result.outputDir, summary: result.report.summary, findings: result.report.findings }, null, 2));
+    : { outputDir: result.outputDir, coverage: result.report.coverage, captureHealth: result.report.captureHealth, summary: result.report.summary, findings: result.report.findings }, null, 2));
 } catch (error) {
   console.error(`cmp-audit: ${error.message}`);
   process.exit(1);

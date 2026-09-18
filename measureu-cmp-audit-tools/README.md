@@ -12,7 +12,9 @@ The auditor runs clean browser contexts for seven consent scenarios:
 - Reject, then reload
 - Accept, open the withdrawal flow, then reject
 
-For each scenario it records a timestamped event timeline, network requests and response metadata, request bodies when enabled, likely analytics and advertising destinations, consent commands from the browser data layer, Google Consent Mode parameters from URLs and request bodies, cookies, storage for every accessible frame, visible CMP markup and controls across frames, screenshots, and browser console messages. Sensitive request and response headers such as cookies and authorization are removed from the saved evidence.
+For each scenario it records stable evidence IDs, a timestamped event timeline, network requests and response metadata, source-frame context, request bodies when enabled, classification traces, timestamped consent commands and storage mutations, cookies, storage for every accessible frame, visible CMP markup and controls across frames, screenshots, and browser console messages. Sensitive request and response headers such as cookies and authorization are removed from the saved evidence.
+
+By default, the auditor also compares an instrumented pre-consent run with a control run. A changed request-signature set marks the audit inconclusive so capture interference can be investigated.
 
 The result is evidence for review, not a legal-compliance score.
 
@@ -27,7 +29,7 @@ Requirements:
 npm install
 ```
 
-When installed from a plugin marketplace, the MCP launcher installs this locked dependency before its first start. The CLI uses the same local package, so run `npm ci` from this directory before using the CLI directly.
+When installed from the marketplace, the MCP launcher installs this locked dependency before its first start. The CLI uses the same local package, so run `npm ci` from this directory before using the CLI directly.
 
 ## Run an audit
 
@@ -72,6 +74,8 @@ Use [cmp-audit.example.json](./cmp-audit.example.json) to configure:
 - Scenario selection
 - Multi-step flows, including category toggles and save actions
 - Proxy routing for a real network location
+- An explicit audit profile describing the expected CMP, consent model, Consent Mode, geography, and scenario behavior
+- Capture-health controls (disable with `"captureHealth": false` only when necessary)
 
 ```bash
 node scripts/cmp-audit.mjs --config cmp-audit.example.json
@@ -118,6 +122,8 @@ Review findings currently cover:
 
 Request classifications are heuristics and can be extended through the configuration file.
 
+Every finding has a stable ID and may reference request evidence IDs. The report separates run coverage (`complete`, `partial`, or `inconclusive`) from findings. Profile mismatches are evaluated only when the profile states an expectation.
+
 ## Regression comparison
 
 Compare a later audit against a baseline:
@@ -149,6 +155,12 @@ Available tools:
 - `audit_cmp_page`
 - `read_cmp_audit`
 - `compare_cmp_audits`
+- `validate_cmp_audit_profile`
+- `inspect_cmp_request`
+- `explain_cmp_finding`
+- `trace_cmp_vendor`
+- `query_cmp_storage_events`
+- `check_cmp_capture_health`
 - `get_cmp_audit_methodology`
 
 ## Interpretation limits

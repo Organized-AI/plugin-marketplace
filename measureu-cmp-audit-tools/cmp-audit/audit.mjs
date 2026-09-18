@@ -2,7 +2,8 @@ import fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright-core";
-import { classifyUrl, isTrackingCategory, mergedConsentSignals } from "./classify.mjs";
+import { classifyUrlDetailed, isTrackingCategory, mergedConsentSignals } from "./classify.mjs";
+import { validateProfile } from "./evidence.mjs";
 
 const CHROME_CANDIDATES = {
   darwin: [
@@ -22,6 +23,8 @@ const CMP_HINTS = [
   "[id*='onetrust' i]", "[class*='onetrust' i]", "[aria-label*='cookie' i]",
 ];
 const REDACTED_HEADERS = new Set(["authorization", "cookie", "proxy-authorization", "set-cookie", "x-api-key"]);
+const SCHEMA_VERSION = "0.4.0";
+const CLASSIFIER_VERSION = "2026-09-18";
 
 function slug(value) {
   return value.replace(/^https?:\/\//, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").slice(0, 80) || "site";
@@ -119,17 +122,19 @@ async function consentStateSnapshot(page) {
   return page.evaluate(() => {
     const audit = window.__cmpAudit || { dataLayer: [] };
     const events = audit.dataLayer || [];
-    const consentEvents = events.filter((event) => event[0] === "consent" || event[0]?.event === "consent");
+    const consentEvents = events.filter((event) => event.value?.[0] === "consent" || event.value?.[0]?.event === "consent");
     const relevant = (store) => Object.fromEntries(Object.keys(store).filter((key) => /consent|cookie|privacy|opt/i.test(key)).map((key) => [key, store[key]]));
     return {
-      dataLayerConsentEvents: consentEvents,
+      dataLayerConsentEvents: consentEvents.map((event) => event.value),
+      timestampedConsentEvents: consentEvents,
+      storageEvents: audit.storage || [],
       consentStorage: {
         localStorage: relevant(Object.fromEntries([...Array(localStorage.length)].map((_, index) => [localStorage.key(index), localStorage.getItem(localStorage.key(index))]))),
         sessionStorage: relevant(Object.fromEntries([...Array(sessionStorage.length)].map((_, index) => [sessionStorage.key(index), sessionStorage.getItem(sessionStorage.key(index))]))),
       },
       globalPrivacyControl: navigator.globalPrivacyControl === true,
     };
-  }).catch(() => ({ dataLayerConsentEvents: [], consentStorage: { localStorage: {}, sessionStorage: {} }, globalPrivacyControl: false }));
+  }).catch(() => ({ dataLayerConsentEvents: [], timestampedConsentEvents: [], storageEvents: [], consentStorage: { localStorage: {}, sessionStorage: {} }, globalPrivacyControl: false }));
 }
 
 async function cmpEvidence(page) {
@@ -254,11 +259,16 @@ async function performActions(page, scenario, config, emit) {
   return results;
 }
 
-function requestRecord(request, startedAt, page, config) {
-  const classification = classifyUrl(request.url(), new URL(config.url).hostname, config.classifiers || []);
+function requestRecord(request, startedAt, page, config, requestId, requestIds) {
+  const { classification, trace } = classifyUrlDetailed(request.url(), new URL(config.url).hostname, config.classifiers || []);
   const postData = config.capturePostData === false ? null : truncate(request.postData());
+  const redirectedFrom = request.redirectedFrom();
+  let sourceFrameUrl = null;
+  try { sourceFrameUrl = request.frame().url(); } catch { sourceFrameUrl = "service-worker-or-unavailable"; }
   return {
+    id: requestId,
     timestampMs: Date.now() - startedAt,
+    epochMs: Date.now(),
     phase: page.__auditPhase || "navigation",
     method: request.method(),
     resourceType: request.resourceType(),
@@ -266,16 +276,22 @@ function requestRecord(request, startedAt, page, config) {
     requestHeaders: sanitizeHeaders(request.headers()),
     postData,
     ...classification,
+    classification: { ...classification, ...trace, classifierVersion: CLASSIFIER_VERSION },
+    source: {
+      frameUrl: sourceFrameUrl,
+      isNavigationRequest: request.isNavigationRequest(),
+      redirectedFromRequestId: redirectedFrom ? requestIds.get(redirectedFrom) || null : null,
+    },
     consentSignals: mergedConsentSignals(request.url(), postData),
     response: null,
     failure: null,
   };
 }
 
-async function runScenario(browser, config, scenario, outputDir) {
+async function runScenario(browser, config, scenario, outputDir, options = {}) {
   const startedAt = Date.now();
   const timeline = [];
-  const emit = (type, details = {}) => timeline.push({ timestampMs: Date.now() - startedAt, type, ...details });
+  const emit = (type, details = {}) => timeline.push({ timestampMs: Date.now() - startedAt, epochMs: Date.now(), type, ...details });
   const context = await browser.newContext({
     viewport: config.viewport || { width: 1440, height: 1000 },
     locale: config.locale || "en-US",
@@ -287,14 +303,14 @@ async function runScenario(browser, config, scenario, outputDir) {
       Object.defineProperty(Navigator.prototype, "globalPrivacyControl", { get: () => true, configurable: true });
     });
   }
-  await context.addInitScript(() => {
-    const state = window.__cmpAudit = window.__cmpAudit || { dataLayer: [] };
+  if (options.instrument !== false) await context.addInitScript(() => {
+    const state = window.__cmpAudit = window.__cmpAudit || { dataLayer: [], storage: [] };
     const record = (value) => {
       try {
         const entry = Array.from(value).map((item) => typeof item === "object" && item !== null ? JSON.parse(JSON.stringify(item)) : item);
-        state.dataLayer.push(entry);
+        state.dataLayer.push({ timestampMs: performance.now(), epochMs: performance.timeOrigin + performance.now(), value: entry });
       } catch {
-        state.dataLayer.push(["unserializable-data-layer-event"]);
+        state.dataLayer.push({ timestampMs: performance.now(), epochMs: performance.timeOrigin + performance.now(), value: ["unserializable-data-layer-event"] });
       }
     };
     const wrap = (layer) => {
@@ -309,14 +325,30 @@ async function runScenario(browser, config, scenario, outputDir) {
       return layer;
     };
     window.dataLayer = wrap(window.dataLayer || []);
+    for (const [kind, storage] of [["localStorage", localStorage], ["sessionStorage", sessionStorage]]) {
+      const setItem = storage.setItem.bind(storage);
+      const removeItem = storage.removeItem.bind(storage);
+      storage.setItem = (key, value) => {
+        state.storage.push({ timestampMs: performance.now(), epochMs: performance.timeOrigin + performance.now(), kind, operation: "set", key: String(key), value: String(value) });
+        return setItem(key, value);
+      };
+      storage.removeItem = (key) => {
+        state.storage.push({ timestampMs: performance.now(), epochMs: performance.timeOrigin + performance.now(), kind, operation: "remove", key: String(key) });
+        return removeItem(key);
+      };
+    }
   });
 
   const page = await context.newPage();
   const requests = [];
   const requestRecords = new WeakMap();
+  const requestIds = new WeakMap();
+  let requestSequence = 0;
   const consoleMessages = [];
   page.on("request", (request) => {
-    const record = requestRecord(request, startedAt, page, config);
+    const requestId = `${scenario}:request:${String(++requestSequence).padStart(4, "0")}`;
+    requestIds.set(request, requestId);
+    const record = requestRecord(request, startedAt, page, config, requestId, requestIds);
     requestRecords.set(request, record);
     requests.push(record);
     emit("request", { url: record.url, phase: record.phase, category: record.category });
@@ -335,7 +367,7 @@ async function runScenario(browser, config, scenario, outputDir) {
     if (record) record.failure = request.failure()?.errorText || "request failed";
   });
   page.on("console", (message) => {
-    const record = { timestampMs: Date.now() - startedAt, type: message.type(), text: message.text().slice(0, 2000), phase: page.__auditPhase || "navigation" };
+    const record = { timestampMs: Date.now() - startedAt, epochMs: Date.now(), type: message.type(), text: message.text().slice(0, 2000), phase: page.__auditPhase || "navigation" };
     consoleMessages.push(record);
     emit("console", record);
   });
@@ -349,12 +381,12 @@ async function runScenario(browser, config, scenario, outputDir) {
   page.__auditPhase = "pre-interaction";
   const before = await snapshot(page, context);
   emit("pre-interaction-captured", { cmpCandidates: countCandidates(before.cmp) });
-  await page.screenshot({ path: path.join(outputDir, `${scenario}-before.png`), fullPage: true });
+  if (options.screenshots !== false) await page.screenshot({ path: path.join(outputDir, `${scenario}-before.png`), fullPage: true });
 
   const interactions = await performActions(page, scenario, config, emit);
   let after = await snapshot(page, context);
   emit("post-actions-captured", { cmpCandidates: countCandidates(after.cmp) });
-  await page.screenshot({ path: path.join(outputDir, `${scenario}-after.png`), fullPage: true });
+  if (options.screenshots !== false) await page.screenshot({ path: path.join(outputDir, `${scenario}-after.png`), fullPage: true });
 
   let afterReload = null;
   let persistence = null;
@@ -366,7 +398,7 @@ async function runScenario(browser, config, scenario, outputDir) {
     afterReload = await snapshot(page, context);
     persistence = persistenceEvidence(after, afterReload);
     emit("reload-captured", persistence);
-    await page.screenshot({ path: path.join(outputDir, `${scenario}-reload.png`), fullPage: true });
+    if (options.screenshots !== false) await page.screenshot({ path: path.join(outputDir, `${scenario}-reload.png`), fullPage: true });
   }
 
   const title = await page.title();
@@ -386,6 +418,7 @@ async function runScenario(browser, config, scenario, outputDir) {
     timeline,
     requests,
     console: consoleMessages,
+    instrumentation: options.instrument === false ? "off" : "on",
   };
 }
 
@@ -419,7 +452,7 @@ function findingsFor(scenarios) {
     findings.push({ severity: "review", code: "cmp-not-detected", message: "No visible CMP candidate was detected before interaction. Confirm jurisdiction, geolocation, and custom markup." });
   }
   if (pre && trackers(pre).length) {
-    findings.push({ severity: "review", code: "preconsent-tracking", message: `${trackers(pre).length} likely analytics/advertising requests occurred before consent. Inspect the timeline and Consent Mode parameters.`, evidence: unique(trackers(pre).map((request) => request.hostname)) });
+    findings.push({ severity: "review", code: "preconsent-tracking", message: `${trackers(pre).length} likely analytics/advertising requests occurred before consent. Inspect the timeline and Consent Mode parameters.`, evidence: unique(trackers(pre).map((request) => request.hostname)), evidenceIds: trackers(pre).map((request) => request.id) });
   }
   for (const [name, scenario, action] of [["accept", accept, "accept"], ["reject", reject, "reject"]]) {
     if (scenario && !scenario.interactions.some((interaction) => interaction.action === action && interaction.clicked)) {
@@ -427,13 +460,13 @@ function findingsFor(scenarios) {
     }
   }
   if (reject && trackers(reject, "action-reject").length) {
-    findings.push({ severity: "review", code: "post-reject-tracking", message: `${trackers(reject, "action-reject").length} likely analytics/advertising requests occurred after reject. Verify whether they are restricted cookieless pings or prohibited collection.`, evidence: unique(trackers(reject, "action-reject").map((request) => request.hostname)) });
+    findings.push({ severity: "review", code: "post-reject-tracking", message: `${trackers(reject, "action-reject").length} likely analytics/advertising requests occurred after reject. Verify whether they are restricted cookieless pings or prohibited collection.`, evidence: unique(trackers(reject, "action-reject").map((request) => request.hostname)), evidenceIds: trackers(reject, "action-reject").map((request) => request.id) });
   }
   if (accept && reject && accept.interactions.some((item) => item.clicked) && reject.interactions.some((item) => item.clicked) && trackers(accept).length === trackers(reject).length) {
     findings.push({ severity: "review", code: "accept-reject-no-request-delta", message: "Accept and reject produced the same number of likely tracking requests. Inspect the timeline, request parameters, and storage to confirm that choice changes behavior." });
   }
   if (gpc && trackers(gpc).length) {
-    findings.push({ severity: "review", code: "gpc-tracking-observed", message: `${trackers(gpc).length} likely tracking requests occurred with GPC enabled. Confirm the site's GPC obligations and request restrictions.`, evidence: unique(trackers(gpc).map((request) => request.hostname)) });
+    findings.push({ severity: "review", code: "gpc-tracking-observed", message: `${trackers(gpc).length} likely tracking requests occurred with GPC enabled. Confirm the site's GPC obligations and request restrictions.`, evidence: unique(trackers(gpc).map((request) => request.hostname)), evidenceIds: trackers(gpc).map((request) => request.id) });
   }
   for (const scenario of [byName["persistence-accept"], byName["persistence-reject"]].filter(Boolean)) {
     if (scenario.persistence && scenario.persistence.retainedCookies.length + scenario.persistence.retainedLocalStorageKeys.length === 0) {
@@ -449,12 +482,76 @@ function findingsFor(scenarios) {
   return findings;
 }
 
+function profileFindings(scenarios, profile = {}) {
+  const expected = profile.expected || {};
+  const byName = Object.fromEntries(scenarios.map((scenario) => [scenario.scenario, scenario]));
+  const tracking = (name) => (byName[name]?.requests || []).filter((request) => isTrackingCategory(request.category));
+  const findings = [];
+  for (const [scenario, expectation] of [["preconsent", expected.preconsentTracking], ["reject", expected.rejectTracking], ["gpc", expected.gpcTracking]]) {
+    if (expectation !== "none" || !byName[scenario] || tracking(scenario).length === 0) continue;
+    findings.push({
+      severity: "error",
+      code: `profile-${scenario}-tracking-mismatch`,
+      message: `The audit profile expected no likely tracking during ${scenario}, but observed ${tracking(scenario).length} request(s).`,
+      evidenceIds: tracking(scenario).map((request) => request.id),
+    });
+  }
+  const allConsentEvents = scenarios.flatMap((scenario) => scenario.after.consentState.timestampedConsentEvents || []);
+  if (expected.consentDefaultRequired && !allConsentEvents.some((event) => event.value?.[0] === "consent" && event.value?.[1] === "default")) {
+    findings.push({ severity: "review", code: "profile-consent-default-missing", message: "The audit profile requires a consent default command, but none was observed." });
+  }
+  if (expected.consentUpdateRequired && !allConsentEvents.some((event) => event.value?.[0] === "consent" && event.value?.[1] === "update")) {
+    findings.push({ severity: "review", code: "profile-consent-update-missing", message: "The audit profile requires a consent update command, but none was observed." });
+  }
+  return findings;
+}
+
+function requestSignature(request) {
+  try {
+    const url = new URL(request.url);
+    return `${request.method}:${url.hostname}${url.pathname}:${request.resourceType}`;
+  } catch {
+    return `${request.method}:${request.url}:${request.resourceType}`;
+  }
+}
+
+function captureHealth(instrumented, control) {
+  const observed = new Set(instrumented.requests.map(requestSignature));
+  const baseline = new Set(control.requests.map(requestSignature));
+  const onlyInstrumented = [...observed].filter((value) => !baseline.has(value)).sort();
+  const onlyControl = [...baseline].filter((value) => !observed.has(value)).sort();
+  const dataLayerCaptureObserved = (instrumented.after.consentState.timestampedConsentEvents || []).length > 0;
+  const status = onlyInstrumented.length || onlyControl.length ? "review" : "pass";
+  return {
+    status,
+    method: "instrumentation-on-off-request-signature-comparison",
+    instrumentedRequestCount: instrumented.requests.length,
+    controlRequestCount: control.requests.length,
+    onlyInstrumented,
+    onlyControl,
+    positiveControls: { dataLayerCaptureObserved },
+    limitations: "Matching request signatures do not prove zero timing or JavaScript-side interference.",
+  };
+}
+
+function runStatus(scenarios, health) {
+  const missedActions = scenarios.flatMap((scenario) => scenario.interactions).filter((interaction) => !interaction.clicked);
+  if (missedActions.length) return { state: "partial", reason: `${missedActions.length} configured interaction(s) could not be completed.` };
+  if (health?.status === "review") return { state: "inconclusive", reason: "Capture instrumentation changed the observed request signature set." };
+  return { state: "complete", reason: "All configured scenarios completed; interpretation limits still apply." };
+}
+
+function withFindingIds(findings) {
+  return findings.map((finding, index) => ({ id: `finding:${String(index + 1).padStart(3, "0")}`, ...finding }));
+}
+
 function markdownReport(report) {
   const rows = report.summary.map((item) => `| ${item.scenario} | ${item.interactions.filter((interaction) => interaction.clicked).map((interaction) => interaction.action).join(", ") || "-"} | ${item.requestCount} | ${item.trackingRequestCount} | ${item.cookieCountBefore} -> ${item.cookieCountAfter} | ${item.trackingHosts.join(", ") || "-"} |`).join("\n");
   const findings = report.findings.length
     ? report.findings.map((item) => `- **${item.severity.toUpperCase()} ${item.code}:** ${item.message}${item.evidence ? ` Evidence: ${item.evidence.join(", ")}.` : ""}`).join("\n")
     : "- No heuristic findings. This is not a compliance determination.";
-  return `# CMP audit: ${report.url}\n\nGenerated: ${report.generatedAt}\n\n## Scenario comparison\n\n| Scenario | Completed actions | Requests | Likely tracking | Cookies | Tracking hosts |\n| --- | --- | ---: | ---: | ---: | --- |\n${rows}\n\n## Findings\n\n${findings}\n\n## Evidence\n\nThe output directory contains screenshots and \`audit.json\` with a timestamped timeline, request/response metadata, request bodies when enabled, cookies, web storage, CMP markup, and console messages.\n\n## Interpretation boundary\n\nThese are browser-observable facts and heuristic classifications. Review jurisdiction, policy, purpose, server-side flows, first-party proxies, and vendor contracts separately.\n`;
+  const health = report.captureHealth ? `${report.captureHealth.status} (${report.captureHealth.method})` : "not run";
+  return `# CMP audit: ${report.url}\n\nGenerated: ${report.generatedAt}\n\nCoverage: **${report.coverage.state}** — ${report.coverage.reason}\n\nCapture health: **${health}**\n\n## Scenario comparison\n\n| Scenario | Completed actions | Requests | Likely tracking | Cookies | Tracking hosts |\n| --- | --- | ---: | ---: | ---: | --- |\n${rows}\n\n## Findings\n\n${findings}\n\n## Evidence\n\nThe output directory contains screenshots and \`audit.json\` with stable evidence IDs, timestamped consent and storage events, request/response metadata, source-frame context, classification traces, request bodies when enabled, cookies, CMP markup, and console messages.\n\n## Interpretation boundary\n\nThese are browser-observable facts and heuristic classifications. Review jurisdiction, policy, purpose, server-side flows, first-party proxies, and vendor contracts separately.\n`;
 }
 
 function publicConfig(config, outputDir) {
@@ -468,6 +565,8 @@ function publicConfig(config, outputDir) {
 
 export async function audit(config) {
   if (!config?.url) throw new Error("config.url is required");
+  const profileValidation = validateProfile(config.profile);
+  if (!profileValidation.valid) throw new Error(`Invalid audit profile: ${profileValidation.issues.join("; ")}`);
   const outputDir = path.resolve(config.outputDir || path.join("cmp-audits", `${slug(config.url)}-${new Date().toISOString().replace(/[:.]/g, "-")}`));
   await fs.mkdir(outputDir, { recursive: true });
   const browser = await chromium.launch({
@@ -478,14 +577,27 @@ export async function audit(config) {
   try {
     const scenarios = [];
     for (const scenario of config.scenarios || DEFAULT_SCENARIOS) scenarios.push(await runScenario(browser, config, scenario, outputDir));
+    let health = null;
+    if (config.captureHealth !== false) {
+      const instrumented = scenarios.find((scenario) => scenario.scenario === "preconsent")
+        || await runScenario(browser, { ...config, scenarios: ["preconsent"] }, "preconsent", outputDir, { screenshots: false });
+      const control = await runScenario(browser, { ...config, scenarios: ["preconsent"] }, "capture-health-control", outputDir, { instrument: false, screenshots: false });
+      health = captureHealth(instrumented, control);
+    }
+    const findings = withFindingIds([...findingsFor(scenarios), ...profileFindings(scenarios, config.profile)]);
     const report = {
-      schemaVersion: "0.3.0",
+      schemaVersion: SCHEMA_VERSION,
       generatedAt: new Date().toISOString(),
       url: config.url,
       methodology: "Browser-observable CMP activity evidence model",
+      classifierVersion: CLASSIFIER_VERSION,
       config: publicConfig(config, outputDir),
+      profile: config.profile || null,
+      profileValidation,
+      coverage: runStatus(scenarios, health),
+      captureHealth: health,
       summary: scenarios.map(summarizeScenario),
-      findings: findingsFor(scenarios),
+      findings,
       scenarios,
     };
     await fs.writeFile(path.join(outputDir, "audit.json"), JSON.stringify(report, null, 2));
@@ -506,7 +618,7 @@ export async function auditMany(config) {
     const result = await audit({ ...config, url, urls: undefined, outputDir: path.join(outputDir, slug(url)) });
     audits.push({ url, outputDir: result.outputDir, summary: result.report.summary, findings: result.report.findings });
   }
-  const report = { schemaVersion: "0.3.0", generatedAt: new Date().toISOString(), urls, audits };
+  const report = { schemaVersion: SCHEMA_VERSION, generatedAt: new Date().toISOString(), urls, audits };
   await fs.writeFile(path.join(outputDir, "batch-audit.json"), JSON.stringify(report, null, 2));
   return { outputDir, report };
 }

@@ -381,7 +381,9 @@ Browser-observable evidence capture for consent management platforms. It exercis
 **Coverage:**
 - Pre-consent activity, accept, reject, Global Privacy Control, reload persistence, and withdrawal flows
 - Custom category-choice flows through selectors and checkbox toggles
-- Network, request-body, cookie, storage, data-layer, screenshot, and console evidence
+- Stable request/finding IDs, classification traces, timestamped consent and storage evidence
+- Explicit behavior profiles and instrumentation-on/off capture-health checks
+- MCP inspection for requests, findings, vendors, storage events, and capture health
 - Regression comparison for tracking hosts, request signatures, cookies, and storage keys
 
 **Requires:** Node.js 20+ and Google Chrome or Chromium. Set `CHROME_PATH` only when the browser is not discoverable automatically. The MCP launcher installs the locked Node dependency on first use.

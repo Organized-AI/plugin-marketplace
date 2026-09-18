@@ -6,6 +6,20 @@
   "settleMs": 3000,
   "postInteractionMs": 3000,
   "capturePostData": true,
+  "captureHealth": true,
+  "profile": {
+    "cmp": "expected CMP name",
+    "consentMode": "basic",
+    "consentModel": "opt-in",
+    "geography": { "location": "California, US", "verifiedBy": "proxy" },
+    "expected": {
+      "preconsentTracking": "none",
+      "rejectTracking": "none",
+      "gpcTracking": "none",
+      "consentDefaultRequired": true,
+      "consentUpdateRequired": true
+    }
+  },
   "selectors": {
     "accept": "button[data-testid='accept-all']",
     "reject": "button[data-testid='reject-all']",
