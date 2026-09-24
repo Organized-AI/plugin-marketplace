@@ -2,6 +2,14 @@
 
 Official Claude Code plugin marketplace for Organized AI. Includes custom workflow, tracking, and automation tools plus curated plugins from Anthropic's official collection.
 
+Maintained by Jordaaan Hill ([LinkedIn](https://www.linkedin.com/in/jordaaanhill)).
+
+## Guides
+
+- [The Stape stack, judged by Jev](https://guide.organizedai.vip/stape-stack/) - the full guide. [Section 12](https://guide.organizedai.vip/stape-stack/#plugins) covers the GTM plugins in this repo: what each adds, whether it writes, and where their configs disagree.
+- [Stape + Jev from zero](https://guide.organizedai.vip/stape-stack/beginners/) - the beginner version, with the read-only plugins to start with.
+- [Observability from zero](https://guide.organizedai.vip/observability/beginners/) - covers GTM Autoresearch, also packaged here as the `gtm-autoresearch-loop` skill in `fix-your-tracking`.
+
 ## Installation
 
 Add this marketplace to Claude Code:
@@ -287,6 +295,8 @@ Secure sandboxed bash execution for OpenClaw AgentSkills via [just-bash](https:/
 **Triggers:** "openclaw skills", "larry tiktok", "capability evolver", "token savings", "google workspace agent", "twitter agent", "persistent memory", "whatsapp agent", "browser automation", "mission control brief", "tweet optimizer"
 
 ## 📊 Tracking & Analytics (Organized AI)
+
+Guide: [The Stape stack, judged by Jev](https://guide.organizedai.vip/stape-stack/#plugins) explains how these GTM plugins fit together and where a decision layer and policy gate belong.
 
 ### gtm-ai-plugin
 
