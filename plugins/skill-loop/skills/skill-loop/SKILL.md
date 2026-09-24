@@ -34,8 +34,12 @@ to this skill directory; resolve them to absolute paths before invoking commands
    must strictly improve without losing any previously passing check to be eligible.
    Ask the user to approve the concrete proposal before `approve`; otherwise keep
    it staged. Installing or testing does not authorize changing the active skill.
-7. Run holdout cases separately after revision. The first release has no enforced
-   holdout partition, so do not describe training-fixture gains as general reliability.
+7. For automatic revisions, configure the independent train, selection, and final
+   test suites described in `../../OPTIMIZATION.md`. Optimization mode enforces
+   bounded patches and held-out gates before approval. Only training feedback
+   reaches the proposer. A final test suite is consumed when exposed; subsequent
+   optimization needs fresh test evidence. Legacy demos and unconfigured runs
+   remain training-fixture checks and do not establish general reliability.
 
 Do not claim background monitoring is active after installation. `watch` is a
 bounded foreground runner requiring a live host; enable only when requested.
