@@ -5,13 +5,13 @@
 **Account:** Challenges by Marisa (act_4178428858845500)  
 **Currency:** GBP  
 **Project:** RTT Server-Side Tracking Implementation  
-**Auditor:** Live analysis from Pipeboard Meta MCP
+**Auditor:** Live analysis from Meta Ads MCP
 
 ---
 
 ## 🎯 Executive Summary
 
-After comprehensive real-time analysis of the Meta Ads account via Pipeboard Meta MCP, I've identified **performance strengths and tracking enhancement opportunities** that would maximize campaign effectiveness.
+After comprehensive real-time analysis of the Meta Ads account via Meta Ads MCP, I've identified **performance strengths and tracking enhancement opportunities** that would maximize campaign effectiveness.
 
 ### Overall Health Score: **7.5/10** ⚠️
 
@@ -544,7 +544,7 @@ The account is performing well. This project will unlock the next level of optim
 ---
 
 **Audit Completed:** November 3, 2025  
-**Data Source:** Pipeboard Meta MCP (Live API Access)  
+**Data Source:** Meta Ads MCP (Live API Access)  
 **Next Action:** Review findings with stakeholders and plan phased CAPI implementation  
 **Contact:** Project lead to discuss implementation timeline and resource allocation
 

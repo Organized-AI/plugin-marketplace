@@ -20,7 +20,9 @@
 | Stape GTM | `https://gtm-mcp.stape.ai/mcp` | GTM container CRUD |
 | Stape | `https://mcp.stape.io/mcp` | Stape container management |
 | TrueClicks Google Ads | `https://mcp.gaql.app/sse/google-ads/TOKEN` | GAQL queries, conversion data |
-| Pipeboard Meta | `https://mcp.pipeboard.co/meta-ads-mcp` | Meta Ads auditing |
+| Meta Ads (official) | `https://mcp.facebook.com/ads` | Meta Ads auditing, Pixel/CAPI signals and datasets. Facebook Login for Business OAuth on first use |
+
+For scripted or CI work, Meta's official Ads CLI (`meta ads ...`, Python 3.12+, pip/uv) covers insights and campaign CRUD. Everything it creates starts PAUSED; activation stays a human step.
 
 ## Installation
 

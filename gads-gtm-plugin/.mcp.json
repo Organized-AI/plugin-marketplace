@@ -15,10 +15,14 @@
       "url": "https://mcp.gaql.app/sse/google-ads/AUTH_TOKEN_HERE",
       "description": "TrueClicks Google Ads MCP — GAQL queries, conversion actions, campaign data"
     },
-    "pipeboard-meta": {
+    "meta-ads": {
       "type": "url",
-      "url": "https://mcp.pipeboard.co/meta-ads-mcp",
-      "description": "Pipeboard Meta Ads MCP — campaign data, pixel health, CAPI diagnostics"
+      "url": "https://mcp.facebook.com/ads",
+      "description": "Meta's official hosted Ads MCP server. Campaign, ad set, ad, and creative management; reporting and insights; catalogs; signals and datasets; A/B tests and conversion lift studies; activity logs.",
+      "auth": {
+        "type": "oauth",
+        "note": "On first use the client opens Facebook Login for Business; approve the scoped permissions. No Meta app or token setup required. Programmatic alternative: user access token with business_management, sent as Authorization: Bearer."
+      }
     }
   }
 }

@@ -27,7 +27,7 @@
 - [ ] Access to GHL admin panel
 - [ ] Access to website backend
 
-### Expected Baseline (From Pipeboard Meta MCP Analysis - Last 30 Days)
+### Expected Baseline (From Meta Ads MCP Analysis - Last 30 Days)
 ```
 Known Performance Metrics (Oct 4 - Nov 2, 2025):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -838,7 +838,7 @@ If GHL has data but NOT passing to Meta:
 
 ## APPENDIX A: EXPECTED BASELINE DATA
 
-From Pipeboard Meta MCP Analysis (Oct 4 - Nov 2, 2025):
+From Meta Ads MCP Analysis (Oct 4 - Nov 2, 2025):
 
 **Account Performance:**
 ```

@@ -11,7 +11,7 @@ Validate the entire conversion tracking stack across GTM, Google Ads, and Meta.
 
 1. **GTM Health** — Runs `tidy-gtm` audit: naming, duplicates, orphans, sGTM correlation
 2. **Google Ads Check** (if `--gads`) — GAQL query for conversion action status, counting method, attribution model
-3. **Meta Check** (if `--meta`) — Pipeboard MCP for Pixel health, CAPI event match quality, deduplication
+3. **Meta Check** (if `--meta`) — Meta's official Ads MCP (signals and datasets) for Pixel health, CAPI event match quality, deduplication
 4. **Cross-Platform** — Validates that GTM tags match platform-side conversion actions (labels align, events match)
 5. **Report** — Outputs a tracking stack health summary with pass/fail per component
 
@@ -26,7 +26,7 @@ data-audit → Meta/CAPI assessment
 ## Required MCP
 - Stape GTM MCP
 - TrueClicks Google Ads MCP (optional)
-- Pipeboard Meta MCP (optional)
+- Meta Ads MCP, Meta's official hosted server at mcp.facebook.com/ads (optional)
 
 ## Example
 ```

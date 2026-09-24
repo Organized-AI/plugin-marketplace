@@ -17,7 +17,7 @@ Plan full conversion tracking architecture across Google Ads, Meta, GA4, and GTM
 ### Step 1: Discovery
 - Query GTM MCP to inventory existing container (if provided)
 - Query Google Ads MCP for existing conversion actions
-- Query Pipeboard Meta MCP for Pixel/CAPI status
+- Query Meta's official Ads MCP (signals and datasets) for Pixel/CAPI status
 - Identify gaps between what exists and what's needed
 
 ### Step 2: Architecture Design

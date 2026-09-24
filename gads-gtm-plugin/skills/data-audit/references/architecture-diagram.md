@@ -4,7 +4,7 @@
 **Date:** November 3, 2025  
 **Account:** act_4178428858845500  
 **Purpose:** Visualize tracking infrastructure and enhancement opportunities  
-**Data Source:** Pipeboard Meta MCP (Live API Access)
+**Data Source:** Meta Ads MCP (Live API Access)
 
 ---
 
@@ -125,7 +125,7 @@ TRUE PERFORMANCE: Likely 30-40% better than visible
 
 ---
 
-## 📈 Current Performance Reality (from Pipeboard Meta MCP)
+## 📈 Current Performance Reality (from Meta Ads MCP)
 
 ```
                     💪 ACTUAL PERFORMANCE 💪

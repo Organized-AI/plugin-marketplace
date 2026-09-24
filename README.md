@@ -739,7 +739,7 @@ Google Ads & GTM automation suite — create conversion actions, wire into GTM, 
 * `google-tag-manager-mcp-server` (Stape GTM)
 * `stape-mcp-server` (Stape container management)
 * `google-ads-mcp` (TrueClicks GAQL)
-* `pipeboard-meta` (Meta Ads auditing)
+* `meta-ads` (Meta's official hosted Ads MCP, Meta Ads auditing)
 
 ### gtm-audit-pro ⭐ NEW
 

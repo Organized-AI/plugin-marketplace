@@ -1,6 +1,6 @@
 ---
 name: data-audit
-description: Comprehensive Meta Ads account auditing using Pipeboard Meta MCP and Stape MCP tools. Use when conducting performance audits, analyzing ad account data, evaluating tracking infrastructure (Pixel/CAPI/Stape), creating audit reports, assessing campaign performance, managing Stape containers, or generating architecture diagrams.
+description: Comprehensive Meta Ads account auditing using Meta's official Ads MCP and Stape MCP tools. Use when conducting performance audits, analyzing ad account data, evaluating tracking infrastructure (Pixel/CAPI/Stape), creating audit reports, assessing campaign performance, managing Stape containers, or generating architecture diagrams.
 triggers:
   - "audit this Meta account"
   - "analyze ad performance"
@@ -154,13 +154,16 @@ PLANNED → IN_PROGRESS → VALIDATING → COMPLETE
 
 ## Tool Integration
 
-### Pipeboard Meta MCP Tools
+### Meta Ads MCP (official)
 
-**Account:** `get_ad_accounts`, `get_account_info`, `get_account_pages`
-**Campaign:** `get_campaigns`, `get_campaign_details`, `bulk_update_campaigns`
-**Ad Set:** `get_adsets`, `get_adset_details`, `bulk_update_adsets`
-**Ad:** `get_ads`, `get_ad_details`, `get_ad_creatives`, `get_ad_image`
-**Analytics:** `get_insights`, `bulk_get_insights`
+Meta's official hosted Ads MCP server (`mcp.facebook.com/ads`, Facebook Login for Business OAuth). Use its `meta-ads:*` tools for:
+
+**Accounts and structure:** ad accounts, pages, campaigns, ad sets, ads, creatives
+**Reporting:** insights and breakdowns
+**Signals:** Pixel and CAPI datasets, event quality, catalogs
+**Tests:** A/B tests, conversion lift studies, activity logs
+
+For scripted or CI pulls, use Meta's official Ads CLI (`meta ads ...`, Python 3.12+). Everything it creates starts PAUSED; activation stays a human step.
 
 ### Stape MCP Tools
 
