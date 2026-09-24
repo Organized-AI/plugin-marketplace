@@ -23,25 +23,25 @@ Complete reference for all GTM MCP tool call patterns with examples.
 ### List Templates
 ```
 gtm_template action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
 ### Get Template
 ```
 gtm_template action=get
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
-  templateId=cvt_42412215_123
+  templateId=cvt_12345678_123
 ```
 
 ### Create Template (Gallery Reference)
 ```
 gtm_template action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   createOrUpdateConfig={
     "name": "LinkedIn InsightTag 2.0",
@@ -57,8 +57,8 @@ gtm_template action=create
 ### Create Template (Raw Template Data)
 ```
 gtm_template action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   createOrUpdateConfig={
     "name": "Custom Template",
@@ -69,10 +69,10 @@ gtm_template action=create
 ### Remove Template
 ```
 gtm_template action=remove
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
-  templateId=cvt_42412215_123
+  templateId=cvt_12345678_123
 ```
 
 ---
@@ -82,16 +82,16 @@ gtm_template action=remove
 ### List Variables
 ```
 gtm_variable action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
 ### Get Variable
 ```
 gtm_variable action=get
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   variableId=123
 ```
@@ -99,8 +99,8 @@ gtm_variable action=get
 ### Create Constant Variable
 ```
 gtm_variable action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "LinkedIn Partner ID",
@@ -114,8 +114,8 @@ gtm_variable action=create
 ### Create Custom JavaScript Variable
 ```
 gtm_variable action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "CJS - Event ID Generator",
@@ -133,8 +133,8 @@ gtm_variable action=create
 ### Create Cookie Variable
 ```
 gtm_variable action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "Cookie - li_fat_id",
@@ -148,8 +148,8 @@ gtm_variable action=create
 ### Create Data Layer Variable
 ```
 gtm_variable action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "DL - Transaction ID",
@@ -164,8 +164,8 @@ gtm_variable action=create
 ### Create Lookup Table Variable
 ```
 gtm_variable action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "LUT - Event Mapping",
@@ -189,8 +189,8 @@ gtm_variable action=create
 ### Update Variable
 ```
 gtm_variable action=update
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   variableId=123
   config={
@@ -205,8 +205,8 @@ gtm_variable action=update
 ### Remove Variable
 ```
 gtm_variable action=remove
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   variableId=123
 ```
@@ -218,16 +218,16 @@ gtm_variable action=remove
 ### List Tags
 ```
 gtm_tag action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
 ### Get Tag
 ```
 gtm_tag action=get
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   tagId=456
 ```
@@ -235,12 +235,12 @@ gtm_tag action=get
 ### Create Tag (Custom Template)
 ```
 gtm_tag action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "LinkedIn - Base Pageview",
-    "type": "cvt_42412215_123",
+    "type": "cvt_12345678_123",
     "parameter": [
       {"key": "partnerId", "type": "template", "value": "{{LinkedIn Partner ID}}"},
       {"key": "trackPageview", "type": "boolean", "value": "true"}
@@ -253,8 +253,8 @@ gtm_tag action=create
 ### Create Tag (GA4 Event)
 ```
 gtm_tag action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "GA4 - Purchase",
@@ -280,12 +280,12 @@ gtm_tag action=create
 ### Create Tag with Blocking Trigger
 ```
 gtm_tag action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "Meta - PageView",
-    "type": "cvt_42412215_456",
+    "type": "cvt_12345678_456",
     "parameter": [...],
     "firingTriggerId": ["2147479553"],
     "blockingTriggerId": ["789"],
@@ -296,8 +296,8 @@ gtm_tag action=create
 ### Update Tag
 ```
 gtm_tag action=update
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   tagId=456
   config={
@@ -309,8 +309,8 @@ gtm_tag action=update
 ### Remove Tag
 ```
 gtm_tag action=remove
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   tagId=456
 ```
@@ -322,16 +322,16 @@ gtm_tag action=remove
 ### List Triggers
 ```
 gtm_trigger action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
 ### Get Trigger
 ```
 gtm_trigger action=get
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   triggerId=789
 ```
@@ -339,8 +339,8 @@ gtm_trigger action=get
 ### Create Pageview Trigger
 ```
 gtm_trigger action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "PV - Thank You Page",
@@ -360,8 +360,8 @@ gtm_trigger action=create
 ### Create Custom Event Trigger
 ```
 gtm_trigger action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "CE - Purchase",
@@ -381,8 +381,8 @@ gtm_trigger action=create
 ### Create Click Trigger
 ```
 gtm_trigger action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "Click - CTA Button",
@@ -405,8 +405,8 @@ gtm_trigger action=create
 ### Remove Trigger
 ```
 gtm_trigger action=remove
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   triggerId=789
 ```
@@ -418,8 +418,8 @@ gtm_trigger action=remove
 ### Get Workspace Status
 ```
 gtm_workspace action=getStatus
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
@@ -430,16 +430,16 @@ gtm_workspace action=getStatus
 ### Sync Workspace
 ```
 gtm_workspace action=sync
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
 ### Create Version
 ```
 gtm_workspace action=createVersion
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   name="LinkedIn Tracking v1.0"
   notes="Added LinkedIn Insight Tag base + Lead conversion tag"
@@ -448,8 +448,8 @@ gtm_workspace action=createVersion
 ### Quick Preview
 ```
 gtm_workspace action=quickPreview
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
@@ -464,31 +464,31 @@ gtm_workspace action=quickPreview
 ### Get Version
 ```
 gtm_version action=get
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   containerVersionId=123
 ```
 
 ### Get Live Version
 ```
 gtm_version action=live
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
 ```
 
 ### Publish Version
 ```
 gtm_version action=publish
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   containerVersionId=123
 ```
 
 ### List Version Headers
 ```
 gtm_version_header action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
 ```
 
 ---
@@ -498,14 +498,14 @@ gtm_version_header action=list
 ### Get Container
 ```
 gtm_container action=get
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
 ```
 
 ### List Containers
 ```
 gtm_container action=list
-  accountId=4702245012
+  accountId=1234567890
 ```
 
 ---
@@ -515,16 +515,16 @@ gtm_container action=list
 ### List Folders
 ```
 gtm_folder action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
 ```
 
 ### Create Folder
 ```
 gtm_folder action=create
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   config={
     "name": "LinkedIn"
@@ -534,8 +534,8 @@ gtm_folder action=create
 ### Move Items to Folder
 ```
 gtm_folder action=move_entities_to_folder
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   workspaceId=86
   folderId=123
   tagId=["456", "789"]
@@ -549,16 +549,16 @@ gtm_folder action=move_entities_to_folder
 ### List Clients
 ```
 gtm_client action=list
-  accountId=4702245012
-  containerId=175099610
+  accountId=1234567890
+  containerId=987654321
   workspaceId=86
 ```
 
 ### Get Client
 ```
 gtm_client action=get
-  accountId=4702245012
-  containerId=175099610
+  accountId=1234567890
+  containerId=987654321
   workspaceId=86
   clientId=123
 ```
@@ -566,8 +566,8 @@ gtm_client action=get
 ### Create Client (GA4)
 ```
 gtm_client action=create
-  accountId=4702245012
-  containerId=175099610
+  accountId=1234567890
+  containerId=987654321
   workspaceId=86
   config={
     "name": "GA4 Client",

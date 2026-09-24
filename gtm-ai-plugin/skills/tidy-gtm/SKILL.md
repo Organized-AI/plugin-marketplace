@@ -704,7 +704,7 @@ After audit completion, the following files are generated:
 │                    BEFORE (Issues Found)                     │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│  GTM-W9S77T7/                                               │
+│  GTM-XXXXXXX/                                               │
 │  ├── Tags (87)                                              │
 │  │   ├── [DUPLICATE] GA4 - PageView        ← Duplicate #42  │
 │  │   ├── [ORPHAN] Old FB Pixel             ← No trigger     │
@@ -726,7 +726,7 @@ After audit completion, the following files are generated:
 │                    AFTER (Cleaned Up)                        │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│  GTM-W9S77T7/                                               │
+│  GTM-XXXXXXX/                                               │
 │  ├── Tags (72)                              # -15 removed   │
 │  │   ├── [Meta]                                             │
 │  │   │   ├── Meta - Base Pixel             ✓ Renamed        │
@@ -752,7 +752,7 @@ After audit completion, the following files are generated:
 │                        GTM ↔ sGTM CORRELATION                            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
-│  WEB CONTAINER (GTM-W9S77T7)          SERVER CONTAINER (GTM-KJHX6KJ7)   │
+│  WEB CONTAINER (GTM-XXXXXXX)          SERVER CONTAINER (GTM-YYYYYYYY)   │
 │                                                                          │
 │  ┌─────────────────────────┐           ┌─────────────────────────┐      │
 │  │ LI - Base Pageview      │ ════════► │ LI CAPI - PageView     │ ✓    │

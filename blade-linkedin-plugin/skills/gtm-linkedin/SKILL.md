@@ -24,9 +24,9 @@ Deploy LinkedIn Insight Tag programmatically via GTM MCP tools.
 
 ```json
 {
-  "accountId": "4702245012",
-  "webContainerId": "42412215",
-  "serverContainerId": "175099610",
+  "accountId": "1234567890",
+  "webContainerId": "12345678",
+  "serverContainerId": "987654321",
   "workspaceId": "86"
 }
 ```

@@ -18,8 +18,8 @@ Revert to previous GTM container version if issues are discovered after publish.
 ### Step 1: List Previous Versions
 ```
 gtm_version_header action=list
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
 ```
 
 ### Step 2: Identify Safe Version
@@ -28,8 +28,8 @@ Look for version before LinkedIn changes were made.
 ### Step 3: Republish Previous Version
 ```
 gtm_version action=publish
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
   containerVersionId=[PREVIOUS_VERSION_ID]
   fingerprint=[PREVIOUS_FINGERPRINT]
 ```
@@ -37,8 +37,8 @@ gtm_version action=publish
 ### Step 4: Verify Rollback
 ```
 gtm_version action=live
-  accountId=4702245012
-  containerId=42412215
+  accountId=1234567890
+  containerId=12345678
 ```
 
 ## Post-Rollback

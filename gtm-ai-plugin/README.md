@@ -27,8 +27,8 @@ Edit `CONFIG/config.json`:
 ```json
 {
   "gtm": {
-    "accountId": "4702245012",
-    "webContainer": { "id": "42412215" },
+    "accountId": "1234567890",
+    "webContainer": { "id": "12345678" },
     "workspace": { "id": "86" }
   },
   "platforms": {

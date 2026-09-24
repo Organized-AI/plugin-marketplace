@@ -87,10 +87,10 @@ python3 scripts/create_gads_conversions.py \
 
 ### 4. Use labels in GTM
 
-Script output provides `send_to` values like `AW-17926165004/hWL8CMriqYIcEIyk7uNC`.
+Script output provides `send_to` values like `AW-12345678901/XXXXXXXXXXXXXXXXXXXX`.
 
 For GTM configuration:
-- **Conversion ID**: the `AW-` number (e.g., `17926165004`)
+- **Conversion ID**: the `AW-` number (e.g., `12345678901`)
 - **Conversion Label**: the string after `/` (e.g., `hWL8CMriqYIcEIyk7uNC`)
 - **Full send_to**: use in Google Ads conversion tag's `send_to` field
 

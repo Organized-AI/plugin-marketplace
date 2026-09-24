@@ -127,7 +127,7 @@ gtm_template action=create
   }
 ```
 
-**Output**: `templateId` (e.g., `cvt_42412215_123`)
+**Output**: `templateId` (e.g., `cvt_12345678_123`)
 
 ### Pattern 2: Create Variable
 
@@ -180,7 +180,7 @@ gtm_variable action=create
 gtm_tag action=create
   config={
     "name": "LinkedIn - Base Pageview",
-    "type": "cvt_42412215_123",
+    "type": "cvt_12345678_123",
     "parameter": [
       {"key": "partnerId", "type": "template", "value": "{{LinkedIn Partner ID}}"},
       {"key": "trackPageview", "type": "boolean", "value": "true"}
@@ -288,13 +288,13 @@ User Browser
 {
   "project": "Project Name",
   "gtm": {
-    "accountId": "4702245012",
+    "accountId": "1234567890",
     "webContainer": {
-      "id": "42412215",
+      "id": "12345678",
       "publicId": "GTM-XXXXXXX"
     },
     "serverContainer": {
-      "id": "175099610",
+      "id": "987654321",
       "publicId": "GTM-XXXXXXX"
     },
     "workspace": {
@@ -339,18 +339,18 @@ See `references/` folder for:
 ### Deploy LinkedIn Tracking
 ```
 Read .claude/skills/gtm-AI/SKILL.md then deploy LinkedIn Insight Tag
-with Partner ID 1234567 to GTM container 42412215
+with Partner ID 1234567 to GTM container 12345678
 ```
 
 ### Audit GTM Container
 ```
-Use gtm-AI skill to audit GTM container 42412215 for duplicates,
+Use gtm-AI skill to audit GTM container 12345678 for duplicates,
 orphaned triggers, and naming convention violations
 ```
 
 ### Publish Changes
 ```
-Use gtm-AI skill to create version and publish GTM container 42412215
+Use gtm-AI skill to create version and publish GTM container 12345678
 with description "Q1 2025 tracking updates"
 ```
 

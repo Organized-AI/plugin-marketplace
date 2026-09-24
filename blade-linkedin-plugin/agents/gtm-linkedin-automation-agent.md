@@ -28,7 +28,7 @@ Read `.claude/hooks/pre-phase.md` and execute:
 
 1. **MCP Auth Check**
    ```
-   gtm_workspace action=getStatus accountId=4702245012 containerId=42412215 workspaceId=86
+   gtm_workspace action=getStatus accountId=1234567890 containerId=12345678 workspaceId=86
    ```
    If auth error → `rm -rf ~/.mcp-auth` + restart
 
@@ -104,9 +104,9 @@ Read `.claude/hooks/post-phase.md` and execute:
 ```json
 {
   "gtm": {
-    "accountId": "4702245012",
-    "webContainer": { "id": "42412215", "publicId": "GTM-W9S77T7" },
-    "serverContainer": { "id": "175099610", "publicId": "GTM-KJHX6KJ7" },
+    "accountId": "1234567890",
+    "webContainer": { "id": "12345678", "publicId": "GTM-XXXXXXX" },
+    "serverContainer": { "id": "987654321", "publicId": "GTM-YYYYYYYY" },
     "workspace": { "id": "86" }
   },
   "linkedin": {
@@ -245,7 +245,7 @@ After each phase:
 ╔══════════════════════════════════════════════════════════╗
 ║     BLADE LINKEDIN INSIGHT TAG - DEPLOYMENT COMPLETE     ║
 ╠══════════════════════════════════════════════════════════╣
-║ Phase 0: Template ✅  cvt_42412215_XXX                   ║
+║ Phase 0: Template ✅  cvt_12345678_XXX                   ║
 ║ Phase 1: Variables ✅  3 created                         ║
 ║ Phase 2: Tags ✅  2 created                              ║
 ║ Phase 3: Validation ✅  0 conflicts                      ║
@@ -278,7 +278,7 @@ If issues after publish:
 
 ```
 # List versions
-gtm_version_header action=list accountId=4702245012 containerId=42412215
+gtm_version_header action=list accountId=1234567890 containerId=12345678
 
 # Get previous version
 gtm_version action=get containerVersionId=[PREV_ID]

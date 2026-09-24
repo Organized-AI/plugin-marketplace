@@ -34,13 +34,13 @@ The command will:
 
 | Setting | Value |
 |---------|-------|
-| Account | 4702245012 |
-| Container | 42412215 (GTM-W9S77T7) |
+| Account | 1234567890 |
+| Container | 12345678 (GTM-XXXXXXX) |
 | Workspace | 86 |
 
 ## Success Criteria
 
-- Template installed with ID format `cvt_42412215_XXX`
+- Template installed with ID format `cvt_12345678_XXX`
 - 3 variables created
 - 2 tags with correct triggers
 - Version published to live

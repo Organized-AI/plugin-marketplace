@@ -470,7 +470,7 @@ Add to `hooks/hooks.json`:
 
 ```bash
 # Generate correlation map only
-"Generate correlation map for web container 42412215 and server container 175099610"
+"Generate correlation map for web container 12345678 and server container 987654321"
 
 # Hook generates:
 # → CORRELATION-MAP-20250129-1430.md
@@ -483,13 +483,13 @@ Add to `hooks/hooks.json`:
 | Variable | Source | Example |
 |----------|--------|---------|
 | `{{timestamp}}` | System | 2025-01-29T14:30:00Z |
-| `{{containerPublicId}}` | GTM API | GTM-W9S77T7 |
-| `{{containerId}}` | GTM API | 42412215 |
+| `{{containerPublicId}}` | GTM API | GTM-XXXXXXX |
+| `{{containerId}}` | GTM API | 12345678 |
 | `{{workspaceId}}` | Config | 86 |
 | `{{workspaceName}}` | GTM API | Default Workspace |
 | `{{platform}}` | User input | LinkedIn |
 | `{{partnerId}}` | Config | 1234567 |
-| `{{templateId}}` | Phase 0 artifact | cvt_42412215_123 |
+| `{{templateId}}` | Phase 0 artifact | cvt_12345678_123 |
 | `{{tagCount}}` | GTM API list | 25 |
 | `{{triggerCount}}` | GTM API list | 18 |
 | `{{variableCount}}` | GTM API list | 32 |

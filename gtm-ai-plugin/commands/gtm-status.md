@@ -33,7 +33,7 @@ Check GTM workspace status and container health.
 ```
 GTM Status
 ----------
-Account: 4702245012
+Account: 1234567890
 Web Container: GTM-XXXXXXX
 Server Container: GTM-XXXXXXX
 

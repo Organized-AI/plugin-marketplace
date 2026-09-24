@@ -146,7 +146,7 @@ Track progress in `CONFIG/phase-state.json`:
       "status": "complete",
       "completedAt": "2025-01-15T10:30:00Z",
       "artifacts": {
-        "templateId": "cvt_42412215_123"
+        "templateId": "cvt_12345678_123"
       }
     },
     "1": {
@@ -196,7 +196,7 @@ Generate `DEPLOYMENT-COMPLETE.md`:
 ## Components Created
 
 ### Template
-- LinkedIn InsightTag 2.0 (cvt_42412215_123)
+- LinkedIn InsightTag 2.0 (cvt_12345678_123)
 
 ### Variables
 - CONST - LinkedIn Partner ID

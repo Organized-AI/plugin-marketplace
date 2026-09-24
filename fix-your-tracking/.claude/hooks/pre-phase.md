@@ -93,7 +93,7 @@ If conflicts exist: BLOCK until resolved
       "status": "complete",
       "completedAt": "2025-01-15T10:32:00Z",
       "artifacts": {
-        "templateId": "cvt_42412215_123"
+        "templateId": "cvt_12345678_123"
       }
     },
     "1": {

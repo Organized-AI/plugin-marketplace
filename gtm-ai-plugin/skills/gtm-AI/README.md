@@ -130,22 +130,22 @@ gtm-AI/
 ### Deploy Platform Tracking
 ```
 Use gtm-AI skill to deploy LinkedIn tracking with Partner ID 1234567
-to GTM container 42412215
+to GTM container 12345678
 ```
 
 ### Audit Container
 ```
-Use gtm-AI skill to audit GTM container 42412215 for issues
+Use gtm-AI skill to audit GTM container 12345678 for issues
 ```
 
 ### Publish Changes
 ```
-Use gtm-AI skill to create version and publish container 42412215
+Use gtm-AI skill to create version and publish container 12345678
 ```
 
 ### Rollback
 ```
-Use gtm-AI skill to rollback container 42412215 to previous version
+Use gtm-AI skill to rollback container 12345678 to previous version
 ```
 
 ---

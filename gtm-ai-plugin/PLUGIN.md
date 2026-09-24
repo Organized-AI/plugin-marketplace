@@ -181,7 +181,7 @@ The install script:
 
 Or natural language:
 ```
-Deploy LinkedIn tracking with Partner ID 1234567 to GTM container 42412215
+Deploy LinkedIn tracking with Partner ID 1234567 to GTM container 12345678
 ```
 
 ### Audit Container

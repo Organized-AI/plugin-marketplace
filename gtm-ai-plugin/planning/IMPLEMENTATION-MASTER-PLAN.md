@@ -53,7 +53,7 @@ This document provides the complete implementation roadmap for deploying platfor
 - `gtm_template action=createFromGallery`
 
 **Artifacts:**
-- Template ID (e.g., `cvt_42412215_XXX`)
+- Template ID (e.g., `cvt_12345678_XXX`)
 
 ---
 

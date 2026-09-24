@@ -47,9 +47,9 @@ Quick health check for GTM workspace and containers.
 ```
 GTM Status: HEALTHY
 
-Account:     4702245012
-Web Container:    GTM-XXXXXXX (42412215)
-Server Container: GTM-XXXXXXX (175099610)
+Account:     1234567890
+Web Container:    GTM-XXXXXXX (12345678)
+Server Container: GTM-XXXXXXX (987654321)
 Workspace:   Default (86)
 Status:      No conflicts
 Live Version: 42 (published 2025-01-15)
@@ -60,9 +60,9 @@ Live Version: 42 (published 2025-01-15)
 ```
 GTM Status: HEALTHY
 
-Account:     4702245012
-Web Container:    GTM-XXXXXXX (42412215)
-Server Container: GTM-XXXXXXX (175099610)
+Account:     1234567890
+Web Container:    GTM-XXXXXXX (12345678)
+Server Container: GTM-XXXXXXX (987654321)
 Workspace:   Default (86)
 Status:      No conflicts
 Live Version: 42 (published 2025-01-15)
@@ -79,8 +79,8 @@ Components:
 ```
 GTM Status: UNHEALTHY
 
-Account:     4702245012
-Container:   GTM-XXXXXXX (42412215)
+Account:     1234567890
+Container:   GTM-XXXXXXX (12345678)
 Workspace:   Default (86)
 Status:      CONFLICTS DETECTED
 Live Version: 42

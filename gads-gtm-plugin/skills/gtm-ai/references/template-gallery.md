@@ -355,7 +355,7 @@ After installing a template, it gets an ID like:
 cvt_[CONTAINER_ID]_[TEMPLATE_INDEX]
 ```
 
-Example: `cvt_42412215_123`
+Example: `cvt_12345678_123`
 
 Use this `type` value when creating tags with the template.
 
