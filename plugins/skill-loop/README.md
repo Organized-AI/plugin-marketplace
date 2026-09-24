@@ -128,6 +128,11 @@ No credentials are bundled, and no account setup is performed automatically.
 
 ## Research, iteration and approval
 
+For automatic revisions with separate training, selection, and final test suites,
+see [Bounded skill optimization](OPTIMIZATION.md). It adds exact patch budgets,
+rejected-edit memory, optional Jev triage, and approval-time evidence checks.
+Legacy demos remain training-fixture evaluations.
+
 Research belongs to the domain assistant, using cited authoritative rules and
 observed failures. `stage CONFIG candidate.md "source and rationale"` tests a
 manual candidate. A trusted `proposerCommand` enables `loop`; it receives skill

@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
@@ -70,7 +71,7 @@ test('watch honors bounds and stops after repeated failure',async t=>{
 test('MCP initialize, discovery, prepare and ingest via actual stdio',async t=>{
  const {config}=await fixture(t);
  const messages=[{jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2024-11-05',capabilities:{},clientInfo:{name:'test',version:'1'}}},{jsonrpc:'2.0',method:'notifications/initialized'},{jsonrpc:'2.0',id:2,method:'tools/list'},{jsonrpc:'2.0',id:3,method:'tools/call',params:{name:'skill_loop_prepare',arguments:{config}}}];
- const result=spawnSync(process.execPath,[new URL('../scripts/mcp.mjs',import.meta.url).pathname],{input:messages.map(x=>JSON.stringify(x)).join('\n')+'\n',encoding:'utf8'});
+ const result=spawnSync(process.execPath,[fileURLToPath(new URL('../scripts/mcp.mjs',import.meta.url))],{input:messages.map(x=>JSON.stringify(x)).join('\n')+'\n',encoding:'utf8'});
  assert.equal(result.status,0);const rows=result.stdout.trim().split('\n').map(JSON.parse);assert.equal(rows.length,3);assert.equal(rows[0].result.protocolVersion,'2024-11-05');assert.ok(rows[1].result.tools.some(t=>t.name==='skill_loop_stage'));assert.ok(JSON.parse(rows[2].result.content[0].text).requestId);
 });
 test('shared command honors credential-filtered environment',async()=>{
