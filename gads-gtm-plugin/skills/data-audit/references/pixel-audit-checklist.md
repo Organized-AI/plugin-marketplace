@@ -1,8 +1,8 @@
 # Meta Pixel & CAPI Audit Checklist
-## Challenges by Marisa - Events Manager Review
+## Example Coaching Co - Events Manager Review
 
-**Account:** act_4178428858845500  
-**Account Name:** Challenges by Marisa  
+**Account:** act_XXXXXXXXXXXXXXXX  
+**Account Name:** Example Coaching Co  
 **Audit Date:** November 3, 2025  
 **Auditor:** _________________  
 **Review Duration:** 60-90 minutes  
@@ -60,8 +60,8 @@ Campaign Performance:
 **Navigate to:** Business Manager > Ad Accounts
 
 **Account Details:**
-- [ ] **Account ID:** act_4178428858845500 ✓
-- [ ] **Account Name:** Challenges by Marisa ✓
+- [ ] **Account ID:** act_XXXXXXXXXXXXXXXX ✓
+- [ ] **Account Name:** Example Coaching Co ✓
 - [ ] **Account Status:** Active (1) ✓
 - [ ] **Business Country:** GB ✓
 - [ ] **Currency:** GBP ✓
@@ -85,7 +85,7 @@ Campaign Performance:
 - [ ] **Pixel Name:** _______________
 - [ ] **Status:** ☐ Active ☐ Inactive ☐ Limited
 - [ ] **Creation Date:** _______________
-- [ ] **Associated Ad Account:** act_4178428858845500 ✓
+- [ ] **Associated Ad Account:** act_XXXXXXXXXXXXXXXX ✓
 
 **Multiple Pixels Check:**
 - [ ] How many pixels exist? _____
@@ -369,7 +369,7 @@ This is your primary gap. Document why:
 ## SECTION 5: TECHNICAL IMPLEMENTATION AUDIT
 
 ### 5.1 Website Pixel Implementation
-**Test on:** challengesbymarisa.com (or relevant domain)
+**Test on:** example-coaching.com (or relevant domain)
 
 **Using Meta Pixel Helper Chrome Extension:**
 

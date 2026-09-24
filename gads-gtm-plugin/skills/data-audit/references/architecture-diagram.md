@@ -1,8 +1,8 @@
 # Meta Pixel Architecture: Current vs. Ideal
-## Challenges by Marisa - Visual System Diagram
+## Example Coaching Co - Visual System Diagram
 
 **Date:** November 3, 2025  
-**Account:** act_4178428858845500  
+**Account:** act_XXXXXXXXXXXXXXXX  
 **Purpose:** Visualize tracking infrastructure and enhancement opportunities  
 **Data Source:** Meta Ads MCP (Live API Access)
 
@@ -19,7 +19,7 @@
 ┃  👤 USER                                                        ┃
 ┃  ┃                                                              ┃
 ┃  ┗━━━> Visits Website                                          ┃
-┃  ┃      (challengesbymarisa.com)                               ┃
+┃  ┃      (example-coaching.com)                                 ┃
 ┃  ┃                                                              ┃
 ┃  v                                                              ┃
 ┃  📄 WEBSITE                                                     ┃
@@ -203,7 +203,7 @@ TRUE PERFORMANCE: Likely 30-40% better than visible
 ┃  👤 USER                                                        ┃
 ┃  ┃                                                              ┃
 ┃  ┗━━━> Visits Website                                          ┃
-┃  ┃      (challengesbymarisa.com)                               ┃
+┃  ┃      (example-coaching.com)                                 ┃
 ┃  ┃                                                              ┃
 ┃  v                                                              ┃
 ┃  📄 WEBSITE                                                     ┃

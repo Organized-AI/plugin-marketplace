@@ -1,8 +1,8 @@
 # RTT Implementation Audit: What's Wrong & What's Next
-## Challenges by Marisa - Comprehensive Assessment & Action Plan
+## Example Coaching Co - Comprehensive Assessment & Action Plan
 
 **Audit Date:** November 3, 2025  
-**Account:** Challenges by Marisa (act_4178428858845500)  
+**Account:** Example Coaching Co (act_XXXXXXXXXXXXXXXX)  
 **Currency:** GBP  
 **Project:** RTT Server-Side Tracking Implementation  
 **Auditor:** Live analysis from Meta Ads MCP
@@ -33,7 +33,7 @@ This is a high-performing account with strong fundamentals. However, tracking in
 
 ### Account Overview (Last 30 Days)
 ```
-Account: act_4178428858845500
+Account: act_XXXXXXXXXXXXXXXX
 Total Spend: £111,974
 Currency: GBP
 Account Status: Active (1)
