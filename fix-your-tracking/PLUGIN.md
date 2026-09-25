@@ -60,13 +60,14 @@ This plugin provides a complete toolkit for:
 | `/setup-tracking` | Initialize tracking infrastructure for new domains |
 | `/sync-data` | Synchronize data between GHL, TripleWhale, and ad platforms |
 
-### Skills (9 specialized skills)
+### Skills (10 specialized skills)
 
 | Skill | Purpose |
 |-------|---------|
 | `tidy-gtm` | GTM container auditing and cleanup (web + server-side) |
 | `gtm-AI` | GTM automation patterns and phase-based deployment |
-| `gtm-autoresearch-loop` | Autonomous GTM optimize/validate/revert loop using enriched ad-platform signals |
+| `gtm-audit-pro` | Workshop baseline audit using the shared runtime |
+| `gtm-autoresearch-loop` | Shared GTM static audit, background change watcher, and metadata keep/revert loop |
 | `linkedin-capi-setup` | Server-side LinkedIn Conversions API implementation |
 | `triple-whale-bridge` | GHL to Triple Whale data transformation |
 | `organized-codebase-applicator` | Project structure template application |
@@ -186,9 +187,9 @@ Create `CONFIG/config.json` with your GTM credentials:
 Use skill: `gtm-autoresearch-loop`
 
 This skill runs a Karpathy-style optimization loop on GTM container exports:
-- Scores the container across 12 dimensions
-- Prompts Claude to mutate low-scoring areas
-- Validates JSON/schema/invariants
+- Scores six static configuration quality dimensions; live behavior and ads reconciliation remain unverified
+- Optionally asks a configured model to propose names and folder organization
+- Validates inventory shape and permitted metadata operations
 - Keeps improvements and reverts regressions
 - Stores winning configs and loop logs for review
 
@@ -204,7 +205,7 @@ This skill runs a Karpathy-style optimization loop on GTM container exports:
 
 ## Requirements
 
-- Node.js >= 18.0.0
+- Node.js >= 22.0.0 for the audit runtime
 - Python >= 3.10 (for Google Ads MCP)
 - Claude Code CLI or Claude Code Web
 

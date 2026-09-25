@@ -73,6 +73,14 @@ else
     fi
 fi
 
+# Shared audit and Autoresearch skills (runtime is bundled inside the skill).
+for skill in gtm-audit-pro gtm-autoresearch-loop; do
+    if [ -d "$PLUGIN_DIR/skills/$skill" ]; then
+        cp -r "$PLUGIN_DIR/skills/$skill" "$PROJECT_DIR/.claude/skills/"
+        echo -e "  ${GREEN}✓${NC} Installed $skill"
+    fi
+done
+
 # 2. Install Agents
 echo -e "${BLUE}[2/8] Installing Agents...${NC}"
 ensure_dir "$PROJECT_DIR/.claude/agents"
@@ -86,7 +94,7 @@ fi
 echo -e "${BLUE}[3/8] Installing Commands...${NC}"
 ensure_dir "$PROJECT_DIR/.claude/commands"
 
-for cmd in gtm-deploy gtm-audit gtm-status gtm-rollback; do
+for cmd in gtm-deploy gtm-audit gtm-status gtm-rollback gtm-autoresearch; do
     if [ -f "$PLUGIN_DIR/commands/$cmd.md" ]; then
         cp "$PLUGIN_DIR/commands/$cmd.md" "$PROJECT_DIR/.claude/commands/"
         echo -e "  ${GREEN}✓${NC} Installed /$cmd"
@@ -239,9 +247,9 @@ echo -e "${GREEN}║       Installation Complete!           ║${NC}"
 echo -e "${GREEN}╚════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "Installed components:"
-echo -e "  Skills:   gtm-AI, tidy-gtm, linkedin-capi-setup"
+echo -e "  Skills:   gtm-AI, tidy-gtm, linkedin-capi-setup, gtm-audit-pro, gtm-autoresearch-loop"
 echo -e "  Agents:   gtm-automation-agent"
-echo -e "  Commands: /gtm-deploy, /gtm-audit, /gtm-status, /gtm-rollback"
+echo -e "  Commands: /gtm-deploy, /gtm-audit, /gtm-status, /gtm-rollback, /gtm-autoresearch"
 echo -e "  Hooks:    pre-phase, post-phase"
 echo -e "  Scripts:  execute-phase.sh, start-agent.sh"
 echo -e "  Planning: IMPLEMENTATION-MASTER-PLAN.md, Phase prompts (0-4)"
