@@ -104,7 +104,8 @@
     {
       "name": "gtm-audit-pro",
       "source": "./gtm-audit-pro",
-      "description": "AI-assisted GTM + GA4 audit: 72 read-only checkpoints across MeasureU's base 33, consent/privacy, data-layer quality, Google Ads + Meta reconciliation, sGTM delivery and cross-container dedup, performance/security, version history and drift, and offline-conversion / Data Manager API coverage. Produces a scored, tiered-recommendation report. Successor to the audit portion of tidy-gtm (gtm-ai-plugin, gads-gtm-plugin, fix-your-tracking) \u2014 tidy-gtm's write/remediation phase remains the tool for actually applying fixes."
+      "description": "Report-only GTM configuration audit (v0.1): six static quality dimensions \u2014 broken references, duplicate configs, naming, unused components, legacy tags, and folders \u2014 with saved findings and open questions. Optional background monitoring and bounded Autoresearch candidates; never imports or publishes container changes. Use tidy-gtm (gtm-ai-plugin, gads-gtm-plugin, fix-your-tracking) to apply fixes. The 72-checkpoint GA4/ads/sGTM/offline-conversion edition is in progress.",
+      "version": "0.1.0"
     },
     {
       "name": "measureu-cmp-audit-tools",
