@@ -149,18 +149,35 @@ container before workshop distribution.
 ## HTML report and HyperFrames video
 
 `audit.html` is an interactive container atlas in the GTM Command Center style.
-It loads GSAP (cdnjs) and Space Mono (Google Fonts); everything else is inline.
-The graph has a node for every tag, trigger, variable, client and referenced
-built-in, and edges for firing triggers, blocking triggers, `{{variable}}` reads,
-tag sequencing and identical-configuration pairs. Views: Structured (columns),
-Free-form (concentric rings), Axonometric (exploded planes) and Schedule (sortable
-table). Find, Family and Finding filters, click-to-trace inspector, keyboard
-access and reduced-motion support are built in. Animations always settle to their
-end state, so throttled tabs and previews still show the full diagram.
+It loads GSAP (cdnjs), Space Mono (Google Fonts) and, only when the 3D view is
+opened, three.js r128 (cdnjs); everything else is inline. The page source lives
+in `scripts/runtime/atlas/` (`client.js`, `style.css`) and is assembled by
+`atlas.mjs`.
 
-Only names, IDs, types, folders and relationships are embedded. Parameter values
-(constant variables, tokens, custom HTML) are read solely to find `{{references}}`
-and are never written to the page. Embedded data is JSON with `<` escaped.
+- Graph: a node for every tag, trigger, variable, client and referenced built-in;
+  edges for firing and blocking triggers, `{{variable}}` reads, tag sequencing
+  and identical-configuration pairs.
+- Views: Structured, Free-form, Axonometric, Schedule (sortable table) and 3D
+  (orbit, zoom, click to select, fly to selection).
+- Explore: drag to pan, ctrl/cmd + scroll or pinch to zoom, drag nodes to move
+  them, minimap, Fit, keyboard (+, -, 0, arrows, / to find, Esc to clear), and a
+  Trace control that switches between direct neighbors and the full upstream and
+  downstream path.
+- Signal flow (web + server bundles): `flow.mjs` finds web senders (Stape Data
+  Tags via `gtm_server_domain`, custom HTML posting to the endpoint, GA4 routed
+  by a Google tag's `server_container_url`), picks the claiming client by type
+  and priority, tests each event name against every server trigger condition
+  (yes / no / maybe) and follows the fired server tags to their platform.
+  Findings: dead-end events, server tags no web event reaches, page-view fan-in
+  into one server tag, and GA4 clients nothing is routed to. Conditions that
+  depend on request data are marked conditional. Events from other sources (apps,
+  other containers, Google tag settings outside GTM) are not visible.
+
+Animations always settle to their end state, so throttled tabs and previews
+still show the full diagram. Only names, IDs, types, folders, event names, the
+endpoint host and relationships are embedded. Tag HTML, constants and tokens are
+read only to find references, event names and URLs, and are never written to
+the page. Embedded data is JSON with `<` escaped.
 
 Re-render an existing run after updating the plugin:
 

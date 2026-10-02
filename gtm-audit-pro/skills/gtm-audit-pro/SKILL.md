@@ -16,18 +16,24 @@ also requests Autoresearch, follow the sibling skill's bounded optimization setu
 No mode imports or publishes a GTM change. Existing `tidy-gtm` remains the separate
 remediation workflow for explicitly authorized fixes.
 
-Every run also writes `audit.html`, an interactive container atlas: the tags,
+Every run also writes `audit.html`, an interactive container atlas: tags,
 triggers and variables drawn as a dependency diagram (Structured, Free-form,
-Axonometric and Schedule views), with findings marked on the elements they apply
-to, identical pairs linked, an inspector that traces what each element fires on,
-reads and feeds, and a prioritized recommendation list. It embeds names, types and
-relationships only, never parameter values such as constants or access tokens.
-Each run also writes `hyperframes/index.html`, a 14-second HyperFrames composition
-of the headline findings. To share the atlas, publish `audit.html` (combine a web
-and server container with `htmlBundle`, see the setup reference). To make the
-video, run `npx hyperframes lint` then `npx hyperframes render` on the
-`hyperframes` folder on a machine with Chrome and ffmpeg. Both outputs contain
-container and element names, so treat them as client material.
+Axonometric, Schedule and 3D views) with pan and zoom, draggable nodes, a
+minimap and neighbor or full-path tracing. Findings are marked on the elements
+they apply to and the inspector traces what each element fires on, reads and
+feeds. When a web container and its server container are audited together
+(`htmlBundle`), the atlas adds a Web → Server signal-flow tab: which web tags
+send which events to the server, which client claims them, which server
+triggers match and which platforms receive them, with dead ends, unreached
+server tags and duplicate page-view fan-in called out. This is worked out from
+configuration, not live traffic; say so when presenting it.
+The page embeds names, types, event names, the endpoint host and relationships
+only, never tag HTML or parameter values such as constants or access tokens.
+Each run also writes `hyperframes/index.html`, a 14-second HyperFrames
+composition of the headline findings. To make the video, run
+`npx hyperframes lint` then `npx hyperframes render` on the `hyperframes` folder
+on a machine with Chrome and ffmpeg. Both outputs contain container and element
+names, so treat them as client material.
 
 This 0.1 release implements six static quality dimensions. Report skipped checks;
 do not claim 72 checkpoints, GA4/ads reconciliation, compliance verification,
