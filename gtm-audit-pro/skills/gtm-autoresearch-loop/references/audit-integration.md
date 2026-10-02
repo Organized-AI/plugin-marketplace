@@ -39,7 +39,7 @@ node CLI audit audit-config.json
 
 Paths are relative to the config file. Reopen `audit.md`, `audit.json`, and
 `questions.md` in the returned run directory. The same folder holds `audit.html`
-(interactive report) and `hyperframes/index.html` (video composition). Empty inventories are valid but
+(interactive container atlas) and `hyperframes/index.html` (video composition). Empty inventories are valid but
 do not prove required business events exist. Generated reports are private local
 files; nothing is sent to recipients automatically.
 
@@ -148,10 +148,19 @@ container before workshop distribution.
 
 ## HTML report and HyperFrames video
 
-`audit.html` is self-contained apart from GSAP (cdnjs) and the Archivo font
-(Google Fonts). It follows the viewer's light or dark theme, collapses
-housekeeping findings into one section, and shows duplicate findings as named
-pairs. All container text is HTML-escaped.
+`audit.html` is an interactive container atlas in the GTM Command Center style.
+It loads GSAP (cdnjs) and Space Mono (Google Fonts); everything else is inline.
+The graph has a node for every tag, trigger, variable, client and referenced
+built-in, and edges for firing triggers, blocking triggers, `{{variable}}` reads,
+tag sequencing and identical-configuration pairs. Views: Structured (columns),
+Free-form (concentric rings), Axonometric (exploded planes) and Schedule (sortable
+table). Find, Family and Finding filters, click-to-trace inspector, keyboard
+access and reduced-motion support are built in. Animations always settle to their
+end state, so throttled tabs and previews still show the full diagram.
+
+Only names, IDs, types, folders and relationships are embedded. Parameter values
+(constant variables, tokens, custom HTML) are read solely to find `{{references}}`
+and are never written to the page. Embedded data is JSON with `<` escaped.
 
 Re-render an existing run after updating the plugin:
 
@@ -164,7 +173,7 @@ Combine containers (for example web plus server) into one page from Node:
 ```js
 import { htmlBundle } from './scripts/runtime/report-html.mjs';
 htmlBundle([{ report: webAudit, snapshot: webSnapshot }, { report: sgtmAudit, snapshot: sgtmSnapshot }],
-  { title: 'Client GTM Audit', fragment: false });
+  { title: 'Client Container Atlas', fragment: false });
 ```
 
 `fragment: true` omits the `<html>`/`<head>`/`<body>` wrapper for hosts that add

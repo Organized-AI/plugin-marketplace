@@ -1,6 +1,6 @@
 {
   "name": "gtm-audit-pro",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Read-only GTM configuration audits with optional background monitoring and local Autoresearch candidates.",
   "author": {
     "name": "Organized AI"

@@ -12,7 +12,7 @@ test('container text is escaped in both outputs',()=>{
  for(const out of [htmlReport(r,s),hyperframes(r,s)]){
   assert.equal(out.includes('<img src=x'),false);
   assert.equal(out.includes('</script><script>alert(1)'),false);
-  assert.ok(out.includes('&lt;img src=x'));
+  assert.ok(out.includes('&lt;img src=x')||out.includes('\\u003cimg src=x'));
  }
 });
 test('duplicate findings resolve both names and info findings collapse',()=>{

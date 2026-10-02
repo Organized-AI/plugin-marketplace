@@ -16,13 +16,18 @@ also requests Autoresearch, follow the sibling skill's bounded optimization setu
 No mode imports or publishes a GTM change. Existing `tidy-gtm` remains the separate
 remediation workflow for explicitly authorized fixes.
 
-Every run also writes `audit.html`, a color-coded, GSAP-animated report page, and
-`hyperframes/index.html`, a 14-second HyperFrames composition of the headline
-findings. To share the page, publish `audit.html` (or combine a web and server
-container with `htmlBundle`, see the setup reference). To make the video, run
-`npx hyperframes lint` then `npx hyperframes render` on the `hyperframes` folder
-on a machine with Chrome and ffmpeg. Both outputs contain container names, so
-treat them as client material.
+Every run also writes `audit.html`, an interactive container atlas: the tags,
+triggers and variables drawn as a dependency diagram (Structured, Free-form,
+Axonometric and Schedule views), with findings marked on the elements they apply
+to, identical pairs linked, an inspector that traces what each element fires on,
+reads and feeds, and a prioritized recommendation list. It embeds names, types and
+relationships only, never parameter values such as constants or access tokens.
+Each run also writes `hyperframes/index.html`, a 14-second HyperFrames composition
+of the headline findings. To share the atlas, publish `audit.html` (combine a web
+and server container with `htmlBundle`, see the setup reference). To make the
+video, run `npx hyperframes lint` then `npx hyperframes render` on the
+`hyperframes` folder on a machine with Chrome and ffmpeg. Both outputs contain
+container and element names, so treat them as client material.
 
 This 0.1 release implements six static quality dimensions. Report skipped checks;
 do not claim 72 checkpoints, GA4/ads reconciliation, compliance verification,
