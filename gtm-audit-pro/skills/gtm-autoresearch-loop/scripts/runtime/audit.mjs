@@ -40,6 +40,8 @@ function references(value) {
   return [];
 }
 const builtinTriggers = new Set(['2147479553', '2147479572', '2147479573']);
+// GTM's internal key for the built-in Event variable; exports list it as "Event".
+const internalVariables = new Set(['_event']);
 const sequenceMatches=(reference,tag)=>reference.tagName===tag.name||reference.tagName===tag.tagId;
 const dimensions = ['references', 'duplicates', 'naming', 'hygiene', 'legacy', 'folders'];
 export function audit(input) {
@@ -64,7 +66,7 @@ export function audit(input) {
       if (key !== 'folder') {
         for (const name of references(row)) {
           usedVariables.add(name);
-          if (!variableNames.has(name)) add('references','critical',key,row,id,`Unresolved variable ${name}`);
+          if (!variableNames.has(name) && !internalVariables.has(name)) add('references','critical',key,row,id,`Unresolved variable ${name}`);
         }
         if (!row.parentFolderId) add('folders','info',key,row,id,'No folder assigned');
         else if (!folderIds.has(row.parentFolderId)) add('references','critical',key,row,id,'Unresolved parent folder');

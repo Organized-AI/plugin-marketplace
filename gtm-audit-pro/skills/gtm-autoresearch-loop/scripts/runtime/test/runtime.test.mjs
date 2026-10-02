@@ -17,6 +17,13 @@ test('built-in triggers are accepted; actual missing references are critical',()
  s.tag[0].firingTriggerId=['404'];s.tag[0].parameter=[{value:'{{Missing}}'}];
  assert.equal(audit(s).criticalCount,2);
 });
+test('the internal {{_event}} reference used by custom event triggers resolves',()=>{
+ const s=seed();s.trigger=[{triggerId:'9',name:'checked_out',type:'customEvent',parentFolderId:undefined,customEventFilter:[{type:'equals',parameter:[{key:'arg0',value:'{{_event}}'},{key:'arg1',value:'checked_out'}]}]}];
+ s.tag[0].firingTriggerId=['9'];
+ assert.equal(audit(s).criticalCount,0);
+ s.trigger[0].customEventFilter[0].parameter[0].value='{{_evnt}}';
+ assert.equal(audit(s).criticalCount,1);
+});
 test('GA4 event tags are not mislabeled Universal Analytics',()=>{
  assert.equal(audit(seed()).findings.some(f=>f.dimension==='legacy'),false);
  const s=seed();s.tag[0].type='ua';assert.equal(audit(s).findings.some(f=>f.dimension==='legacy'),true);
