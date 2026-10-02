@@ -56,6 +56,8 @@ Deploy LinkedIn tracking to my GTM container
 |-------|---------|
 | **gtm-AI** | Core automation - templates, variables, tags, versions |
 | **tidy-gtm** | Container auditing - duplicates, naming, correlation |
+| **gtm-audit-pro** | Report-only static GTM audit and workshop findings |
+| **gtm-autoresearch-loop** | Change monitoring and bounded candidate optimization (never publishes) |
 | **linkedin-capi-setup** | Server-side LinkedIn CAPI implementation |
 
 ### Agent
@@ -68,6 +70,7 @@ Deploy LinkedIn tracking to my GTM container
 |---------|-------------|
 | `/gtm-deploy [platform]` | Deploy tracking for platform |
 | `/gtm-audit` | Audit container health |
+| `/gtm-autoresearch` | Audit-to-candidate loop or explicitly requested monitoring |
 | `/gtm-status` | Check workspace status |
 | `/gtm-rollback` | Rollback to previous version |
 
@@ -358,6 +361,7 @@ your-project/
 |---------|------|---------|
 | 2.2.0 | 2025-01 | Added ascii-diagram-generator hook for visual before/after documentation |
 | 2.1.0 | 2025-01 | Added pre-publish-audit hook for strategic container validation |
+| 2.3.0 | 2026-10 | Added gtm-audit-pro and gtm-autoresearch-loop skills, /gtm-autoresearch command |
 | 2.0.0 | 2024-01 | Added hooks, scripts, planning, state management, linkedin-capi-setup |
 | 1.0.0 | 2024-01 | Initial release |
 

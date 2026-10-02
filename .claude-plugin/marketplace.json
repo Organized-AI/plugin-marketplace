@@ -59,7 +59,7 @@
     {
       "name": "gtm-ai-plugin",
       "source": "./gtm-ai-plugin",
-      "description": "Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers"
+      "description": "Complete Google Tag Manager automation toolkit - deploy, audit, manage, and publish GTM/sGTM containers. Includes the GTM Audit Pro report-only audit and gtm-autoresearch-loop monitoring skills."
     },
     {
       "name": "blade-linkedin-plugin",
