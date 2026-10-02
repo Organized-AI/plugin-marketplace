@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 import { spawn } from 'node:child_process';
 import { container, fingerprint, audit, optimize, hash } from './audit.mjs';
+import { htmlReport, hyperframes } from './report-html.mjs';
 
 export async function atomic(path, data) {
   await fs.mkdir(dirname(path),{recursive:true,mode:0o700});
@@ -99,6 +100,8 @@ export async function runSnapshot(config,snapshot,{propose}={}) {
   const report=audit(snapshot);
   await atomic(join(folder,'snapshot.json'),snapshot);
   await atomic(join(folder,'audit.json'),report);await atomic(join(folder,'audit.md'),markdown(report));
+  await atomic(join(folder,'audit.html'),htmlReport(report,snapshot));
+  await atomic(join(folder,'hyperframes','index.html'),hyperframes(report,snapshot));
   await atomic(join(folder,'questions.md'),'# Workshop questions\n\n'+report.findings.slice(0,3).map((f,i)=>`${i+1}. How should I investigate ${f.kind} ${f.id}: ${f.message}?`).join('\n')+'\n');
   let result;
   if(config.optimize){

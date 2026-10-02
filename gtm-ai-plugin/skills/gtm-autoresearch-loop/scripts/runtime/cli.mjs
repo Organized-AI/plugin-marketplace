@@ -6,6 +6,18 @@ import { spawn } from 'node:child_process';
 import { loadConfig, capture, runSnapshot, acquireLock, watch, readJSON } from './runner.mjs';
 
 const [action,configPath]=process.argv.slice(2);
+if(action==='render'){
+  // Re-render audit.html and hyperframes/index.html for an existing run folder.
+  try{
+    if(!configPath)throw Error('Usage: node cli.mjs render RUN_FOLDER');
+    const { htmlReport, hyperframes } = await import('./report-html.mjs');
+    const { atomic } = await import('./runner.mjs');
+    const run=resolve(configPath),report=await readJSON(join(run,'audit.json')),snapshot=await readJSON(join(run,'snapshot.json'),{});
+    await atomic(join(run,'audit.html'),htmlReport(report,snapshot));await atomic(join(run,'hyperframes','index.html'),hyperframes(report,snapshot));
+    process.stdout.write(JSON.stringify({html:join(run,'audit.html'),hyperframes:join(run,'hyperframes','index.html')})+'\n');
+  }catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
+  process.exit();
+}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 try{
   if(!['audit','loop','watch','start','status','stop','unlock'].includes(action)||!configPath)throw Error('Usage: node cli.mjs audit|loop|watch|start|status|stop|unlock CONFIG.json');

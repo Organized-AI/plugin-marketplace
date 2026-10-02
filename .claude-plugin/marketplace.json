@@ -104,8 +104,8 @@
     {
       "name": "gtm-audit-pro",
       "source": "./gtm-audit-pro",
-      "description": "Report-only GTM configuration audit (v0.1): six static quality dimensions \u2014 broken references, duplicate configs, naming, unused components, legacy tags, and folders \u2014 with saved findings and open questions. Optional background monitoring and bounded Autoresearch candidates; never imports or publishes container changes. Use tidy-gtm (gtm-ai-plugin, gads-gtm-plugin, fix-your-tracking) to apply fixes. The 72-checkpoint GA4/ads/sGTM/offline-conversion edition is in progress.",
-      "version": "0.1.0"
+      "description": "Report-only GTM configuration audit (v0.2): six static quality dimensions \u2014 broken references, duplicate configs, naming, unused components, legacy tags, and folders \u2014 with saved findings, an animated HTML report and a HyperFrames video composition. Optional background monitoring and bounded Autoresearch candidates; never imports or publishes container changes. Use tidy-gtm (gtm-ai-plugin, gads-gtm-plugin, fix-your-tracking) to apply fixes. The 72-checkpoint GA4/ads/sGTM/offline-conversion edition is in progress.",
+      "version": "0.2.0"
     },
     {
       "name": "measureu-cmp-audit-tools",

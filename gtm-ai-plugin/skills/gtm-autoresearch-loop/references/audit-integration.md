@@ -38,7 +38,8 @@ node CLI audit audit-config.json
 ```
 
 Paths are relative to the config file. Reopen `audit.md`, `audit.json`, and
-`questions.md` in the returned run directory. Empty inventories are valid but
+`questions.md` in the returned run directory. The same folder holds `audit.html`
+(interactive report) and `hyperframes/index.html` (video composition). Empty inventories are valid but
 do not prove required business events exist. Generated reports are private local
 files; nothing is sent to recipients automatically.
 
@@ -144,3 +145,39 @@ container before workshop distribution.
 - [Workspace tag pagination](https://developers.google.com/tag-platform/tag-manager/api/reference/rest/v2/accounts.containers.workspaces.tags/list)
 - [Published container snapshot](https://developers.google.com/tag-platform/tag-manager/api/reference/rest/v2/accounts.containers.versions/live)
 - [Claude CLI](https://code.claude.com/docs/en/cli-reference)
+
+## HTML report and HyperFrames video
+
+`audit.html` is self-contained apart from GSAP (cdnjs) and the Archivo font
+(Google Fonts). It follows the viewer's light or dark theme, collapses
+housekeeping findings into one section, and shows duplicate findings as named
+pairs. All container text is HTML-escaped.
+
+Re-render an existing run after updating the plugin:
+
+```sh
+node CLI render path/to/run-folder
+```
+
+Combine containers (for example web plus server) into one page from Node:
+
+```js
+import { htmlBundle } from './scripts/runtime/report-html.mjs';
+htmlBundle([{ report: webAudit, snapshot: webSnapshot }, { report: sgtmAudit, snapshot: sgtmSnapshot }],
+  { title: 'Client GTM Audit', fragment: false });
+```
+
+`fragment: true` omits the `<html>`/`<head>`/`<body>` wrapper for hosts that add
+their own, such as claude.ai artifacts.
+
+The composition follows the HyperFrames contract: a `#stage` root with
+`data-composition-id`, `data-duration`, `data-width` and `data-height`, and a
+paused GSAP timeline registered on `window.__timelines`. Render it with:
+
+```sh
+npx hyperframes lint path/to/run-folder/hyperframes
+npx hyperframes render path/to/run-folder/hyperframes --output audit.mp4 --quality draft --workers 1
+```
+
+Rendering needs Chrome and ffmpeg, so run it on a workstation rather than a
+locked-down sandbox.
