@@ -136,7 +136,7 @@ button{cursor:pointer;padding:7px 10px;font-size:11px}button:focus-visible,input
 .diagram{position:relative;min-width:0;overflow:auto;max-height:calc(100vh - 118px);padding:8px 10px 48px}
 .diagram svg{display:block}.caption{position:sticky;left:10px;top:0;z-index:2;color:var(--muted);font-size:9px;letter-spacing:.14em;padding:6px 0;pointer-events:none}
 .edge{fill:none;stroke:var(--line);stroke-width:1;opacity:.75;transition:opacity .2s,stroke .2s}
-.edge.e-blocks{stroke:var(--crit);stroke-dasharray:.02 .015;opacity:.6}.edge.e-sequence{stroke:var(--client)}.edge.e-duplicate{stroke:var(--gold);stroke-dasharray:.03 .02;stroke-width:1.5;opacity:.9}
+.edge.e-blocks{stroke:var(--crit);stroke-dasharray:.02 .015;opacity:.6}.edge.e-sequence{stroke:var(--client)}.edge.e-duplicate{stroke:var(--gold);stroke-dasharray:.03 .02;stroke-width:1.2;opacity:.35}
 .edge.hot{stroke:var(--ink);opacity:1;stroke-width:1.5}.edge.hot.e-duplicate{stroke:var(--gold)}.edge.fade{opacity:.06}
 .node{cursor:pointer;outline:none}.node circle.dot{stroke:var(--bg);stroke-width:1.5}.node .ring{fill:none;stroke-width:2}
 .node.r-critical .ring{stroke:var(--crit)}.node.r-review .ring{stroke:var(--gold)}.node.r-info .ring,.node.r-none .ring{stroke:none}
@@ -239,7 +239,7 @@ function layout(animate){
  $('caption').textContent=caption;const svg=$('svg');svg.setAttribute('width',w);svg.setAttribute('height',height);svg.setAttribute('viewBox','0 0 '+w+' '+height);svg.setAttribute('class','v-'+S.view);
  deco.textContent='';deco.setAttribute('class','deco');decoItems.forEach(([t,a,txt])=>{const e=el(t,a,deco);if(txt)e.textContent=txt;if(t==='line')e.setAttribute('y2',height)});
  const from=new Map(S.pos);S.pos=pos;
- if(animate&&G&&from.size){const o={t:0};G.to(o,{t:1,duration:.8,ease:'power2.inOut',onUpdate:()=>place(from,pos,o.t)})}else place(null,pos,1);
+ if(animate&&G&&from.size){const o={t:0};S.tw&&S.tw.progress(1);const tw=S.tw=G.to(o,{t:1,duration:.8,ease:'power2.inOut',onUpdate:()=>place(from,pos,o.t)});setTimeout(()=>tw.progress(1),1200)}else place(null,pos,1);
 }
 function place(from,to,t){const at=id=>{const b=to.get(id);if(!from||!from.get(id))return b;const a=from.get(id);return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}};
  const P=new Map();C.nodes.forEach(n=>{const p=at(n.id);P.set(n.id,p);nodeEls.get(n.id).g.setAttribute('transform','translate('+p.x.toFixed(1)+','+p.y.toFixed(1)+')')});
@@ -280,10 +280,12 @@ document.querySelectorAll('.schedule th').forEach((th,i)=>th.onclick=()=>{S.sort
 function setView(v){S.view=v;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
  const sch=v==='schedule';$('schedule').hidden=!sch;$('svg').style.display=sch?'none':'';$('legend').hidden=sch;$('caption').hidden=sch;if(!sch){layout(true);apply()}
  try{history.replaceState(null,'','#'+v)}catch(e){}}
-function intro(){if(!G)return;const ns=[...nodeEls.values()].map(x=>x.g),es=edgeEls.map(x=>x.p);
- const ds=[...nodeEls.values()].map(x=>x.dot);G.set(es,{strokeDasharray:1,strokeDashoffset:1});G.from(ns,{opacity:0,duration:.35,stagger:{amount:.9}});G.from(ds,{attr:{r:0},duration:.5,stagger:{amount:.9},ease:'back.out(3)'});
- G.to(es,{strokeDashoffset:0,duration:.9,stagger:{amount:.8},delay:.5,ease:'power2.out',onComplete(){G.set(es,{clearProps:'strokeDasharray,strokeDashoffset'})}});
- G.from('.deco > *',{opacity:0,duration:.6,stagger:.04})}
+function intro(){if(!G)return;const ns=[...nodeEls.values()].map(x=>x.g),ds=[...nodeEls.values()].map(x=>x.dot),es=edgeEls.map(x=>x.p);
+ // One timeline, forced to its end state if the browser throttles animation (background tabs, previews).
+ S.intro&&S.intro.progress(1);const tl=S.intro=G.timeline({onComplete(){G.set(es,{clearProps:'strokeDasharray,strokeDashoffset'})}});
+ tl.set(es,{strokeDasharray:1,strokeDashoffset:1}).from(ns,{opacity:0,duration:.35,stagger:{amount:.9}},0).from(ds,{attr:{r:0},duration:.5,stagger:{amount:.9},ease:'back.out(3)'},0)
+  .to(es,{strokeDashoffset:0,duration:.9,stagger:{amount:.8},ease:'power2.out'},.5).from('.deco > *',{opacity:0,duration:.6,stagger:.04},0);
+ setTimeout(()=>tl.progress(1),2600)}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 $('q').oninput=e=>{S.q=e.target.value.toLowerCase().trim();apply()};$('kind').onchange=e=>{S.kind=e.target.value;apply()};$('risk').onchange=e=>{S.risk=e.target.value;apply()};
 $('reset').onclick=()=>{S.q='';S.kind='all';S.risk='all';$('q').value='';$('kind').value='all';$('risk').value='all';select(null);setView('structured')};
