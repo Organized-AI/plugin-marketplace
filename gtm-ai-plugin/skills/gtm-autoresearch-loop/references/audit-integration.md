@@ -216,7 +216,14 @@ in `scripts/runtime/atlas/` (`client.js`, `style.css`) and is assembled by
   runs as a claude.ai artifact with the `sample` capability, "Ask Claude for the
   next round" sends the scores, folders and unfiled element names (no values)
   and runs Claude's operations through the same gates. Accepted operations can
-  be copied as JSON. Nothing is written to GTM.
+  be copied as JSON, or exported as an importable container: "Export container
+  (JSON)" asks for the original export file, checks it is the same container
+  and inventory the page was built from, applies the accepted rounds to it in
+  the browser (settings and tokens untouched, new folders get the account and
+  container IDs) and saves `<GTM-ID>-autoresearch-candidate.json` through the
+  `downloads` capability or a plain browser download. Import it into a new
+  workspace with Merge → Overwrite conflicting and review before publishing.
+  The file is never uploaded. Nothing is written to GTM.
 
 Animations always settle to their end state, so throttled tabs and previews
 still show the full diagram. Only names, IDs, types, folders, event names, the

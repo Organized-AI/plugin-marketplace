@@ -38,7 +38,9 @@ scan performed those actions (it must never submit forms or purchases without
 the site owner's permission). The GTM auto tab runs the Autoresearch loop in the
 page on a stripped copy of the container (names, links, settings hashes) with
 the same gates and identical scores; it proposes metadata-only operations and
-never writes to GTM.
+never writes to GTM. "Export container (JSON)" applies the accepted rounds to the
+user's own export file in the browser and saves an importable container for
+them to import into a new workspace and review.
 The page embeds names, types, event names, the endpoint host and relationships
 only, never tag HTML or parameter values such as constants or access tokens.
 Each run also writes `hyperframes/index.html`, a 14-second HyperFrames

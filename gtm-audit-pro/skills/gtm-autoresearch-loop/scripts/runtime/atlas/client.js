@@ -734,7 +734,11 @@ function autoSide(block, box) {
   if (AU.st.done) h('p', 'note', AU.st.failures >= AU.st.maxFailures ? 'Stopped: too many rejected proposals.' : AU.st.plateau >= AU.st.plateauRounds ? 'Stopped: no improvement in two rounds.' : AU.st.rounds.length >= AU.st.maxRounds ? 'Stopped: round limit reached.' : 'Stopped: the proposer has no more ideas.', rb);
   const res = block('Candidate'), ops = AU.st.rounds.filter(r => r.accepted).flatMap(r => r.operations);
   h('p', 'note', ops.length ? `${ops.length} operations from ${AU.st.rounds.filter(r => r.accepted).length} accepted rounds, applied to a copy. Nothing was published or written to GTM.` : 'No accepted changes yet.', res);
-  if (ops.length) { const cp = h('button', '', 'Copy operations (JSON)', res); cp.onclick = () => copyOps(ops, cp); }
+  if (ops.length) {
+    const row2 = h('div', 'autorow pair', '', res), cp = h('button', '', 'Copy operations (JSON)', row2), ex = h('button', 'primary', 'Export container (JSON)', row2);
+    cp.onclick = () => copyOps(ops, cp); ex.onclick = () => exportPick(AU.st.rounds.filter(r => r.accepted).map(r => r.operations));
+    const ix = h('p', 'note', 'Export asks for the original export file of ' + (AU.data.publicId || 'this container') + ', applies these operations to it in this browser and saves an importable container. The file is never uploaded; this page holds no tag settings or tokens of its own.', res); ix.id = 'auExportMsg';
+  }
   const n = block('How the loop works');
   h('p', 'note', 'Audit the container → a proposer suggests one round of metadata-only operations (add folder, assign folder, rename) → apply them to a copy → audit again. A round is kept only if the score rises, no critical finding is added and no check goes down. The loop stops after two rounds without improvement, two rejected proposals, or eight rounds. Scores here are computed in the page from names, links and settings hashes, and match the plugin\'s audit exactly. Publishing is never part of the loop.', n);
   h('p', 'foot', `gtm-audit-pro · GTM Autoresearch · ${(D.generatedAt || '').slice(0, 10)}`, box);
@@ -778,6 +782,28 @@ function runLoop() {
   if (!isAuto()) return; AU.running = true; side();
   const tick = () => { if (!AU.running || !isAuto()) return stopLoop(); const e = stepOnce(); if (!e || AU.st.done) { stopLoop(); side(); return; } loopTimer = setTimeout(tick, reduce ? 200 : 1500); };
   loopTimer = setTimeout(tick, 250);
+}
+function exportPick(rounds) {
+  const ops = rounds.flat();
+  const msg = $('auExportMsg'), say = t => { if (msg) msg.textContent = t; $('live').textContent = t; };
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json'; inp.hidden = true; document.body.append(inp);
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0]; inp.remove(); if (!f) return;
+    f.text().then(async text => {
+      let full; try { full = JSON.parse(text); } catch (e) { return say('That file is not JSON. Choose the container export from GTM (Admin → Export container).'); }
+      const problems = GTM_AUTO.sameInventory(full, AU.data);
+      if (problems.length) return say('Not exported: ' + problems.join('; ') + '. Use the export this atlas was built from, or rebuild the atlas from the newer export.');
+      let doc; try { doc = GTM_AUTO.exportContainer(full, rounds); } catch (e) { return say('Not exported: ' + e.message + '.'); }
+      const name = `${AU.data.publicId || 'container'}-autoresearch-candidate.json`, data = JSON.stringify(doc, null, 2);
+      const done = () => say(`Saved ${name}: ${ops.length} metadata changes on top of your export, every tag setting unchanged. Import it into a new workspace (Admin → Import container → Merge → Overwrite conflicting), review, then publish yourself.`);
+      try {
+        const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+        if (dl) { await dl.save({ filename: name, data }); return done(); }
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' })); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); done();
+      } catch (e) { say(e && e.code === 'declined' ? 'Save cancelled.' : e && e.code === 'rate_limited' ? 'A save prompt is already open.' : 'This view cannot save files; open the page in a browser or in Claude.'); }
+    }, () => say('Could not read that file.'));
+  };
+  inp.click();
 }
 function copyOps(ops, btn) {
   const text = JSON.stringify({ operations: ops }, null, 2);

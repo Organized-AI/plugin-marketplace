@@ -140,3 +140,18 @@ test('cli atlas writes the page from exports and evidence files', async () => {
   assert.equal(res.published, false); assert.equal(res.live, true);
   const html = readFileSync(out, 'utf8'); assert.match(html, /"liveVersion":"12"/); assert.equal(html.includes('99887766'), false);
 });
+
+test('export container: accepted operations applied to the full export, settings untouched', () => {
+  const s = web(), input = autoInput(s), st = AUTO.start(input);
+  let p; while (!st.done && (p = AUTO.propose(st, { vendor: input.vendor }))) AUTO.step(st, p);
+  const ops = st.rounds.filter(r => r.accepted).flatMap(r => r.operations);
+  const full = { exportFormatVersion: 2, exportTime: 'x', containerVersion: { ...s.containerVersion, container: { ...s.containerVersion.container, accountId: '1', containerId: '2' } } };
+  assert.deepEqual([...AUTO.sameInventory(full, input)], []);
+  const out = JSON.parse(JSON.stringify(AUTO.exportContainer(full, st.rounds.filter(r => r.accepted).map(r => r.operations))));
+  assert.equal(out.exportFormatVersion, 2);
+  assert.equal(audit(out).score, st.report.score);
+  for (const t of s.containerVersion.tag) assert.deepEqual(out.containerVersion.tag.find(x => x.tagId === t.tagId).parameter, t.parameter);
+  assert.ok(out.containerVersion.folder.every(f => f.accountId === '1' || s.containerVersion.folder.some(o => o.folderId === f.folderId)));
+  const other = JSON.parse(JSON.stringify(full)); other.containerVersion.tag[0].name = 'Changed';
+  assert.ok(AUTO.sameInventory(other, input).length > 0);
+});

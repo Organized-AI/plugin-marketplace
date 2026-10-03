@@ -10,7 +10,12 @@ var GTM_AUTO = (function () {
   var builtinTriggers = { '2147479553': 1, '2147479572': 1, '2147479573': 1 };
   var internalVariables = { _event: 1 };
   var clone = function (x) { return JSON.parse(JSON.stringify(x)); };
-  var refs = function (row) { var out = []; String(row.refs || '').replace(/\{\{([^{}]+)\}\}/g, function (_, n) { out.push(n); }); return out; };
+  // Stripped rows carry their references in row.refs; full export rows are scanned like audit.mjs does.
+  var refs = function (row) {
+    var out = [], scan = function (v) { if (typeof v === 'string') v.replace(/\{\{([^{}]+)\}\}/g, function (_, n) { out.push(n); }); else if (v && typeof v === 'object') Object.keys(v).forEach(function (k) { scan(v[k]); }); };
+    if (typeof row.refs === 'string') scan(row.refs); else scan(row);
+    return out;
+  };
   var seqMatch = function (r, tag) { return r.tagName === tag.name || r.tagName === tag.tagId; };
 
   function audit(c) {
@@ -162,5 +167,36 @@ var GTM_AUTO = (function () {
     }
     return null;
   }
-  return { audit: audit, applyOperations: applyOperations, start: start, step: step, propose: propose, dims: dims };
+  // Apply accepted operations to the user's own full export (read locally, never
+  // sent anywhere) and return an importable GTM container file.
+  function sameInventory(full, stripped) {
+    var cv = full.containerVersion || full, problems = [];
+    if ((cv.container || {}).publicId !== stripped.publicId) problems.push('container ' + ((cv.container || {}).publicId || 'unknown') + ' is not ' + stripped.publicId);
+    ['tag', 'trigger', 'variable'].forEach(function (k) {
+      var id = groups[k], a = {}, n = 0;
+      (cv[k] || []).forEach(function (r) { a[r[id]] = r.name; });
+      stripped[k].forEach(function (r) { if (a[r[id]] !== r.name) n++; });
+      if (n || (cv[k] || []).length !== stripped[k].length) problems.push(k + 's differ from the version this page was built from');
+    });
+    return problems;
+  }
+  function exportContainer(full, operations) {
+    var doc = clone(full), cv = doc.containerVersion || doc, info = cv.container || {};
+    var base = { tag: cv.tag || [], trigger: cv.trigger || [], variable: cv.variable || [], folder: cv.folder || [], builtInVariable: cv.builtInVariable || [] };
+    // Operations arrive as rounds (each at most 100, as accepted); a flat list is one round.
+    var rounds = operations.length && Array.isArray(operations[0]) ? operations : [operations];
+    var before = JSON.stringify(base), out = base, old = JSON.parse(before);
+    rounds.forEach(function (ops) { out = applyOperations(out, ops); });
+    ['tag', 'trigger', 'variable'].forEach(function (k) {
+      var id = groups[k], prev = {}; old[k].forEach(function (r) { prev[r[id]] = r; });
+      out[k].forEach(function (r) { var p = prev[r[id]]; if (p && (p.name !== r.name || p.parentFolderId !== r.parentFolderId)) delete r.fingerprint; });
+      cv[k] = out[k];
+    });
+    var known = {}; old.folder.forEach(function (f) { known[f.folderId] = 1; });
+    cv.folder = out.folder.map(function (f) { if (known[f.folderId]) return f; var n = { folderId: f.folderId, name: f.name }; if (info.accountId) n.accountId = info.accountId; if (info.containerId) n.containerId = info.containerId; return n; });
+    var d = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
+    if (doc.containerVersion) doc.exportTime = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds());
+    return doc;
+  }
+  return { audit: audit, applyOperations: applyOperations, start: start, step: step, propose: propose, dims: dims, sameInventory: sameInventory, exportContainer: exportContainer };
 })();
