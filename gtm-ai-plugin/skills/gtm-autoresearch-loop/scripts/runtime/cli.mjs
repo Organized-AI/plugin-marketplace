@@ -18,6 +18,23 @@ if(action==='render'){
   }catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
   process.exit();
 }
+if(action==='atlas'){
+  // Container Atlas with Audit and GTM auto tabs:
+  // node cli.mjs atlas OUT.html web.json [server.json] [--compiled gtm.js] [--observed scan.json,...] [--attribution attr.json,...] [--title T] [--fragment]
+  try{
+    const args=process.argv.slice(3),files=[],opt={};
+    for(let i=0;i<args.length;i++){if(args[i].startsWith('--')){const k=args[i].slice(2);opt[k]=k==='fragment'?true:args[++i];}else files.push(args[i]);}
+    const [out,...exports]=files;
+    if(!out||!exports.length)throw Error('Usage: node cli.mjs atlas OUT.html web.json [server.json] [--compiled gtm.js] [--observed a.json,b.json] [--attribution c.json] [--title TITLE] [--fragment]');
+    const { audit } = await import('./audit.mjs'), { atlas } = await import('./atlas.mjs'), { atomic } = await import('./runner.mjs');
+    const list=v=>v?String(v).split(',').filter(Boolean):[];
+    const items=await Promise.all(exports.map(async f=>{const snapshot=await readJSON(resolve(f));return{snapshot,report:audit(snapshot)};}));
+    const live={compiled:opt.compiled?await fs.readFile(resolve(opt.compiled),'utf8'):null,observed:await Promise.all(list(opt.observed).map(f=>readJSON(resolve(f)))),attribution:await Promise.all(list(opt.attribution).map(f=>readJSON(resolve(f))))};
+    await atomic(resolve(out),atlas(items,{title:opt.title,fragment:!!opt.fragment,live}));
+    process.stdout.write(JSON.stringify({atlas:resolve(out),containers:items.length,live:!!(live.compiled||live.observed.length),published:false})+'\n');
+  }catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
+  process.exit();
+}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 try{
   if(!['audit','loop','watch','start','status','stop','unlock'].includes(action)||!configPath)throw Error('Usage: node cli.mjs audit|loop|watch|start|status|stop|unlock CONFIG.json');

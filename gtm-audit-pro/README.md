@@ -33,11 +33,16 @@ Do not import or publish candidates.
   and start/status/stop commands.
 - Optional model proposals for names and folder organization, with strict
   keep/revert evaluation on local candidates.
+- Container Atlas with an Audit tab (every web and server element marked broken,
+  not firing, orphaned, drifted, duplicated or untested, using the published
+  gtm.js and an optional live browser scan) and a GTM auto tab that runs the
+  Autoresearch loop in the page: `node CLI atlas OUT.html web.json server.json
+  --compiled gtm.js --observed scan.json`.
 
 See [full setup](skills/gtm-autoresearch-loop/references/audit-integration.md) for
 authentication, model adapters, source selection, and host requirements. MCP
 login alone does not provision background Google API authentication.
 
 Run `node --test skills/gtm-autoresearch-loop/scripts/runtime/test/*.test.mjs`.
-The runtime is maintained in Fix Your Tracking and bundled by
-`python3 gtm-ai-plugin/scripts/sync-autoresearch.py`; `--check` detects drift.
+The runtime is maintained in `gtm-ai-plugin/skills/gtm-autoresearch-loop` and
+copied here unchanged.

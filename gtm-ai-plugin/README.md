@@ -361,6 +361,7 @@ your-project/
 |---------|------|---------|
 | 2.2.0 | 2025-01 | Added ascii-diagram-generator hook for visual before/after documentation |
 | 2.1.0 | 2025-01 | Added pre-publish-audit hook for strategic container validation |
+| 2.7.0 | 2026-10 | Atlas Audit tab (broken / not firing / orphaned / drifted vs the published gtm.js and a live scan) and GTM auto tab (Autoresearch loop in the page); `atlas` CLI command |
 | 2.6.0 | 2026-10 | Atlas v2: pan/zoom, node drag, minimap, full-path trace, 3D view, and a Web → Server signal-flow tab for web + server bundles |
 | 2.5.0 | 2026-10 | audit.html becomes an interactive container atlas: Structured, Free-form, Axonometric and Schedule views with findings on the graph |
 | 2.4.0 | 2026-10 | gtm-audit-pro writes audit.html (GSAP) and a HyperFrames composition; `render` CLI command |

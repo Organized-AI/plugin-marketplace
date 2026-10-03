@@ -27,6 +27,18 @@ send which events to the server, which client claims them, which server
 triggers match and which platforms receive them, with dead ends, unreached
 server tags and duplicate page-view fan-in called out. This is worked out from
 configuration, not live traffic; say so when presenting it.
+The atlas also has an Audit tab and a GTM auto tab (`node CLI atlas OUT.html
+web.json server.json [--compiled gtm.js] [--observed scan.json] [--attribution
+attr.json]`). The Audit tab gives every element a status (broken, not firing,
+orphaned, drifted, duplicated, untested, paused, outside GTM, OK) from the static
+audit, the signal flow, a comparison of the export with the published gtm.js,
+and a browser scan of the live site. Say which inputs were supplied; without a
+scan nothing is "verified live", and conversion tags stay untested unless the
+scan performed those actions (it must never submit forms or purchases without
+the site owner's permission). The GTM auto tab runs the Autoresearch loop in the
+page on a stripped copy of the container (names, links, settings hashes) with
+the same gates and identical scores; it proposes metadata-only operations and
+never writes to GTM.
 The page embeds names, types, event names, the endpoint host and relationships
 only, never tag HTML or parameter values such as constants or access tokens.
 Each run also writes `hyperframes/index.html`, a 14-second HyperFrames
@@ -35,7 +47,8 @@ composition of the headline findings. To make the video, run
 on a machine with Chrome and ffmpeg. Both outputs contain container and element
 names, so treat them as client material.
 
-This 0.1 release implements six static quality dimensions. Report skipped checks;
-do not claim 72 checkpoints, GA4/ads reconciliation, compliance verification,
-live firing validation, or a complete business-event audit. An exported file
+This release implements six static quality dimensions plus the optional live
+evidence above. Report skipped checks; do not claim 72 checkpoints, GA4/ads
+reconciliation, compliance verification, live firing validation beyond the
+scanned pages, or a complete business-event audit. An exported file
 source only sees new changes when that file is refreshed.

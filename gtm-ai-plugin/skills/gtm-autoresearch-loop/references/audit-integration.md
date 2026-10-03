@@ -173,6 +173,51 @@ in `scripts/runtime/atlas/` (`client.js`, `style.css`) and is assembled by
   depend on request data are marked conditional. Events from other sources (apps,
   other containers, Google tag settings outside GTM) are not visible.
 
+- Audit tab (`audit-view.mjs`, `live.mjs`): every web and server element in one
+  lane map (web variables → web triggers → web tags → endpoint → server clients →
+  server variables → server triggers → server tags → destinations), each with a
+  status: broken, not firing, orphaned, drifted, duplicated, untested, paused,
+  outside GTM or OK. Inputs, all optional beyond the exports:
+  - the published `gtm.js` (`https://www.googletagmanager.com/gtm.js?id=GTM-XXXX`).
+    `parseCompiled` reads its data block in an isolated VM context with a time
+    limit; `versionDrift` compares it with the export tag by tag (`tag_id` =
+    export `tagId`): tags added or removed, paused or unpaused, firing rules
+    gained or lost, and literal settings that changed. Only the changed key
+    names, true/false flips and endpoint hosts are reported. Custom HTML is
+    compared by the hosts it loads, because GTM rewrites HTML when it compiles.
+    Auto-event listeners (`__cl`, `__fsl`, `__hl`…) are counted, not shown as tags.
+  - browser scan results (`observed*.json`: requests with host, path, selected
+    query keys, POST event name; dataLayer events; cookie names) and optional
+    initiator attribution (`attribution.json`). `liveStatus` matches each tag to
+    its network fingerprint (GA4 `tid`, Ads conversion ID and label, Floodlight
+    `src`/`type`/`cat`, Meta pixel ID and event, Bing `ti`, Data Tag event at
+    `/data`, hosts referenced by custom HTML, and so on) and checks whether its
+    trigger could have fired on the scanned pages. A tag is *not firing* only
+    when its trigger fired and its fingerprint was absent; *untested* when the
+    scan never reached the trigger (purchases, sign-ups and form submits are
+    never performed); *silent* tags (no recognisable request) are untested.
+  - Server side: routes from `flow.mjs`, marked live when the web request that
+    feeds them was seen. A dead-end route whose event reached the live endpoint
+    is reported as confirmed broken. The server container itself cannot be
+    observed from outside.
+  - Vendors loaded by page code (attribution root "Page code") that no GTM tag
+    accounts for appear as *outside GTM* nodes.
+  Only hosts, never request paths or query values, appear in evidence text.
+- GTM auto tab (`atlas/auto.js`): the Autoresearch loop running in the page.
+  `autoInput()` strips each container to IDs, names, types, trigger links,
+  folder IDs, `{{references}}` and a SHA-256 settings hash per element; the
+  in-page `audit`, `applyOperations` and loop gates are a port of `audit.mjs`
+  and produce identical scores (covered by `test/live.test.mjs`, which also
+  replays the accepted operations through `optimize()`). A deterministic
+  proposer files tags by platform, triggers and variables beside what uses
+  them, tries to mark duplicate variables (refused by the guardrail when they
+  are referenced) and parks unused variables for review; rounds hold at most 100
+  operations. Accepted rounds animate elements into their folders. When the page
+  runs as a claude.ai artifact with the `sample` capability, "Ask Claude for the
+  next round" sends the scores, folders and unfiled element names (no values)
+  and runs Claude's operations through the same gates. Accepted operations can
+  be copied as JSON. Nothing is written to GTM.
+
 Animations always settle to their end state, so throttled tabs and previews
 still show the full diagram. Only names, IDs, types, folders, event names, the
 endpoint host and relationships are embedded. Tag HTML, constants and tokens are
@@ -192,6 +237,18 @@ import { htmlBundle } from './scripts/runtime/report-html.mjs';
 htmlBundle([{ report: webAudit, snapshot: webSnapshot }, { report: sgtmAudit, snapshot: sgtmSnapshot }],
   { title: 'Client Container Atlas', fragment: false });
 ```
+
+Build the full atlas, with Audit and GTM auto tabs, from the command line:
+
+```sh
+node CLI atlas atlas.html web.json server.json \
+  --compiled gtm.js --observed observed.json,observed-decline.json \
+  --attribution attribution.json --title "Client Container Atlas"
+```
+
+`--compiled`, `--observed` and `--attribution` are optional; without them the
+Audit tab shows static and flow statuses only. From Node pass
+`{ live: { compiled, observed: [...], attribution: [...] } }` to `htmlBundle`.
 
 `fragment: true` omits the `<html>`/`<head>`/`<body>` wrapper for hosts that add
 their own, such as claude.ai artifacts.

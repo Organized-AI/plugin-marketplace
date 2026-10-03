@@ -1,7 +1,7 @@
 /* Container atlas: score header, toolbar, pan/zoom diagram viewport beside a 340px inspector (GTM Command Center language). */
 :root{color-scheme:dark;--bg:#0c0b09;--panel:#15130f;--panel2:#1c1913;--ink:#f7f2df;--muted:#a69f8b;--dim:#5d574a;--line:#353025;--gold:#ffe94a;
  --tag:#65b7ff;--trigger:#bd8cff;--variable:#58ded8;--builtin:#8f8877;--client:#ffad58;--crit:#ff625f;--pass:#5ce1a4;--amber:#ffad58;
- --mono:'Space Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+ --drift:#ff7ad9;--mono:'Space Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 [hidden]{display:none!important}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono)}
 button,input,select{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:6px}
@@ -71,6 +71,23 @@ dl{display:grid;grid-template-columns:76px minmax(0,1fr);gap:6px;font-size:10px;
 .note{font-size:10.5px;color:var(--muted);line-height:1.55;margin:0}
 .foot{font-size:9.5px;color:var(--dim);line-height:1.5;margin:0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* audit statuses (after the risk rings so they win) */
+.node.st-broken .ring{stroke:var(--crit)}.node.st-not-firing .ring{stroke:var(--amber)}.node.st-orphaned .ring{stroke:var(--muted);stroke-dasharray:2 2}
+.node.st-drifted .ring{stroke:var(--drift)}.node.st-duplicate .ring{stroke:var(--gold)}.node.st-untested .ring{stroke:#3b372d}.node.st-outside .ring{stroke:var(--client);stroke-dasharray:1 2}
+.node.st-ok .ring,.node.st-paused .ring{stroke:none}.node.st-paused{opacity:.5}
+.node.st-broken text{fill:var(--crit)}.node.st-not-firing text{fill:var(--amber)}.node.st-drifted text{fill:var(--drift)}.node.st-duplicate text,.node.st-orphaned text{fill:var(--ink)}
+.node.ghost circle.dot{fill-opacity:.2;stroke:var(--drift);stroke-dasharray:2 1.5}.node .tick{fill:var(--pass)}
+.node.moved circle.dot{stroke:var(--pass);stroke-width:2}
+.deco .lane.fresh{fill:rgba(92,225,164,.06);stroke:rgba(92,225,164,.25)}.deco .lane.nofolder{fill:rgba(255,98,95,.05);stroke:rgba(255,98,95,.2)}
+.tabs button.tab-audit:not([aria-selected="true"]){border-color:#6b2a2a;color:var(--crit)}.tabs button.tab-auto:not([aria-selected="true"]){border-color:#245c43;color:var(--pass)}
+.stchips{display:flex;flex-wrap:wrap;gap:5px}.stchip{display:inline-flex;align-items:center;gap:6px;font-size:10px;padding:5px 8px}.stchip i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.stchip b{font-variant-numeric:tabular-nums}.stchip[aria-pressed="true"]{border-color:var(--gold);background:#2a2614}
+.grouphead{all:unset;display:block;cursor:pointer;font-size:9px;color:var(--muted);letter-spacing:.08em;margin:12px 0 6px}.grouphead:hover,.grouphead:focus-visible{color:var(--gold)}
+.link.more{margin:2px 0 8px}.find.evidence{border-color:var(--pass);color:var(--muted)}
+.autorow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.askbtn{width:100%;margin-bottom:8px;border-color:#245c43;color:var(--pass)}
+button:disabled{opacity:.45;cursor:not-allowed}.pick{display:flex;gap:6px;align-items:center;font-size:10px;color:var(--muted);margin-top:8px}.pick select{height:30px}
+.dim .bar{position:relative}.basemark{position:absolute;top:-2px;width:2px;height:10px;background:var(--ink);opacity:.55}
+.oplist{max-height:320px;overflow:auto;margin-top:8px}
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.diagram{height:72vh}.side{border-left:0;border-top:1px solid var(--line);height:auto;min-height:0}.top{align-items:flex-start}.score strong{font-size:26px}
  .mini{width:130px;height:86px}.legend{max-width:calc(100% - 160px)}.caption{max-width:calc(100% - 24px);top:44px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

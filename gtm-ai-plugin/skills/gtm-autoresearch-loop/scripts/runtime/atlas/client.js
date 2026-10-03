@@ -12,19 +12,35 @@ const K = {
   wtrigger: ['Web triggers', 'web trigger', '--trigger', 0xbd8cff], wtag: ['Web tags', 'web tag', '--tag', 0x65b7ff], endpoint: ['Endpoint', 'endpoint', '--ink', 0xf7f2df],
   event: ['Events', 'event', '--variable', 0x58ded8], strigger: ['Server triggers', 'server trigger', '--trigger', 0xbd8cff], stag: ['Server tags', 'server tag', '--tag', 0x65b7ff],
   dest: ['Destinations', 'destination', '--pass', 0x5ce1a4], sink: ['Dead end', 'dead end', '--crit', 0xff625f],
+  svariable: ['Server variables', 'server variable', '--variable', 0x58ded8], outside: ['Outside GTM', 'page-code vendor', '--client', 0xffad58],
 };
+// Audit statuses, most urgent first: [label, css colour, 3D colour, what it means].
+const ST = {
+  broken: ['Broken', '--crit', 0xff625f, 'Cannot work as configured, or proven failing.'], 'not-firing': ['Not firing', '--amber', 0xffad58, 'Should have fired during the scan and did not.'],
+  orphaned: ['Orphaned', '--muted', 0xa69f8b, 'Nothing uses it, or nothing reaches it.'], drifted: ['Drifted', '--drift', 0xff7ad9, 'Differs between the export and the published version.'],
+  duplicate: ['Duplicated', '--gold', 0xffe94a, 'Same settings as another element, or fires more than once.'], untested: ['Untested', '--dim', 0x5d574a, 'The scan did not reach it, so its behaviour is unproven.'],
+  paused: ['Paused', '--dim', 0x5d574a, 'Switched off.'], outside: ['Outside GTM', '--client', 0xffad58, 'Loaded by the page itself.'], ok: ['OK', '--pass', 0x5ce1a4, 'No issue found; verified live where a scan was available.'],
+};
+const PROBLEMS = ['broken', 'not-firing', 'orphaned', 'drifted', 'duplicate'];
 const label = k => (K[k] || [k])[0], one = k => (K[k] || [, k])[1], cvar = k => `var(${(K[k] || [, , '--muted'])[2]})`, hex = k => (K[k] || [, , , 0xa69f8b])[3];
 const DIM = { references: 'References', duplicates: 'Duplicates', naming: 'Naming', hygiene: 'Unused', legacy: 'Legacy', folders: 'Folders' };
 const RISK = { critical: 'Fix first', review: 'Confirm', info: 'Note' };
 const STATUS = { delivered: 'Delivered', conditional: 'Conditional', 'dead-end': 'Dead end', unknown: 'Unresolved' };
-const TABS = [...D.containers.map((c, i) => ({ i, model: c, flow: false })), ...(D.flow ? [{ i: D.containers.length, model: D.flow, flow: true }] : [])];
+const TABS = [...D.containers.map(c => ({ type: 'container', model: c })), ...(D.flow ? [{ type: 'flow', model: D.flow }] : []),
+  ...(D.audit ? [{ type: 'audit', model: D.audit }] : []), ...(D.auto && D.auto.length ? [{ type: 'auto', model: null }] : [])];
+TABS.forEach((t, i) => (t.i = i));
+if (D.audit) D.audit.lanes = [{ label: 'WEB', from: 0, to: 2 }, { label: 'SERVER', from: 4, to: 7 }];
+if (D.flow) D.flow.lanes = [{ label: 'WEB', from: 0, to: 1 }, { label: 'SERVER', from: 3, to: 6 }];
 const S = { tab: 0, view: 'structured', q: '', kind: 'all', risk: 'all', trace: 'near', sel: null, hover: null, route: null, T: { k: 1, x: 0, y: 0 }, pos: new Map(), pinned: new Set(), sort: null, deco: [] };
 let M, byId, adj, nodeEls = new Map(), edgeEls = new Map(), particles = [];
 const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); parent && parent.append(e); return e; };
 const h = (tag, cls, text, parent) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; parent && parent.append(e); return e; };
 const short = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
-const tab = () => TABS[S.tab], isFlow = () => tab().flow;
-const views = () => (isFlow() ? [['flow', 'Signal flow'], ['schedule', 'Schedule'], ['3d', '3D']] : [['structured', 'Structured'], ['spatial', 'Free-form'], ['axonometric', 'Axonometric'], ['schedule', 'Schedule'], ['3d', '3D']]);
+const tab = () => TABS[S.tab], isFlow = () => tab().type === 'flow', isAudit = () => tab().type === 'audit', isAuto = () => tab().type === 'auto', isLane = () => isFlow() || isAudit();
+const views = () => (isFlow() ? [['flow', 'Signal flow'], ['schedule', 'Schedule'], ['3d', '3D']] : isAudit() ? [['audit', 'Audit map'], ['schedule', 'Issue table'], ['3d', '3D']]
+  : isAuto() ? [['auto', 'Folder map'], ['schedule', 'Changes']] : [['structured', 'Structured'], ['spatial', 'Free-form'], ['axonometric', 'Axonometric'], ['schedule', 'Schedule'], ['3d', '3D']]);
+const homeView = () => views()[0][0];
+const stColor = s => `var(${(ST[s] || ST.ok)[1]})`;
 const ekey = e => `${e.from}>${e.to}>${e.kind}`;
 
 /* ---------- tabs, header, side panel ---------- */
@@ -32,33 +48,52 @@ function tabs() {
   const t = $('tabs');
   if (TABS.length < 2) return;
   TABS.forEach(x => {
-    const b = h('button', x.flow ? 'flowtab' : '', x.flow ? 'Web → Server flow' : (x.model.meta.publicId || x.model.meta.name), t);
-    b.setAttribute('role', 'tab'); b.title = x.model.meta.name;
-    b.onclick = () => { S.tab = x.i; S.sel = S.route = null; S.view = x.flow ? 'flow' : 'structured'; S.pinned.clear(); load(); };
+    const name = { flow: 'Web → Server flow', audit: 'Audit', auto: 'GTM auto' }[x.type] || x.model.meta.publicId || x.model.meta.name;
+    const b = h('button', x.type === 'container' ? '' : 'flowtab tab-' + x.type, name, t);
+    b.setAttribute('role', 'tab'); b.title = x.type === 'auto' ? 'GTM Autoresearch: metadata-only improvement loop' : x.model.meta.name;
+    b.onclick = () => { stopLoop(); S.tab = x.i; S.sel = S.route = null; S.view = null; S.risk = 'all'; S.pinned.clear(); load(); };
   });
 }
 function load() {
-  M = tab().model; byId = new Map(M.nodes.map(n => [n.id, n]));
+  if (isAuto()) { autoInit(); M = AU.model; } else M = tab().model;
+  if (isAudit()) M.nodes.forEach(n => { n.risk = ['broken', 'not-firing'].includes(n.status) ? 'critical' : PROBLEMS.includes(n.status) ? 'review' : null; n.findings = n.findings || []; });
+  byId = new Map(M.nodes.map(n => [n.id, n]));
   adj = new Map(M.nodes.map(n => [n.id, { out: [], in: [] }]));
   M.edges.forEach(e => { adj.get(e.from).out.push(e); adj.get(e.to).in.push(e); });
   [...$('tabs').children].forEach((b, i) => b.setAttribute('aria-selected', String(i === S.tab)));
-  $('title').textContent = isFlow() ? 'Web → server signal flow' : M.meta.name;
-  $('meta').textContent = isFlow()
-    ? `${M.meta.name} · via ${M.meta.hosts.join(', ') || 'no endpoint found'} · ${M.meta.paired ? 'server container serves this web container' : 'pairing assumed'}`
-    : [M.meta.publicId, M.meta.context && M.meta.context + ' container', M.nodes.length + ' elements'].filter(Boolean).join(' · ');
-  $('score').textContent = isFlow() ? `${M.summary.delivered}/${M.summary.routes}` : M.score;
-  $('scoreLabel').textContent = isFlow() ? 'routes delivered' : 'configuration score';
-  const st = isFlow() ? [['Routes', M.summary.routes], ['Delivered', M.summary.delivered], ['Dead ends', M.summary.dead]] : [['Elements', M.nodes.length], ['Links', M.edges.length], ['To act on', M.nodes.filter(n => n.risk === 'critical' || n.risk === 'review').length]];
-  const stats = $('stats'); stats.textContent = '';
-  st.forEach(([a, b]) => { const d = h('div', 'stat', '', stats); h('span', '', a, d); h('strong', '', b, d); });
+  header();
+  const rk = $('risk'); rk.textContent = '';
+  const opts = isAudit() ? [['all', 'Any status'], ['problems', 'Any problem'], ...Object.keys(ST).map(k => [k, ST[k][0]])] : isAuto() ? [['all', 'Any']] : [['all', 'Any'], ['critical', 'Fix first'], ['review', 'Confirm'], ['info', 'Note'], ['none', 'No finding']];
+  opts.forEach(([v, t]) => { const o = h('option', '', t, rk); o.value = v; }); rk.value = S.risk = opts.some(o => o[0] === S.risk) ? S.risk : 'all';
+  rk.parentNode.firstChild.textContent = isAudit() ? 'Status ' : 'Finding ';
   const k = $('kind'); k.length = 1; [...new Set(M.nodes.map(n => n.kind))].forEach(x => { const o = h('option', '', label(x), k); o.value = x; }); S.kind = 'all'; k.value = 'all';
   const mode = $('mode'); mode.textContent = '';
   views().forEach(([v, name]) => { const b = h('button', '', name, mode); b.dataset.view = v; b.onclick = () => setView(v); });
-  side(); build(); rows(); setView(S.view, true);
+  side(); build(); rows(); setView(S.view || homeView(), true);
+}
+function header() {
+  const AD = isAudit() && M, s = AD && M.summary.counts;
+  $('title').textContent = isFlow() ? 'Web → server signal flow' : isAudit() ? 'Container audit · what is broken, not firing, orphaned or drifted' : isAuto() ? 'GTM auto · Autoresearch loop' : M.meta.name;
+  $('meta').textContent = isFlow()
+    ? `${M.meta.name} · via ${M.meta.hosts.join(', ') || 'no endpoint found'} · ${M.meta.paired ? 'server container serves this web container' : 'pairing assumed'}`
+    : isAudit() ? [M.meta.name, M.drift ? `export ${String(M.drift.exportedAt || '').slice(0, 10)} vs published v${M.drift.liveVersion}` : 'no published version supplied', M.scan ? `scan ${String(M.scan.scannedAt || '').slice(0, 10)} · ${M.scan.runs.length} runs` : 'no live scan'].join(' · ')
+    : isAuto() ? `${AU.data.publicId || 'container'} · metadata-only proposals · scored by the same audit as the plugin · nothing is published`
+    : [M.meta.publicId, M.meta.context && M.meta.context + ' container', M.nodes.length + ' elements'].filter(Boolean).join(' · ');
+  $('score').textContent = isFlow() ? `${M.summary.delivered}/${M.summary.routes}` : isAudit() ? s.broken + s['not-firing'] : isAuto() ? AU.st.report.score : M.score;
+  $('score').style.color = isAudit() ? 'var(--crit)' : '';
+  $('scoreLabel').textContent = isFlow() ? 'routes delivered' : isAudit() ? 'broken or not firing' : isAuto() ? `autoresearch score · baseline ${AU.st.baseline.score}` : 'configuration score';
+  const st = isFlow() ? [['Routes', M.summary.routes], ['Delivered', M.summary.delivered], ['Dead ends', M.summary.dead]]
+    : isAudit() ? [['Elements', M.summary.total], ['Problems', PROBLEMS.reduce((a, k) => a + s[k], 0)], ['Verified live', M.nodes.filter(n => n.live === 'fired').length]]
+    : isAuto() ? [['Rounds', AU.st.rounds.length], ['Accepted', AU.st.rounds.filter(r => r.accepted).length], ['Operations', AU.st.rounds.filter(r => r.accepted).reduce((a, r) => a + r.operations.length, 0)]]
+    : [['Elements', M.nodes.length], ['Links', M.edges.length], ['To act on', M.nodes.filter(n => n.risk === 'critical' || n.risk === 'review').length]];
+  const stats = $('stats'); stats.textContent = '';
+  st.forEach(([a, b]) => { const d = h('div', 'stat', '', stats); h('span', '', a, d); h('strong', '', b, d); });
 }
 function side() {
   const box = $('panels'); box.textContent = '';
   const block = title => { const s = h('section', 'block', '', box); h('h2', '', title, s); return s; };
+  if (isAudit()) return auditSide(block, box);
+  if (isAuto()) return autoSide(block, box);
   if (isFlow()) {
     const r = block('Routes'); routeList(r);
     const f = block('Flow findings');
@@ -75,6 +110,38 @@ function side() {
     recs(block('Priority recommendations'));
     const sk = block('Not checked by this run'), ul = h('ul', 'skipped', '', sk); M.skipped.forEach(s => h('li', '', s, ul));
   }
+  h('p', 'foot', `gtm-audit-pro · report-only, nothing was changed or published · ${(D.generatedAt || '').slice(0, 10)}`, box);
+}
+function setRisk(v) { S.risk = v; $('risk').value = v; apply(); if (S.view !== 'schedule' && S.view !== '3d') fit(S.view === 'audit' && v === 'all' ? 'width' : 'all', true); }
+function auditSide(block, box) {
+  const c = M.summary.counts, chips = h('div', 'stchips', '', block('Status'));
+  Object.keys(ST).forEach(k => {
+    const b = h('button', 'stchip', '', chips); b.dataset.st = k; b.title = ST[k][3];
+    const i = h('i', '', '', b); i.style.background = stColor(k); b.append(`${ST[k][0]} `); h('b', '', c[k], b);
+    b.onclick = () => setRisk(S.risk === k ? 'all' : k);
+  });
+  if (M.drift) {
+    const d = M.drift, b = block('Previous version → live'), ul = h('ul', 'skipped', '', b);
+    h('p', 'note', `Export of ${String(d.exportedAt || '').slice(0, 10)} (${d.counts.export} tags) compared with published version ${d.liveVersion} (${d.counts.liveTags} tags + ${d.listeners.length} auto-event listeners).`, b).style.marginBottom = '6px';
+    [[d.added, 'tags added since the export'], [d.paused, 'tags paused since the export'], [d.changed, 'tags with different settings'], [d.triggers, 'tags whose firing changed'], [d.removed, 'tags removed']].forEach(([n, t]) => n && h('li', '', `${n} ${t}`, ul));
+    if (d.endpoint.length) h('li', '', `Server endpoint now ${d.endpoint.join(', ')}`, ul);
+  }
+  if (M.scan) {
+    const sc = block('Live scan'), modes = [...new Set(M.scan.runs.map(r => r.consent))];
+    h('p', 'note', `${M.scan.runs.length} browser runs over ${M.scan.pages.length} pages (${M.scan.pages.map(u => u.replace(/^https?:\/\/[^/]+/, '') || '/').join(', ')}), consent: ${modes.join(', ')}. Events seen: ${M.scan.events.join(', ')}. The scan did not buy, sign up or submit forms, so conversion tags stay untested.`, sc);
+  }
+  const fix = block('What needs attention');
+  ['broken', 'not-firing', 'orphaned', 'drifted', 'duplicate', 'outside'].forEach(k => {
+    const ns = M.nodes.filter(n => n.issues.some(i => i.status === k)); if (!ns.length) return;
+    const g = h('button', 'recgroup grouphead', `${ST[k][0].toUpperCase()} · ${ns.length}`, fix); g.onclick = () => setRisk(k); g.title = 'Show only these in the diagram';
+    ns.slice(0, k === 'drifted' || k === 'orphaned' ? 12 : 30).forEach(n => {
+      const i = n.issues.find(x => x.status === k), b = h('button', 'rec st-' + k, n.name, fix); b.style.borderLeftColor = stColor(k);
+      h('small', '', `${one(n.kind)} · ${i.message}`, b); b.onclick = () => select(n.id, true);
+    });
+    if (ns.length > (k === 'drifted' || k === 'orphaned' ? 12 : 30)) { const m = h('button', 'link more', `Show all ${ns.length} in the diagram`, fix); m.onclick = () => setRisk(k); }
+  });
+  const n = block('How this is worked out');
+  h('p', 'note', 'Static audit of both exports, the web → server signal flow, the published container (gtm.js) compared tag by tag with the export, and a headless browser scan of the live site matched to each tag by its network fingerprint. "Verified live" means a request from that tag was seen. Server tags are marked reached when the web request that feeds them was seen; the server side itself cannot be observed from outside.', n);
   h('p', 'foot', `gtm-audit-pro · report-only, nothing was changed or published · ${(D.generatedAt || '').slice(0, 10)}`, box);
 }
 function recs(d) {
@@ -110,10 +177,11 @@ function build() {
   const eg = $('edges'), ng = $('nodes'); eg.textContent = ''; ng.textContent = ''; nodeEls = new Map(); edgeEls = new Map(); particles = [];
   M.edges.forEach(e => edgeEls.set(ekey(e), { e, p: el('path', { class: `edge e-${e.kind}${e.status ? ' s-' + e.status : ''}` }, eg) }));
   M.nodes.forEach(n => {
-    const g = el('g', { class: `node k-${n.kind} r-${n.risk || 'none'}`, tabindex: 0, role: 'button', 'aria-label': `${one(n.kind)} ${n.name}${n.risk ? ', ' + RISK[n.risk] : ''}` }, ng);
+    const g = el('g', { class: `node k-${n.kind} r-${n.risk || 'none'}${n.status ? ' st-' + n.status : ''}${n.ghost ? ' ghost' : ''}${n.live === 'fired' ? ' fired' : ''}`, tabindex: 0, role: 'button', 'aria-label': `${one(n.kind)} ${n.name}${n.status ? ', ' + ST[n.status][0] : n.risk ? ', ' + RISK[n.risk] : ''}` }, ng);
     g.dataset.id = n.id;
     el('circle', { class: 'ring', r: 8.5 }, g);
     const dot = el('circle', { class: 'dot', r: n.kind === 'tag' || n.kind === 'stag' || n.kind === 'wtag' ? 5 : 4.5, fill: cvar(n.kind) }, g);
+    if (n.live === 'fired') el('circle', { class: 'tick', r: 1.6, cx: -9, cy: 0 }, g);
     const t = el('text', { x: 10, y: 3.5 }, g); t.textContent = n.name;
     g.addEventListener('mouseenter', () => { S.hover = n.id; apply(); });
     g.addEventListener('mouseleave', () => { S.hover = null; apply(); });
@@ -128,17 +196,32 @@ function layout(view) {
   const kinds = ['client', 'tag', 'trigger', 'variable'].filter(k => fam(k).length || (k === 'variable' && fam('builtin').length));
   const col = k => (k === 'variable' ? [...fam('variable'), ...fam('builtin')] : fam(k));
   const labelLen = n => Math.max(10, Math.floor(n / 6.6));
-  if (view === 'flow') {
-    const cw = 250, row = 30, top = 70, cols = M.columns;
-    caption = 'SIGNAL FLOW · WEB CONTAINER → ENDPOINT → SERVER CONTAINER → PLATFORMS';
-    deco.push(['rect', { class: 'lane', x: 0, y: 0, width: cw * 2, height: 99999 }], ['rect', { class: 'lane', x: cw * 3, y: 0, width: cw * 4, height: 99999 }]);
-    deco.push(['text', { class: 'side', x: 14, y: 22 }, 'WEB'], ['text', { class: 'side', x: cw * 3 + 14, y: 22 }, 'SERVER']);
-    cols.forEach((c, i) => {
-      const list = M.nodes.filter(n => n.col === i);
-      deco.push(['text', { class: 'lanehead', x: i * cw + 14, y: 46 }, `${c.toUpperCase()}  ${list.length}`]);
-      list.forEach((n, r) => { pos.set(n.id, { x: i * cw + 20, y: top + r * row }); nodeEls.get(n.id).t.textContent = short(n.name, 33); });
-    });
-    W = cols.length * cw; H = top + Math.max(...cols.map((_, i) => M.nodes.filter(n => n.col === i).length)) * row + 40;
+  if (view === 'flow' || view === 'audit' || view === 'auto') {
+    const auto = view === 'auto', cw = auto ? 220 : 250, row = view === 'flow' ? 30 : auto ? 19 : 24, top = 70, cols = M.columns;
+    caption = view === 'flow' ? 'SIGNAL FLOW · WEB CONTAINER → ENDPOINT → SERVER CONTAINER → PLATFORMS' : auto ? 'FOLDER MAP · ONE COLUMN PER FOLDER · ELEMENTS MOVE AS ROUNDS ARE ACCEPTED' : 'AUDIT · EVERY ELEMENT, HOW IT CONNECTS, AND ITS STATUS · PROBLEMS AT THE TOP OF EACH LANE';
+    (M.lanes || []).forEach(l => { deco.push(['rect', { class: 'lane', x: l.from * cw, y: 0, width: (l.to - l.from + 1) * cw, height: 99999 }], ['text', { class: 'side', x: l.from * cw + 14, y: 22 }, l.label]); });
+    if (auto) {
+      // Folder map: folders are packed onto shelves; a big folder wraps into sub-columns.
+      const per = Math.max(24, Math.ceil(Math.sqrt(M.nodes.length) * 2.2)), shelf = 8;
+      let x0 = 0, y0 = 0, shelfH = 0, wMax = 1;
+      cols.forEach((c, i) => {
+        const list = M.nodes.filter(n => n.col === i), span = Math.max(1, Math.ceil(list.length / per)), rowsN = Math.min(list.length, per);
+        if (x0 && x0 + span > shelf) { y0 += shelfH + 50; x0 = 0; shelfH = 0; }
+        const hgt = 40 + rowsN * row + 14;
+        deco.push(['rect', { class: 'lane' + (AU.fresh.has(c) ? ' fresh' : c === 'No folder' ? ' nofolder' : ''), x: x0 * cw + 4, y: y0 + 30, width: span * cw - 8, height: hgt }]);
+        deco.push(['text', { class: 'lanehead', x: x0 * cw + 14, y: y0 + 50 }, `${short(c.toUpperCase(), 24 * span)}  ${list.length}`]);
+        list.forEach((n, r) => { pos.set(n.id, { x: (x0 + Math.floor(r / per)) * cw + 20, y: y0 + top + 4 + (r % per) * row }); nodeEls.get(n.id).t.textContent = short(n.name, 28); });
+        shelfH = Math.max(shelfH, hgt); x0 += span; wMax = Math.max(wMax, x0);
+      });
+      W = wMax * cw; H = y0 + shelfH + 60;
+    } else {
+      cols.forEach((c, i) => {
+        const list = M.nodes.filter(n => n.col === i);
+        deco.push(['text', { class: 'lanehead', x: i * cw + 14, y: 46 }, `${c.toUpperCase()}  ${list.length}`]);
+        list.forEach((n, r) => { pos.set(n.id, { x: i * cw + 20, y: top + r * row }); nodeEls.get(n.id).t.textContent = short(n.name, 33); });
+      });
+      W = cols.length * cw; H = top + Math.max(1, ...cols.map((_, i) => M.nodes.filter(n => n.col === i).length)) * row + 40;
+    }
   } else if (view === 'structured' || view === 'schedule' || view === '3d') {
     const cw = W / kinds.length, row = 21, top = 46;
     caption = 'STRUCTURED · ' + kinds.map(k => label(k).toUpperCase()).join(' → ');
@@ -176,7 +259,7 @@ function layout(view) {
 }
 function drawDeco(L) {
   const g = $('deco'); g.textContent = ''; g.setAttribute('class', 'deco');
-  L.deco.forEach(([t, a, txt]) => { const e = el(t, a, g); if (txt) e.textContent = txt; if (t === 'line') e.setAttribute('y2', L.H); if (t === 'rect') e.setAttribute('height', L.H); });
+  L.deco.forEach(([t, a, txt]) => { const e = el(t, a, g); if (txt) e.textContent = txt; if (t === 'line') e.setAttribute('y2', L.H); if (t === 'rect' && a.height === 99999) e.setAttribute('height', L.H); });
 }
 function edgePath(e, P) {
   const a = P.get(e.from), b = P.get(e.to);
@@ -211,7 +294,7 @@ function setView(v, first) {
     morph = G.to(o, { t: 1, duration: 0.8, ease: 'power2.inOut', onUpdate: () => place(from, L.pos, o.t) });
     setTimeout(() => morph.progress(1), 1200);
   } else place(null, L.pos, 1);
-  fit(v === 'spatial' || v === 'axonometric' || v === 'flow' ? 'all' : 'width', !first);
+  fit(v === 'spatial' || v === 'axonometric' || v === 'flow' || v === 'auto' ? 'all' : 'width', !first);
   apply(); if (first) intro();
   if (S.route) selectRoute(S.route, true);
 }
@@ -220,9 +303,12 @@ function setView(v, first) {
 const svgBox = () => $('svg').getBoundingClientRect();
 function applyT() { const { k, x, y } = S.T; $('vp').setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${k.toFixed(4)})`); $('zoomLevel').textContent = Math.round(k * 100) + '%'; mini(); }
 function tweenT(to, animate) { if (G && animate) G.to(S.T, { ...to, duration: 0.6, ease: 'power2.inOut', onUpdate: applyT, overwrite: true }); else { Object.assign(S.T, to); applyT(); } }
-function bbox() { let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity; S.pos.forEach(p => { x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); }); return { x0: x0 - 30, y0: Math.min(0, y0 - 60), x1: x1 + 260, y1: y1 + 30 }; }
+function bbox(visible) { let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity; S.pos.forEach((p, id) => { if (visible && !visible.has(id)) return; x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); }); return { x0: x0 - 30, y0: Math.min(0, y0 - 60), x1: x1 + 260, y1: y1 + 30 }; }
 function fit(mode, animate) {
-  const r = svgBox(); if (!r.width) return; const b = bbox(), bw = b.x1 - b.x0, bh = b.y1 - b.y0;
+  const r = svgBox(); if (!r.width) return;
+  // With a filter on, fit what is still shown.
+  const filtered = S.q || S.kind !== 'all' || S.risk !== 'all', vis = filtered ? new Set(M.nodes.filter(match).map(n => n.id)) : null;
+  const b = bbox(vis && vis.size ? vis : null), bw = b.x1 - b.x0, bh = b.y1 - b.y0;
   let k = mode === 'all' ? Math.min((r.width - 40) / bw, (r.height - 60) / bh) : Math.min((r.width - 20) / bw, 1.25);
   k = Math.max(0.12, Math.min(2.5, k));
   const x = mode === 'all' ? (r.width - bw * k) / 2 - b.x0 * k : Math.max(10, (r.width - bw * k) / 2) - b.x0 * k;
@@ -298,8 +384,9 @@ function mini() {
 /* ---------- filtering, tracing, selection ---------- */
 function match(n) {
   if (S.kind !== 'all' && n.kind !== S.kind && !(S.kind === 'variable' && n.kind === 'builtin')) return false;
-  if (S.risk === 'none' ? n.risk : S.risk !== 'all' && n.risk !== S.risk) return false;
-  if (S.q) return [n.name, n.ref, n.type, n.folder || ''].some(v => String(v).toLowerCase().includes(S.q));
+  if (isAudit()) { if (S.risk === 'problems' ? !PROBLEMS.includes(n.status) : S.risk !== 'all' && n.status !== S.risk && !n.issues.some(i => i.status === S.risk)) return false; }
+  else if (S.risk === 'none' ? n.risk : S.risk !== 'all' && n.risk !== S.risk) return false;
+  if (S.q) return [n.name, n.ref, n.type, n.folder || '', n.vendor || ''].some(v => String(v).toLowerCase().includes(S.q));
   return true;
 }
 function reach(id) {
@@ -334,6 +421,7 @@ function apply() {
   edgeEls.forEach(({ e, p }) => { const hot = !!f && f.has(e.from) && f.has(e.to); p.classList.toggle('hot', hot); p.classList.toggle('fade', (!!f && !hot) || !ok.has(e.from) || !ok.has(e.to)); });
   [...$('rows').children].forEach(tr => { tr.hidden = !ok.has(tr.dataset.id); tr.classList.toggle('sel', tr.dataset.id === S.sel); });
   document.querySelectorAll('.rec[data-route]').forEach(b => b.classList.toggle('on', b.dataset.route === S.route));
+  document.querySelectorAll('.stchip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.st === S.risk)));
   const top = S.hover || S.sel; if (top && nodeEls.has(top)) { const g = nodeEls.get(top).g; g.parentNode.append(g); }
   if (S.view === '3d') apply3d(f, ok);
 }
@@ -345,14 +433,31 @@ function names(list, parent) {
 function select(id, focusView) {
   S.sel = id && byId.has(id) ? id : null;
   const box = $('selected'); box.textContent = '';
-  if (!S.sel) { h('p', 'empty', isFlow() ? 'Select a route on the right or any element to follow a signal from the web container to the platform it reaches.' : 'Select an element in the diagram or a recommendation below to trace what it fires on, reads and feeds.', box); stopParticles(); apply(); return; }
+  if (!S.sel) { if (isAuto() && AU.pick != null) return roundCard(box); h('p', 'empty', isFlow() ? 'Select a route on the right or any element to follow a signal from the web container to the platform it reaches.' : isAudit() ? 'Select any element to see its status, the evidence behind it and everything it connects to. Status chips on the right filter the map.' : isAuto() ? 'Run the loop, or step one round at a time. Accepted rounds move elements into folders; select a round to see its operations.' : 'Select an element in the diagram or a recommendation below to trace what it fires on, reads and feeds.', box); stopParticles(); apply(); return; }
   const n = byId.get(S.sel), c = h('div', 'card', '', box);
-  h('h3', '', n.name, c); h('p', 'sub', `${one(n.kind)} ${n.ref} · ${n.type}${n.folder ? ' · ' + n.folder : isFlow() ? '' : ' · no folder'}`, c);
-  const ch = h('div', 'chips', '', c); if (n.paused) h('span', 'chip', 'paused', ch);
-  [...new Set(n.findings.map(f => f.severity))].forEach(s => h('span', 'chip ' + s, RISK[s], ch)); if (!n.findings.length) h('span', 'chip', 'no findings', ch);
-  n.findings.forEach(f => { const p = f.pair && byId.get(f.pair); h('p', 'find ' + f.severity, p ? `Same settings as ${p.name} (${one(p.kind)} ${p.ref}).` : f.message, c); });
+  h('h3', '', n.name, c); h('p', 'sub', `${one(n.kind)} ${n.ref} · ${n.type}${n.vendor && n.vendor !== n.type ? ' · ' + n.vendor : ''}${n.folder ? ' · ' + n.folder : isLane() ? '' : ' · no folder'}`, c);
+  const ch = h('div', 'chips', '', c); if (n.paused && !isAudit()) h('span', 'chip', 'paused', ch);
+  if (isAudit()) {
+    const sts = [...new Set(n.issues.map(i => i.status))]; if (!sts.length) sts.push('ok');
+    sts.forEach(k => { const x = h('span', 'chip', ST[k][0], ch); x.style.color = x.style.borderColor = stColor(k); });
+    if (n.live === 'fired') { const x = h('span', 'chip', 'verified live', ch); x.style.color = x.style.borderColor = 'var(--pass)'; }
+    if (n.ghost) h('span', 'chip', 'only in published version', ch);
+    n.issues.forEach(i => { const p = h('p', 'find', i.message, c); p.style.borderColor = stColor(i.status); });
+    n.evidence.forEach(e => h('p', 'find evidence', e, c));
+  } else if (isAuto()) {
+    const a = AU.origin.get(n.id);
+    h('p', 'find', `Folder: ${a.folder} → ${n.folder}`, c); if (a.name !== n.name) h('p', 'find', `Renamed from ${a.name}`, c);
+  } else {
+    [...new Set(n.findings.map(f => f.severity))].forEach(s => h('span', 'chip ' + s, RISK[s], ch)); if (!n.findings.length) h('span', 'chip', 'no findings', ch);
+    n.findings.forEach(f => { const p = f.pair && byId.get(f.pair); h('p', 'find ' + f.severity, p ? `Same settings as ${p.name} (${one(p.kind)} ${p.ref}).` : f.message, c); });
+  }
   const o = adj.get(n.id), dl = h('dl', '', '', c), row = (lbl, ids, always) => { if (!ids.length && !always) return; h('dt', '', lbl, dl); names([...new Set(ids)], h('dd', '', '', dl)); };
-  if (isFlow()) {
+  if (isAudit()) {
+    row('Fires on', o.in.filter(e => e.kind === 'fires').map(e => e.from)); row('Fires', o.out.filter(e => e.kind === 'fires').map(e => e.to)); row('Reads', o.in.filter(e => e.kind === 'reads').map(e => e.from));
+    row('Read by', o.out.filter(e => e.kind === 'reads').map(e => e.to)); row('Sends to', o.out.filter(e => ['sends', 'routes', 'matches', 'delivers'].includes(e.kind)).map(e => e.to));
+    row('Receives', o.in.filter(e => ['sends', 'routes', 'matches', 'delivers'].includes(e.kind)).map(e => e.from));
+  } else if (isAuto()) {
+  } else if (isFlow()) {
     row('Receives from', o.in.map(e => e.from), true); row('Leads to', o.out.map(e => e.to), true);
     const rs = M.routes.filter(r => routeSet(r).has(n.id));
     if (rs.length) { h('dt', '', 'Routes', dl); const dd = h('dd', '', '', dl); rs.forEach(r => { const b = h('button', 'link', `${STATUS[r.status]}: ${short(byId.get(r.webTag).name, 26)}`, dd); b.onclick = () => selectRoute(r.id); }); }
@@ -365,6 +470,7 @@ function select(id, focusView) {
   if (!S.route) stopParticles();
   apply();
   if (focusView) {
+    const sc = document.querySelector('.scroll'); if (sc && sc.scrollTop > 0) sc.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
     if (S.view === 'schedule') { const tr = $('rows').querySelector(`[data-id="${CSS.escape(n.id)}"]`); tr && tr.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' }); }
     else if (S.view === '3d') fly3d(n.id);
     else { const p = S.pos.get(n.id); if (p) centerOn(p, true); if (G) G.fromTo(nodeEls.get(n.id).dot, { attr: { r: 14 } }, { attr: { r: 5 }, duration: 0.7, ease: 'elastic.out(1,.4)' }); }
@@ -398,6 +504,7 @@ function runParticles(r) {
 function rows() {
   const tb = $('rows'); tb.textContent = ''; const deg = n => adj.get(n.id).out.length + adj.get(n.id).in.length; let list = [...M.nodes];
   const head = $('schedHead'); head.textContent = '';
+  if (isAudit() || isAuto()) return rows2(tb, head, deg, list);
   const cols = isFlow() ? ['Element', 'Kind', 'Detail', 'Side', 'Links', 'Finding'] : ['Element', 'Family', 'Type', 'Folder', 'Links', 'Finding'];
   cols.forEach((c, i) => { const th = h('th', '', c, head); th.scope = 'col'; th.onclick = () => { S.sort = S.sort && S.sort[0] === i ? [i, -S.sort[1]] : [i, 1]; rows(); }; });
   if (S.sort) { const [k, dir] = S.sort, val = { 0: n => n.name, 1: n => n.kind, 2: n => n.type, 3: n => n.folder || n.side || '~', 4: deg, 5: n => ({ critical: 0, review: 1, info: 2 }[n.risk] ?? 3) }[k]; list.sort((a, b) => { const x = val(a), y = val(b); return (x > y ? 1 : x < y ? -1 : 0) * dir; }); }
@@ -410,11 +517,37 @@ function rows() {
   });
   apply();
 }
+function rows2(tb, head, deg, list) {
+  const A = isAudit(), cols = A ? ['Element', 'Kind', 'Status', 'Lane', 'Links', 'Issue / evidence'] : ['Element', 'Kind', 'Folder before', 'Folder now', 'Name change'];
+  const val = A ? { 0: n => n.name, 1: n => n.kind, 2: n => Object.keys(ST).indexOf(n.status), 3: n => n.col, 4: deg, 5: n => (n.issues[0] || {}).message || '' }
+    : { 0: n => n.name, 1: n => n.kind, 2: n => AU.origin.get(n.id).folder, 3: n => n.folder, 4: n => (AU.origin.get(n.id).name !== n.name ? 0 : 1) };
+  cols.forEach((c, i) => { const th = h('th', '', c, head); th.scope = 'col'; th.onclick = () => { S.sort = S.sort && S.sort[0] === i ? [i, -S.sort[1]] : [i, 1]; rows(); }; });
+  if (A && !S.sort) list.sort((a, b) => Object.keys(ST).indexOf(a.status) - Object.keys(ST).indexOf(b.status) || a.col - b.col);
+  if (!A && !S.sort) list = list.filter(n => AU.origin.get(n.id).folder !== n.folder || AU.origin.get(n.id).name !== n.name).concat(list.filter(n => AU.origin.get(n.id).folder === n.folder && AU.origin.get(n.id).name === n.name));
+  if (S.sort) { const [k, dir] = S.sort; list.sort((a, b) => { const x = val[k](a), y = val[k](b); return (x > y ? 1 : x < y ? -1 : 0) * dir; }); }
+  list.forEach(n => {
+    const tr = h('tr', '', '', tb); tr.dataset.id = n.id; tr.tabIndex = 0;
+    if (A) {
+      [n.name, one(n.kind)].forEach(v => h('td', '', v, tr));
+      const st = h('td', '', ST[n.status][0] + (n.live === 'fired' ? ' · live ✓' : ''), tr); st.style.color = stColor(n.status);
+      h('td', '', M.columns[n.col], tr); h('td', 'num', deg(n), tr); h('td', '', (n.issues[0] || {}).message || n.evidence[0] || '—', tr);
+    } else {
+      const o = AU.origin.get(n.id); [n.name, one(n.kind), o.folder].forEach(v => h('td', '', v, tr));
+      const now = h('td', '', n.folder, tr); if (n.folder !== o.folder) now.style.color = 'var(--pass)'; h('td', '', o.name !== n.name ? `was ${o.name}` : '—', tr);
+    }
+    tr.onclick = () => select(n.id, false); tr.onkeydown = e => { if (e.key === 'Enter') select(n.id, false); };
+  });
+  apply();
+}
 function legend() {
   const l = $('legend'); l.textContent = '';
   const add = (style, text) => { const s = h('span', '', '', l), i = h('i', style.ln ? 'ln' : '', '', s); Object.assign(i.style, style.css); s.append(text); };
-  [...new Set(M.nodes.map(n => n.kind))].filter(k => k !== 'sink').forEach(k => add({ css: { background: cvar(k) } }, label(k)));
-  if (isFlow()) { add({ ln: 1, css: { borderTop: '2px dashed var(--gold)' } }, 'Delivered'); add({ ln: 1, css: { borderTop: '2px dotted var(--amber)' } }, 'Conditional'); add({ ln: 1, css: { borderTop: '2px dashed var(--crit)' } }, 'Dead end'); }
+  if (!isAudit()) [...new Set(M.nodes.map(n => n.kind))].filter(k => k !== 'sink').forEach(k => add({ css: { background: cvar(k) } }, label(k)));
+  if (isAudit()) {
+    Object.keys(ST).filter(k => k !== 'ok').forEach(k => add({ css: { border: `2px ${k === 'orphaned' ? 'dashed' : 'solid'} ${stColor(k)}` } }, ST[k][0]));
+    add({ css: { background: 'var(--pass)', width: '5px', height: '5px' } }, 'Verified live'); add({ ln: 1, css: { borderTop: '2px dashed var(--gold)' } }, 'Seen live'); add({ ln: 1, css: { borderTop: '2px dashed var(--crit)' } }, 'Dead end');
+  } else if (isAuto()) { add({ css: { background: 'rgba(92,225,164,.35)' } }, 'Folder added by the loop'); add({ css: { background: 'rgba(255,98,95,.25)' } }, 'No folder'); }
+  else if (isFlow()) { add({ ln: 1, css: { borderTop: '2px dashed var(--gold)' } }, 'Delivered'); add({ ln: 1, css: { borderTop: '2px dotted var(--amber)' } }, 'Conditional'); add({ ln: 1, css: { borderTop: '2px dashed var(--crit)' } }, 'Dead end'); }
   else { add({ css: { border: '2px solid var(--crit)' } }, 'Fix first'); add({ css: { border: '2px solid var(--gold)' } }, 'Confirm'); add({ ln: 1, css: { borderTop: '2px dashed var(--gold)' } }, 'Identical pair'); }
   h('span', 'hint', S.view === '3d' ? 'Drag to orbit · shift-drag to pan · scroll to zoom · click a node to select' : 'Drag to pan · ctrl/⌘ + scroll or pinch to zoom · drag a node to move it · +/− and 0 on the keyboard', l);
 }
@@ -424,8 +557,8 @@ function intro() {
   if (!G) return;
   const ns = [...nodeEls.values()].map(x => x.g), ds = [...nodeEls.values()].map(x => x.dot), es = [...edgeEls.values()].map(x => x.p).filter(p => !p.classList.contains('s-ok'));
   const tl = G.timeline();
-  tl.from(ns, { opacity: 0, duration: 0.35, stagger: { amount: 0.9 } }, 0).from(ds, { attr: { r: 0 }, duration: 0.5, stagger: { amount: 0.9 }, ease: 'back.out(3)' }, 0)
-    .from(es, { opacity: 0, duration: 0.8, stagger: { amount: 0.6 } }, 0.5).from('#deco > *', { opacity: 0, duration: 0.6, stagger: 0.03 }, 0);
+  tl.from(ns, { opacity: 0, duration: 0.35, stagger: { amount: 0.9 }, clearProps: 'opacity' }, 0).from(ds, { attr: { r: 0 }, duration: 0.5, stagger: { amount: 0.9 }, ease: 'back.out(3)' }, 0)
+    .from(es, { opacity: 0, duration: 0.8, stagger: { amount: 0.6 }, clearProps: 'opacity' }, 0.5).from('#deco > *', { opacity: 0, duration: 0.6, stagger: 0.03, clearProps: 'opacity' }, 0);
   // Throttled tabs and previews still end up showing everything.
   setTimeout(() => tl.progress(1), 2600);
 }
@@ -445,7 +578,7 @@ function enter3d() {
 function leave3d() { T3.active = false; T3.raf && cancelAnimationFrame(T3.raf); T3.raf = null; $('labels').textContent = ''; }
 function positions3d() {
   const P = new Map(), planes = [];
-  if (isFlow()) {
+  if (isLane()) {
     M.columns.forEach((_, ci) => { const list = M.nodes.filter(n => n.col === ci); list.forEach((n, r) => P.set(n.id, [(ci - (M.columns.length - 1) / 2) * 150, 0, (r - (list.length - 1) / 2) * 24])); });
   } else {
     const order = ['client', 'tag', 'trigger', 'variable'].filter(k => fam(k).length || (k === 'variable' && fam('builtin').length));
@@ -466,7 +599,7 @@ function start3d() {
   }
   if (!T3.scenes.has(S.tab)) T3.scenes.set(S.tab, scene3d());
   T3.cur = T3.scenes.get(S.tab); size3d();
-  const o = T3.orbit; Object.assign(o, { tx: 0, ty: 0, tz: 0, r: T3.cur.radius, theta: 0.75, phi: isFlow() ? 0.85 : 1.1 });
+  const o = T3.orbit; Object.assign(o, { tx: 0, ty: 0, tz: 0, r: T3.cur.radius, theta: 0.75, phi: isLane() ? 0.85 : 1.1 });
   if (G) { const tl = G.timeline(); tl.from(o, { r: o.r * 2.2, theta: o.theta + 1.2, duration: 1.6, ease: 'power3.out' }); setTimeout(() => tl.progress(1), 2200); }
   apply(); loop3d();
 }
@@ -475,7 +608,8 @@ function scene3d() {
   M.nodes.forEach(n => {
     const p = P.get(n.id); if (!p) return;
     const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: hex(n.kind), transparent: true })); m.position.set(...p); m.userData.id = n.id; scene.add(m); meshes.set(n.id, m);
-    if (n.risk === 'review' || n.risk === 'critical') { const r = new THREE.Mesh(halo, new THREE.MeshBasicMaterial({ color: n.risk === 'critical' ? 0xff625f : 0xffe94a, wireframe: true, transparent: true, opacity: 0.55 })); r.position.set(...p); scene.add(r); m.userData.halo = r; }
+    const hc = isAudit() ? (PROBLEMS.includes(n.status) ? ST[n.status][2] : null) : n.risk === 'critical' ? 0xff625f : n.risk === 'review' ? 0xffe94a : null;
+    if (hc != null) { const r = new THREE.Mesh(halo, new THREE.MeshBasicMaterial({ color: hc, wireframe: true, transparent: true, opacity: 0.55 })); r.position.set(...p); scene.add(r); m.userData.halo = r; }
   });
   planes.forEach(pl => {
     if (pl.y == null) return;
@@ -485,7 +619,7 @@ function scene3d() {
   });
   const curve = (a, b) => {
     const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
-    if (!isFlow()) return [A, B];
+    if (!isLane()) return [A, B];
     const mid = A.clone().add(B).multiplyScalar(0.5); mid.y += 20 + A.distanceTo(B) * 0.22;
     return new THREE.QuadraticBezierCurve3(A, mid, B).getPoints(12);
   };
@@ -536,19 +670,166 @@ function controls3d() {
   c.addEventListener('wheel', e => { e.preventDefault(); o.r = Math.max(60, Math.min(5000, o.r * Math.exp(e.deltaY * 0.0012))); }, { passive: false });
 }
 
+/* ---------- GTM auto: the Autoresearch loop, run in the page ---------- */
+const AU = { ci: null, st: null, data: null, model: null, origin: new Map(), fresh: new Set(), pick: null, running: false, sample: undefined, busy: false };
+const KINDS = { tag: ['tag', 'tagId'], trigger: ['trigger', 'triggerId'], variable: ['variable', 'variableId'] };
+function autoInit(ci) {
+  if (ci == null && AU.st) return autoModel();
+  const webIdx = D.containers.findIndex(c => /web/.test(c.meta.context));
+  AU.ci = ci ?? (webIdx >= 0 ? webIdx : 0); AU.data = D.auto[AU.ci];
+  AU.st = GTM_AUTO.start(AU.data); AU.pick = null; AU.fresh = new Set(); AU.origin = new Map();
+  const fname = id => (AU.data.folder.find(f => f.folderId === id) || {}).name || 'No folder';
+  Object.entries(KINDS).forEach(([k, [, idk]]) => AU.data[k].forEach(r => AU.origin.set(`a-${k}:${r[idk]}`, { folder: r.parentFolderId ? fname(r.parentFolderId) : 'No folder', name: r.name })));
+  AU.model = null; autoModel();
+}
+function autoModel() {
+  const c = AU.st.best, start = new Set(AU.data.folder.map(f => f.folderId));
+  const fname = id => (c.folder.find(f => f.folderId === id) || {}).name || 'No folder';
+  const prev = AU.model ? new Map(AU.model.nodes.map(n => [n.id, n])) : new Map();
+  const nodes = [];
+  Object.entries(KINDS).forEach(([k, [kind, idk]]) => c[k].forEach(r => {
+    const id = `a-${k}:${r[idk]}`, n = prev.get(id) || { id, kind, ref: r[idk], type: r.type, findings: [], risk: null };
+    n.name = r.name; n.folder = r.parentFolderId ? fname(r.parentFolderId) : 'No folder'; nodes.push(n);
+  }));
+  const used = new Set(nodes.map(n => n.folder));
+  const cols = [...c.folder.filter(f => start.has(f.folderId)), ...c.folder.filter(f => !start.has(f.folderId))].map(f => f.name).filter(n => used.has(n));
+  if (used.has('No folder')) cols.push('No folder');
+  AU.fresh = new Set(c.folder.filter(f => !start.has(f.folderId)).map(f => f.name));
+  const ko = { tag: 0, trigger: 1, variable: 2 };
+  nodes.forEach(n => (n.col = cols.indexOf(n.folder)));
+  nodes.sort((a, b) => a.col - b.col || ko[a.kind] - ko[b.kind] || a.name.localeCompare(b.name));
+  if (AU.model) { AU.model.nodes = nodes; AU.model.columns = cols; }
+  else AU.model = { meta: { name: 'GTM auto', publicId: AU.data.publicId }, nodes, edges: [], columns: cols };
+  return AU.model;
+}
+function autoSide(block, box) {
+  const b = block('Loop'), row = h('div', 'autorow', '', b);
+  const run = h('button', 'primary', AU.st.done ? 'Run again' : 'Run loop', row), stp = h('button', '', 'Step one round', row), rst = h('button', '', 'Reset', row);
+  run.id = 'auRun'; stp.id = 'auStep'; rst.id = 'auReset';
+  run.onclick = () => { if (AU.st.done || AU.st.rounds.length) { autoInit(AU.ci); load(); } runLoop(); };
+  stp.onclick = () => stepOnce(); rst.onclick = () => { stopLoop(); autoInit(AU.ci); load(); };
+  const ask = h('button', 'askbtn', 'Ask Claude for the next round', b); ask.id = 'auAsk'; ask.hidden = !AU.sample; ask.onclick = askClaude;
+  const msg = h('p', 'note', '', b); msg.id = 'auMsg'; msg.setAttribute('aria-live', 'polite');
+  if (D.auto.length > 1) {
+    const lab = h('label', 'pick', 'Container ', b), sel = h('select', '', '', lab);
+    D.auto.forEach((a, i) => { const o = h('option', '', a.publicId || 'Container ' + (i + 1), sel); o.value = i; }); sel.value = AU.ci;
+    sel.onchange = () => { stopLoop(); autoInit(+sel.value); load(); };
+  }
+  [stp, ask].forEach(x => (x.disabled = AU.st.done || AU.running)); run.disabled = AU.running;
+  const d = block('Score by check'), dims = h('div', 'dims', '', d);
+  GTM_AUTO.dims.forEach(k => {
+    const base = AU.st.baseline.dimensions[k], now = AU.st.report.dimensions[k], r = h('div', 'dim', '', dims);
+    h('span', '', DIM[k] || k, r); const bar = h('span', 'bar', '', r), bb = h('b', '', '', bar), mark = h('i', 'basemark', '', bar);
+    bb.style.width = now + '%'; bb.style.background = now > base + 0.01 ? 'var(--pass)' : now >= 90 ? 'var(--pass)' : now >= 60 ? 'var(--gold)' : 'var(--crit)'; mark.style.left = base + '%';
+    h('span', 'v', (now - base > 0.05 ? '+' + Math.round(now - base) : Math.round(now)), r);
+  });
+  h('p', 'note', `Total ${AU.st.baseline.score} → ${AU.st.report.score}. Light marks show the baseline.`, d).style.marginTop = '8px';
+  const rb = block('Rounds');
+  if (!AU.st.rounds.length) h('p', 'empty', 'No rounds yet.', rb);
+  AU.st.rounds.forEach((r, i) => {
+    const btn = h('button', 'rec ' + (r.accepted ? 'delivered' : 'critical') + (AU.pick === i ? ' on' : ''), `Round ${r.round} · ${r.accepted ? 'accepted' : 'rejected'}${r.score != null ? ' · ' + r.score : ''}${r.source === 'claude' ? ' · Claude' : ''}`, rb);
+    h('small', '', r.why, btn); h('small', '', `${r.operations.length} operation${r.operations.length === 1 ? '' : 's'}. ${r.reason}`, btn);
+    btn.onclick = () => { AU.pick = i; S.sel = null; select(null); side(); };
+  });
+  if (AU.st.done) h('p', 'note', AU.st.failures >= AU.st.maxFailures ? 'Stopped: too many rejected proposals.' : AU.st.plateau >= AU.st.plateauRounds ? 'Stopped: no improvement in two rounds.' : AU.st.rounds.length >= AU.st.maxRounds ? 'Stopped: round limit reached.' : 'Stopped: the proposer has no more ideas.', rb);
+  const res = block('Candidate'), ops = AU.st.rounds.filter(r => r.accepted).flatMap(r => r.operations);
+  h('p', 'note', ops.length ? `${ops.length} operations from ${AU.st.rounds.filter(r => r.accepted).length} accepted rounds, applied to a copy. Nothing was published or written to GTM.` : 'No accepted changes yet.', res);
+  if (ops.length) { const cp = h('button', '', 'Copy operations (JSON)', res); cp.onclick = () => copyOps(ops, cp); }
+  const n = block('How the loop works');
+  h('p', 'note', 'Audit the container → a proposer suggests one round of metadata-only operations (add folder, assign folder, rename) → apply them to a copy → audit again. A round is kept only if the score rises, no critical finding is added and no check goes down. The loop stops after two rounds without improvement, two rejected proposals, or eight rounds. Scores here are computed in the page from names, links and settings hashes, and match the plugin\'s audit exactly. Publishing is never part of the loop.', n);
+  h('p', 'foot', `gtm-audit-pro · GTM Autoresearch · ${(D.generatedAt || '').slice(0, 10)}`, box);
+}
+function roundCard(box) {
+  const r = AU.st.rounds[AU.pick], c = h('div', 'card', '', box), cur = AU.st.best;
+  h('h3', '', `Round ${r.round}: ${r.accepted ? 'accepted' : 'rejected'}`, c); h('p', 'sub', `${r.source === 'claude' ? 'Proposed by Claude' : 'Heuristic proposer'} · ${r.operations.length} operations`, c);
+  h('p', 'find', r.why, c); const p = h('p', 'find', r.reason, c); p.style.borderColor = r.accepted ? 'var(--pass)' : 'var(--crit)';
+  const name = (k, id) => ((cur[k] || []).find(x => x[KINDS[k][1]] === id) || {}).name || id;
+  const fname = id => ((cur.folder.find(f => f.folderId === id) || r.operations.find(o => o.op === 'addFolder' && o.id === id) || {}).name) || id;
+  const ul = h('ul', 'skipped oplist', '', c);
+  r.operations.slice(0, 80).forEach(o => h('li', '', o.op === 'addFolder' ? `Add folder "${o.name}"` : o.op === 'assignFolder' ? `${o.kind} ${name(o.kind, o.id)} → ${fname(o.folderId)}` : `Rename ${o.kind} ${o.id} → ${o.name}`, ul));
+  if (r.operations.length > 80) h('li', '', `+${r.operations.length - 80} more`, ul);
+  const back = h('button', 'link', 'Close', c); back.onclick = () => { AU.pick = null; select(null); side(); };
+}
+function relayout() {
+  const from = new Map(S.pos); autoModel(); byId = new Map(M.nodes.map(n => [n.id, n]));
+  adj = new Map(M.nodes.map(n => [n.id, { out: [], in: [] }]));
+  M.nodes.forEach(n => nodeEls.get(n.id).g.classList.toggle('moved', AU.origin.get(n.id).folder !== n.folder));
+  if (S.view !== 'auto') { rows(); return; }
+  const L = layout('auto'); drawDeco(L); $('caption').textContent = L.caption; S.pos = L.pos; S.bounds = { W: L.W, H: L.H };
+  if (G) { morph && morph.progress(1); const o = { t: 0 }; morph = G.to(o, { t: 1, duration: 0.9, ease: 'power3.inOut', onUpdate: () => place(from, L.pos, o.t) }); setTimeout(() => morph.progress(1), 1300); G.from('#deco > *', { opacity: 0, duration: 0.5, stagger: 0.01, clearProps: 'opacity' }); }
+  else place(null, L.pos, 1);
+  fit('all', true); rows();
+}
+function afterRound(entry) {
+  if (entry.accepted) relayout();
+  header(); side(); legend();
+  const m = $('auMsg'); if (m) m.textContent = `Round ${entry.round} ${entry.accepted ? 'accepted' : 'rejected'}. ${entry.reason}`;
+  $('live').textContent = `Round ${entry.round} ${entry.accepted ? 'accepted' : 'rejected'}`;
+}
+function stepOnce() {
+  if (AU.st.done || AU.busy) return null;
+  const p = GTM_AUTO.propose(AU.st, { vendor: AU.data.vendor });
+  if (!p) { AU.st.done = true; side(); return null; }
+  const e = GTM_AUTO.step(AU.st, p); afterRound(e); return e;
+}
+let loopTimer = null;
+function stopLoop() { clearTimeout(loopTimer); loopTimer = null; AU.running = false; }
+function runLoop() {
+  if (!isAuto()) return; AU.running = true; side();
+  const tick = () => { if (!AU.running || !isAuto()) return stopLoop(); const e = stepOnce(); if (!e || AU.st.done) { stopLoop(); side(); return; } loopTimer = setTimeout(tick, reduce ? 200 : 1500); };
+  loopTimer = setTimeout(tick, 250);
+}
+function copyOps(ops, btn) {
+  const text = JSON.stringify({ operations: ops }, null, 2);
+  const done = ok => { btn.textContent = ok ? 'Copied' : 'Copy failed: select and copy from the Changes view'; setTimeout(() => (btn.textContent = 'Copy operations (JSON)'), 2200); };
+  try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch (e) { done(false); }
+}
+// Optional: Claude proposes the next round through the artifact runtime, when the page is opened in Claude.
+(async () => {
+  try { AU.sample = window.claude && window.claude.use ? await window.claude.use('sample') : null; } catch (e) { AU.sample = null; }
+  const b = $('auAsk'); if (b) b.hidden = !AU.sample;
+})();
+async function askClaude() {
+  if (!AU.sample || AU.busy || AU.st.done) return;
+  const st = AU.st, c = st.best, m = $('auMsg'), btn = $('auAsk'); AU.busy = true; btn.disabled = true; m.textContent = 'Asking Claude for one round of operations…';
+  const fname = id => (c.folder.find(f => f.folderId === id) || {}).name;
+  const unfiled = Object.entries(KINDS).flatMap(([k, [, idk]]) => c[k].filter(r => !r.parentFolderId).map(r => `${k} ${r[idk]} "${r.name}"${k === 'tag' && AU.data.vendor[r[idk]] ? ' [' + AU.data.vendor[r[idk]] + ']' : ''}`)).slice(0, 140);
+  const counts = {}; st.report.findings.forEach(f => (counts[f.dimension] = (counts[f.dimension] || 0) + 1));
+  const maxId = Math.max(0, ...c.folder.map(f => +f.folderId || 0));
+  const prompt = [
+    'You propose ONE round of metadata-only cleanup for a Google Tag Manager container. Reply with JSON only: {"why":"one sentence","operations":[...]}.',
+    'Allowed operations: {"op":"addFolder","id":"<numeric string greater than ' + maxId + '>","name":"..."}; {"op":"assignFolder","kind":"tag|trigger|variable","id":"<element id>","folderId":"<folder id>"}; {"op":"rename","kind":"tag|trigger|variable","id":"<element id>","name":"..."}.',
+    'Rules: at most 100 operations; names must not contain { or }; variables that other elements reference cannot be renamed; the round is kept only if the audit score rises and no check goes down.',
+    'Check scores now: ' + GTM_AUTO.dims.map(k => `${k} ${Math.round(st.report.dimensions[k])}`).join(', ') + '. Finding counts: ' + JSON.stringify(counts) + '.',
+    'Folders: ' + (c.folder.map(f => `${f.folderId} "${f.name}"`).join('; ') || 'none') + '.',
+    'Elements without a folder (' + unfiled.length + ' shown):\n' + unfiled.join('\n'),
+    'Earlier rounds: ' + (st.rounds.map(r => `${r.round} ${r.accepted ? 'accepted' : 'rejected'} (${r.why})`).join('; ') || 'none') + '.',
+  ].join('\n\n');
+  try {
+    const out = await AU.sample.json(prompt, { modelTier: 'default' });
+    const ops = Array.isArray(out && out.operations) ? out.operations : [];
+    const e = GTM_AUTO.step(st, { idea: 'claude-' + (st.rounds.length + 1), why: String((out && out.why) || 'Claude proposal').slice(0, 300), source: 'claude', operations: ops });
+    afterRound(e);
+  } catch (err) {
+    m.textContent = err && err.code === 'not_granted' ? 'Claude is not available on this page.' : err && err.code === 'rate_limited' ? 'Claude is busy; try again in a minute.' : 'Claude did not return a usable proposal.';
+    if (err && err.code === 'not_granted') { AU.sample = null; btn.hidden = true; }
+  } finally { AU.busy = false; if ($('auAsk')) $('auAsk').disabled = AU.st.done; }
+}
+
 /* ---------- wiring ---------- */
 $('q').oninput = e => { S.q = e.target.value.toLowerCase().trim(); apply(); };
 $('kind').onchange = e => { S.kind = e.target.value; apply(); };
-$('risk').onchange = e => { S.risk = e.target.value; apply(); };
+$('risk').onchange = e => (isAudit() ? setRisk(e.target.value) : (S.risk = e.target.value, apply()));
 $('trace').onchange = e => { S.trace = e.target.value; apply(); };
 $('zoomIn').onclick = () => (S.view === '3d' ? (T3.orbit.r *= 0.8) : zoomBy(1.25));
 $('zoomOut').onclick = () => (S.view === '3d' ? (T3.orbit.r *= 1.25) : zoomBy(0.8));
 $('fit').onclick = () => (S.view === '3d' ? Object.assign(T3.orbit, { tx: 0, ty: 0, tz: 0, r: T3.cur.radius }) : fit('all', true));
-$('reset').onclick = () => { S.q = ''; S.kind = 'all'; S.risk = 'all'; S.trace = 'near'; S.route = null; S.pinned.clear(); $('q').value = ''; $('kind').value = 'all'; $('risk').value = 'all'; $('trace').value = 'near'; select(null); setView(isFlow() ? 'flow' : 'structured', true); };
+$('reset').onclick = () => { S.q = ''; S.kind = 'all'; S.risk = 'all'; S.trace = 'near'; S.route = null; S.pinned.clear(); $('q').value = ''; $('kind').value = 'all'; $('risk').value = 'all'; $('trace').value = 'near'; select(null); setView(homeView(), true); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { S.route = null; select(null); } else if (e.key === '/' && !e.target.matches('input,select,textarea')) { e.preventDefault(); $('q').focus(); } });
 let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (S.view !== 'schedule' && S.view !== '3d') mini(); }, 150); });
 tabs();
-const hv = location.hash.slice(1), want = ['structured', 'spatial', 'axonometric', 'schedule', '3d', 'flow'].includes(hv) ? hv : 'structured';
-if (want === 'flow' && D.flow) { S.tab = D.containers.length; S.view = 'flow'; } else S.view = want;
+const hv = location.hash.slice(1), byType = t => TABS.findIndex(x => x.type === t);
+if (['flow', 'audit', 'auto'].includes(hv) && byType(hv) >= 0) { S.tab = byType(hv); S.view = hv; }
+else S.view = ['structured', 'spatial', 'axonometric', 'schedule', '3d'].includes(hv) ? hv : null;
 load(); select(null);
 })();

@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { signalFlow } from './flow.mjs';
+import { signalFlow, platformOf } from './flow.mjs';
+import { auditView } from './audit-view.mjs';
+import { hash } from './audit.mjs';
 // Interactive "container atlas" report in the GTM Command Center visual language.
 // The page embeds only names, types, IDs and relationships. Parameter values
 // (constants, tokens, custom HTML) are never copied into the output.
@@ -78,12 +80,38 @@ export function graph(report, snapshot) {
 const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 const json = v => JSON.stringify(v).replace(/</g, '\\u003c').replace(/[\u2028\u2029]/g, ch => ch === '\u2028' ? '\\u2028' : '\\u2029');
 
-export function atlas(items, { generatedAt = new Date().toISOString(), title, fragment = false } = {}) {
+// Stripped container for the in-page Autoresearch loop: identities, links,
+// {{references}} and a settings hash. Scores computed on it match audit.mjs.
+const SHAPE_DROP = ['name', 'notes', 'path', 'fingerprint', 'accountId', 'containerId', 'workspaceId', 'parentFolderId', 'tagManagerUrl'];
+export function autoInput(snapshot) {
+  const c = cvOf(snapshot);
+  const strip = (row, idKey) => {
+    const shape = { ...row }; for (const k of [idKey, ...SHAPE_DROP]) delete shape[k];
+    const out = { [idKey]: row[idKey], name: row.name, type: row.type, refs: [...refs(row)].map(n => `{{${n}}}`).join(' '), sig: hash(shape).slice(0, 20) };
+    if (row.parentFolderId) out.parentFolderId = row.parentFolderId;
+    if (row.paused) out.paused = true;
+    for (const k of ['firingTriggerId', 'blockingTriggerId']) if (row[k]) out[k] = [...row[k]];
+    for (const k of ['setupTag', 'teardownTag']) if (row[k]) out[k] = row[k].map(x => ({ tagName: x.tagName }));
+    return out;
+  };
+  return {
+    publicId: c.container?.publicId ?? '', tag: (c.tag ?? []).map(r => strip(r, 'tagId')), trigger: (c.trigger ?? []).map(r => strip(r, 'triggerId')),
+    variable: (c.variable ?? []).map(r => strip(r, 'variableId')), folder: (c.folder ?? []).map(f => ({ folderId: f.folderId, name: f.name })),
+    builtInVariable: (c.builtInVariable ?? []).map(v => ({ name: v.name })),
+    vendor: Object.fromEntries((c.tag ?? []).map(t => [t.tagId, platformOf(c, t)])),
+  };
+}
+
+export function atlas(items, { generatedAt = new Date().toISOString(), title, fragment = false, live = null, auto = true } = {}) {
   const containers = items.map(i => graph(i.report, i.snapshot));
   // A web container and a server container together get a signal-flow tab.
   const ctx = i => (cvOf(i.snapshot).container?.usageContext ?? []).map(String).map(x => x.toUpperCase());
   const web = items.find(i => ctx(i).includes('WEB')), server = items.find(i => ctx(i).includes('SERVER'));
   const flow = web && server ? signalFlow(web.snapshot, server.snapshot) : null;
+  const audit = auditView({ items, graphs: containers, flow, live: live ?? {} });
+  const autoData = auto ? items.map(i => autoInput(i.snapshot)) : null;
+  // Platform names from the live scan are more specific than the template names.
+  if (autoData && audit && web) { const wi = items.indexOf(web); for (const n of audit.nodes) if (n.kind === 'wtag' && !n.ghost && n.vendor) autoData[wi].vendor[n.ref] = n.vendor; }
   const name = title ?? (containers.map(c => c.meta.publicId).filter(Boolean).join(' + ') || 'GTM') + ' Atlas';
   const head = `<title>${esc(name)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,7 +144,7 @@ export function atlas(items, { generatedAt = new Date().toISOString(), title, fr
  </aside>
 </div></div>
 <div class="sr" id="live" aria-live="polite"></div>
-<script type="application/json" id="atlas-data">${json({ containers, flow, generatedAt })}</script>
+<script type="application/json" id="atlas-data">${json({ containers, flow, audit, auto: autoData, generatedAt })}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>${JS}</script>`;
   return fragment ? `${head}\n${body}\n` : `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">${head}</head><body>${body}</body></html>\n`;
@@ -126,4 +154,4 @@ const cvOf = s => s?.containerVersion ?? s ?? {};
 const asset = name => readFileSync(new URL(`./atlas/${name}`, import.meta.url), 'utf8');
 const CSS = asset('style.css');
 // Keep the inline script from closing its own <script> element.
-const JS = asset('client.js').replace(/<\/(script)/gi, '<\\/$1');
+const JS = (asset('auto.js') + '\n' + asset('client.js')).replace(/<\/(script)/gi, '<\\/$1');
