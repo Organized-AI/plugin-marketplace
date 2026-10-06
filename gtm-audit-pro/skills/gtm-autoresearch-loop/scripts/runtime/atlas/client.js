@@ -51,15 +51,16 @@ function tabs() {
     const name = { flow: 'Web → Server flow', audit: 'Audit', auto: 'GTM auto' }[x.type] || x.model.meta.publicId || x.model.meta.name;
     const b = h('button', x.type === 'container' ? '' : 'flowtab tab-' + x.type, name, t);
     b.setAttribute('role', 'tab'); b.title = x.type === 'auto' ? 'GTM Autoresearch: metadata-only improvement loop' : x.model.meta.name;
-    b.onclick = () => { stopLoop(); S.tab = x.i; S.sel = S.route = null; S.view = null; S.risk = 'all'; S.pinned.clear(); load(); };
+    b.onclick = () => { stopLoop(); S.tab = x.i; S.sel = S.route = S.hover = null; S.view = null; S.risk = 'all'; S.pinned.clear(); load(); };
   });
 }
 function load() {
   if (isAuto()) { autoInit(); M = AU.model; } else M = tab().model;
   if (isAudit()) M.nodes.forEach(n => { n.risk = ['broken', 'not-firing'].includes(n.status) ? 'critical' : PROBLEMS.includes(n.status) ? 'review' : null; n.findings = n.findings || []; });
   byId = new Map(M.nodes.map(n => [n.id, n]));
+  if (S.hover && !byId.has(S.hover)) S.hover = null;
   adj = new Map(M.nodes.map(n => [n.id, { out: [], in: [] }]));
-  M.edges.forEach(e => { adj.get(e.from).out.push(e); adj.get(e.to).in.push(e); });
+  M.edges.forEach(e => { const a = adj.get(e.from), b = adj.get(e.to); if (!a || !b) return; a.out.push(e); b.in.push(e); });
   [...$('tabs').children].forEach((b, i) => b.setAttribute('aria-selected', String(i === S.tab)));
   header();
   const rk = $('risk'); rk.textContent = '';
@@ -391,17 +392,18 @@ function match(n) {
 }
 function reach(id) {
   const set = new Set([id]);
+  if (!adj.has(id)) return set;
   if (S.trace === 'near') { adj.get(id).out.forEach(e => set.add(e.to)); adj.get(id).in.forEach(e => set.add(e.from)); return set; }
   for (const dir of ['out', 'in']) {
     const stack = [id], seen = new Set([id]);
-    while (stack.length) { const cur = stack.pop(); for (const e of adj.get(cur)[dir]) { if (e.kind === 'duplicate') continue; const nx = dir === 'out' ? e.to : e.from; if (!seen.has(nx)) { seen.add(nx); set.add(nx); stack.push(nx); } } }
+    while (stack.length) { const cur = stack.pop(); for (const e of (adj.get(cur) || { out: [], in: [] })[dir]) { if (e.kind === 'duplicate') continue; const nx = dir === 'out' ? e.to : e.from; if (!seen.has(nx)) { seen.add(nx); set.add(nx); stack.push(nx); } } }
   }
   return set;
 }
 function routeSet(r) {
   const ids = new Set([...r.webTriggers, r.webTag, r.endpoint, r.client, r.eventNode, ...r.tags.map(t => t.id), ...r.tags.map(t => 'ds:' + t.destination)].filter(Boolean));
   const fired = new Set(r.tags.map(t => t.id));
-  r.matched.forEach(m => { if (adj.get(m.id).out.some(e => fired.has(e.to)) || !r.tags.length) ids.add(m.id); });
+  r.matched.forEach(m => { if ((adj.get(m.id) || { out: [] }).out.some(e => fired.has(e.to)) || !r.tags.length) ids.add(m.id); });
   if (r.status === 'dead-end') ids.add('sink');
   return ids;
 }
@@ -575,7 +577,7 @@ function enter3d() {
   s.onerror = () => { box.querySelector('.notice').textContent = 'The 3D view needs three.js from cdnjs.cloudflare.com, which did not load here. The 2D views have the same data.'; };
   document.head.append(s);
 }
-function leave3d() { T3.active = false; T3.raf && cancelAnimationFrame(T3.raf); T3.raf = null; $('labels').textContent = ''; }
+function leave3d() { T3.active = false; S.hover = null; T3.raf && cancelAnimationFrame(T3.raf); T3.raf = null; $('labels').textContent = ''; }
 function positions3d() {
   const P = new Map(), planes = [];
   if (isLane()) {
@@ -666,6 +668,7 @@ function controls3d() {
     else { o.theta += dx * 0.006; o.phi = Math.max(0.12, Math.min(Math.PI - 0.12, o.phi - dy * 0.006)); }
   });
   c.addEventListener('pointerup', e => { if (drag && !drag.moved) { const id = pick(e); if (id) select(id, false); else { S.route = null; select(null); } } drag = null; });
+  c.addEventListener('pointerleave', () => { if (!drag && S.hover) { S.hover = null; c.style.cursor = 'grab'; apply(); } });
   c.addEventListener('contextmenu', e => e.preventDefault());
   c.addEventListener('wheel', e => { e.preventDefault(); o.r = Math.max(60, Math.min(5000, o.r * Math.exp(e.deltaY * 0.0012))); }, { passive: false });
 }
@@ -858,4 +861,23 @@ const hv = location.hash.slice(1), byType = t => TABS.findIndex(x => x.type === 
 if (['flow', 'audit', 'auto'].includes(hv) && byType(hv) >= 0) { S.tab = byType(hv); S.view = hv; }
 else S.view = ['structured', 'spatial', 'axonometric', 'schedule', '3d'].includes(hv) ? hv : null;
 load(); select(null);
+})();
+
+/* ---------- report export (Markdown file, PDF via the browser's print dialog) ---------- */
+(function reportExports() {
+  const R = JSON.parse(document.getElementById('atlas-data').textContent).report, $ = id => document.getElementById(id); if (!R) return;
+  const say = t => { $('live').textContent = t; const m = $('repMsg'); if (m) m.textContent = t; };
+  async function save(name, data, type) {
+    try {
+      const dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null;
+      if (dl) { await dl.save({ filename: name, data }); return say('Saved ' + name); }
+    } catch (e) { if (e && e.code === 'declined') return say('Save cancelled.'); }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); say('Saved ' + name);
+  }
+  $('repMd').onclick = () => save(R.name + '.md', R.md, 'text/markdown');
+  $('repPdf').onclick = () => {
+    const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; f.setAttribute('aria-hidden', 'true');
+    f.onload = () => { try { f.contentWindow.focus(); f.contentWindow.print(); say('Choose "Save as PDF" in the print dialog.'); } catch (e) { save(R.name + '.html', R.html, 'text/html'); say('Printing is blocked here; saved the print-ready HTML instead. Open it and Save as PDF.'); } setTimeout(() => f.remove(), 60000); };
+    f.srcdoc = R.html; document.body.append(f);
+  };
 })();

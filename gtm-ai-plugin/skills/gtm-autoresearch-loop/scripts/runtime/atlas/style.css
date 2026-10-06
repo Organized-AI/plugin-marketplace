@@ -91,3 +91,6 @@ button:disabled{opacity:.45;cursor:not-allowed}.pick{display:flex;gap:6px;align-
 @media(max-width:900px){.workspace{grid-template-columns:1fr}.diagram{height:72vh}.side{border-left:0;border-top:1px solid var(--line);height:auto;min-height:0}.top{align-items:flex-start}.score strong{font-size:26px}
  .mini{width:130px;height:86px}.legend{max-width:calc(100% - 160px)}.caption{max-width:calc(100% - 24px);top:44px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.exports{display:flex;gap:6px;align-items:center;margin-left:auto}
+.exports button{font-size:11px;padding:6px 10px;cursor:pointer}.exports button:hover{border-color:var(--gold)}
+@media (max-width:720px){.exports{margin:8px 0 0}}

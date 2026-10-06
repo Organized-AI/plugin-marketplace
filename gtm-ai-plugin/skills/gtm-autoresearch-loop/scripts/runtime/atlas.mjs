@@ -33,7 +33,7 @@ export function autoInput(snapshot) {
   };
 }
 
-export function atlas(items, { generatedAt = new Date().toISOString(), title, fragment = false, live = null, auto = true } = {}) {
+export function atlas(items, { generatedAt = new Date().toISOString(), title, fragment = false, live = null, auto = true, report = null } = {}) {
   const containers = items.map(i => graph(i.report, i.snapshot));
   // A web container and a server container together get a signal-flow tab.
   const ctx = i => (cvOf(i.snapshot).container?.usageContext ?? []).map(String).map(x => x.toUpperCase());
@@ -50,7 +50,7 @@ export function atlas(items, { generatedAt = new Date().toISOString(), title, fr
 <style>${CSS}</style>`;
   const body = `<div id="app">
 <header class="top"><div class="who"><div class="tabs" id="tabs" role="tablist" aria-label="Container"></div><h1 id="title"></h1><p id="meta"></p></div>
-<div class="score"><strong id="score">—</strong><span id="scoreLabel">configuration score</span></div></header>
+<div class="score"><strong id="score">—</strong><span id="scoreLabel">configuration score</span></div>${report ? '<div class="exports" role="group" aria-label="Report"><button id="repMd">Report (.md)</button><button id="repPdf">Report (PDF)</button><span id="repMsg" class="sr" aria-live="polite"></span></div>' : ''}</header>
 <div class="toolbar">
  <div class="mode" id="mode" role="group" aria-label="View"></div>
  <label for="q">Find <input id="q" type="search" placeholder="Name, ID, type  ( / )" autocomplete="off"></label>
@@ -75,7 +75,7 @@ export function atlas(items, { generatedAt = new Date().toISOString(), title, fr
  </aside>
 </div></div>
 <div class="sr" id="live" aria-live="polite"></div>
-<script type="application/json" id="atlas-data">${json({ containers, flow, audit, auto: autoData, generatedAt })}</script>
+<script type="application/json" id="atlas-data">${json({ containers, flow, audit, auto: autoData, generatedAt, report })}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>${JS}</script>`;
   return fragment ? `${head}\n${body}\n` : `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">${head}</head><body>${body}</body></html>\n`;

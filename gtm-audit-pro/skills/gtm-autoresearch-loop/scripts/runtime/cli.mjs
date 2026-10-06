@@ -35,6 +35,37 @@ if(action==='atlas'){
   }catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
   process.exit();
 }
+if(action==='report'){
+  // One-shot report: node cli.mjs report OUT_DIR web.json [server.json] [--website example.com] [--jev] [--title T] [--no-pdf] [--name FILE_STEM]
+  // Writes OUT_DIR/<name>.md, <name>.pdf (needs local Chrome/Edge), <name>.print.html, <name>-atlas.html and, with --jev, <name>-jev.json.
+  // Jev runs only with --jev and JEV_GATEWAY_TOKEN (direct) or JEV_KEY (hosted) in the environment; tokens are never written out.
+  try{
+    const args=process.argv.slice(3),files=[],opt={};
+    for(let i=0;i<args.length;i++){if(args[i].startsWith('--')){const k=args[i].slice(2);opt[k]=['jev','no-pdf'].includes(k)?true:args[++i];}else files.push(args[i]);}
+    const [outDir,...exports]=files;
+    if(!outDir||!exports.length)throw Error('Usage: node cli.mjs report OUT_DIR web.json [server.json] [--website example.com] [--jev] [--title TITLE] [--no-pdf] [--name STEM]');
+    const { audit } = await import('./audit.mjs'), { atlas } = await import('./atlas.mjs'), { atomic } = await import('./runner.mjs');
+    const R=await import('./report.mjs'), J=await import('./jev.mjs');
+    const items=await Promise.all(exports.map(async f=>{const snapshot=await readJSON(resolve(f));return{snapshot,report:audit(snapshot)};}));
+    const website=String(opt.website||'').replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+    let jev=null;
+    if(opt.jev){
+      const findings=items.flatMap(i=>J.toJevFindings(i.report,i.snapshot));
+      process.stderr.write(`Jev (${J.jevMode()}): judging ${findings.length} findings…\n`);
+      jev=await J.runJev(findings,website);
+    }
+    const model=R.build(items,{website,jev,title:opt.title});
+    const stem=opt.name||('gtm-audit-'+model.containers.map(c=>c.publicId).join('_')),dir=resolve(outDir);
+    await fs.mkdir(dir,{recursive:true});
+    const mdText=R.toMarkdown(model),html=R.toPrintHtml(model),out={markdown:join(dir,stem+'.md'),printHtml:join(dir,stem+'.print.html'),atlas:join(dir,stem+'-atlas.html')};
+    await atomic(out.markdown,mdText);await atomic(out.printHtml,html);
+    await atomic(out.atlas,atlas(items,{title:opt.title,report:{name:stem,md:mdText,html}}));
+    if(jev){out.jev=join(dir,stem+'-jev.json');await atomic(out.jev,{mode:jev.mode,reason:jev.reason||null,rubric:jev.rubric,results:jev.results});}
+    if(!opt['no-pdf']){const p=await R.pdf(html,join(dir,stem+'.pdf'));if(p.ok)out.pdf=p.path;else out.pdfSkipped=p.reason;}
+    process.stdout.write(JSON.stringify({...out,jev:jev?{mode:jev.mode,judged:jev.results.length,stage:jev.rubric&&jev.rubric.stage||null,reason:jev.reason||null}:'not requested',published:false})+'\n');
+  }catch(error){process.stderr.write(error.message+'\n');process.exitCode=1;}
+  process.exit();
+}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 try{
   if(!['audit','loop','watch','start','status','stop','unlock'].includes(action)||!configPath)throw Error('Usage: node cli.mjs audit|loop|watch|start|status|stop|unlock CONFIG.json');

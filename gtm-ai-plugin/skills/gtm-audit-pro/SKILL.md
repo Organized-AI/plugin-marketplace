@@ -49,6 +49,24 @@ composition of the headline findings. To make the video, run
 on a machine with Chrome and ffmpeg. Both outputs contain container and element
 names, so treat them as client material.
 
+## One-shot report (Markdown + PDF, optional Jev)
+
+`node CLI report OUT_DIR web.json [server.json] --website example.com [--jev] [--title T] [--name STEM]`
+writes `STEM.md`, `STEM.pdf` (headless Chrome/Chromium/Edge; set `CHROME_PATH` if it is
+not in /Applications; `--no-pdf` skips it), `STEM.print.html`, and `STEM-atlas.html` with
+"Report (.md)" and "Report (PDF)" buttons in the header.
+
+With `--jev`, every Fix first / Confirm finding goes to jev-gateway (Cloudflare Worker
+behind AI Gateway `jev-gateway`) as one `evaluate` claim against
+`RUB-S1-JEV-ATLAS-FINDING`, with the element's GTM notes, folder and paused state as
+evidence: VERIFIED = fix, REFUTED = intended, INCONCLUSIVE/ERROR = ask the owner. Set
+`JEV_GATEWAY_TOKEN` (direct; `JEV_GATEWAY_URL` overrides the endpoint) or `JEV_KEY`
+(hosted key via the Container Atlas `/api/judge`). Without either, or if the gateway
+fails, Jev is reported as not run and every finding stays with the user. Verdicts are an
+appendix column only: they never change scores, priorities or statuses, and until the
+rubric reaches the gating stage they are labelled suggestions. Tokens are read from the
+environment and never written to any output; `STEM-jev.json` keeps the verdicts.
+
 This release implements six static quality dimensions plus the optional live
 evidence above. Report skipped checks; do not claim 72 checkpoints, GA4/ads
 reconciliation, compliance verification, live firing validation beyond the
