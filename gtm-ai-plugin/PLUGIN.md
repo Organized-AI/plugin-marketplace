@@ -120,7 +120,7 @@ This plugin requires:
 
 | Server | URL | Purpose |
 |--------|-----|---------|
-| `google-tag-manager-mcp-server` | `https://gtm-mcp.stape.ai/mcp` | GTM API operations |
+| `google-tag-manager-mcp-server` | `https://gtm-mcp.stape.io/mcp` | GTM API operations |
 | `stape-mcp-server` | `https://mcp.stape.ai/sse` | sGTM validation (optional) |
 
 ---

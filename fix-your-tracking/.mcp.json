@@ -2,7 +2,7 @@
   "mcpServers": {
     "google-tag-manager-mcp-server": {
       "type": "url",
-      "url": "https://gtm-mcp.stape.ai/mcp",
+      "url": "https://gtm-mcp.stape.io/mcp",
       "description": "Google Tag Manager MCP server for GTM API operations. Provides CRUD operations for templates, variables, tags, triggers, versions, and workspace management.",
       "auth": {
         "type": "oauth",

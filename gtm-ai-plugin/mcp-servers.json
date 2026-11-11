@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "google-tag-manager-mcp-server": {
-      "url": "https://gtm-mcp.stape.ai/mcp",
-      "transport": "sse",
+      "url": "https://gtm-mcp.stape.io/mcp",
+      "transport": "http",
       "description": "GTM API operations - CRUD for templates, variables, tags, triggers, versions",
       "required": true,
       "tools": [

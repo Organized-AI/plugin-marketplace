@@ -17,7 +17,7 @@
 
 | Server | URL | Purpose |
 |--------|-----|---------|
-| Stape GTM | `https://gtm-mcp.stape.ai/mcp` | GTM container CRUD |
+| Stape GTM | `https://gtm-mcp.stape.io/mcp` | GTM container CRUD |
 | Stape | `https://mcp.stape.io/mcp` | Stape container management |
 | TrueClicks Google Ads | `https://mcp.gaql.app/sse/google-ads/TOKEN` | GAQL queries, conversion data |
 | Meta Ads (official) | `https://mcp.facebook.com/ads` | Meta Ads auditing, Pixel/CAPI signals and datasets. Facebook Login for Business OAuth on first use |

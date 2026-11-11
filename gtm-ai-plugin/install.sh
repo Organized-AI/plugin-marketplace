@@ -147,7 +147,7 @@ if [ -f "$MCP_CONFIG" ]; then
         echo -e "  ${YELLOW}→${NC} google-tag-manager-mcp-server already configured"
     else
         echo -e "  ${YELLOW}!${NC} Add google-tag-manager-mcp-server manually:"
-        echo -e "      URL: https://gtm-mcp.stape.ai/mcp"
+        echo -e "      URL: https://gtm-mcp.stape.io/mcp"
     fi
 
     if grep -q "stape-mcp-server" "$MCP_CONFIG"; then
@@ -162,7 +162,7 @@ else
 {
   "mcpServers": {
     "google-tag-manager-mcp-server": {
-      "url": "https://gtm-mcp.stape.ai/mcp"
+      "url": "https://gtm-mcp.stape.io/mcp"
     },
     "stape-mcp-server": {
       "url": "https://mcp.stape.ai/sse"

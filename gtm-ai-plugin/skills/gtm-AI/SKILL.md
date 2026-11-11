@@ -58,7 +58,7 @@ Add to your `.mcp.json`:
   "mcpServers": {
     "google-tag-manager-mcp-server": {
       "type": "url",
-      "url": "https://gtm-mcp.stape.ai/mcp"
+      "url": "https://gtm-mcp.stape.io/mcp"
     },
     "stape-mcp-server": {
       "type": "sse",

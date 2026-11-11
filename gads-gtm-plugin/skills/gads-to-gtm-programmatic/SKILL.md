@@ -15,7 +15,7 @@ End-to-end workflow: audit existing state → create conversion actions in Googl
   "mcpServers": {
     "google-tag-manager-mcp-server": {
       "type": "url",
-      "url": "https://gtm-mcp.stape.ai/mcp"
+      "url": "https://gtm-mcp.stape.io/mcp"
     },
     "google-ads-mcp": {
       "type": "url",

@@ -2,7 +2,7 @@
   "mcpServers": {
     "google-tag-manager": {
       "type": "url",
-      "url": "https://gtm-mcp.stape.ai/mcp",
+      "url": "https://gtm-mcp.stape.io/mcp",
       "description": "Stape GTM MCP — full CRUD for GTM containers, tags, triggers, variables, and workspaces"
     },
     "stape": {

@@ -20,4 +20,4 @@ actually applies fixes (renames, dedup, folder reorganization, republish). `gtm-
 and never writes to your container; `tidy-gtm` is where you go once you know what to fix.
 
 ## Required MCP
-- Stape GTM MCP (`gtm-mcp.stape.ai`)
+- Stape GTM MCP (`gtm-mcp.stape.io`)

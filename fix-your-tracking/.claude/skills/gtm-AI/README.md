@@ -29,7 +29,7 @@ Copy `assets/templates/mcp.template.json` to your project root as `.mcp.json`:
   "mcpServers": {
     "google-tag-manager-mcp-server": {
       "type": "url",
-      "url": "https://gtm-mcp.stape.ai/mcp"
+      "url": "https://gtm-mcp.stape.io/mcp"
     }
   }
 }

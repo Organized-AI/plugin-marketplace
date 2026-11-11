@@ -200,7 +200,7 @@ Deployments follow a 5-phase process:
 ### Required
 
 **google-tag-manager-mcp-server**
-- URL: `https://gtm-mcp.stape.ai/mcp`
+- URL: `https://gtm-mcp.stape.io/mcp`
 - Provides: GTM CRUD operations
 - Auth: OAuth via browser
 
